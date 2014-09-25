@@ -1,0 +1,26 @@
+{% load i18n sizeformat parse_date %}
+{% load url from future %}
+
+<h3>{% trans "Instance Overview" %}: {{ instance.instanceId }}</h3>
+
+<div class="info row-fluid detail">
+  <h4>{% trans "Info" %}</h4>
+  <hr class="header_rule">
+  <dl>
+    <dt>{% trans "Name" %}</dt>
+    {{ instance.instanceId }}
+  </dl>
+  <h4>{% trans "More Info" %}</h4>
+  <hr class="header_rule">
+  <dl>
+    <dt>{% trans "State" %}</dt>
+    {{ instance.state }}
+  </dl>
+  <dl>
+    <dt>{% trans "SHH Public" %}</dt>
+    {{ instance.sshPublic }}
+  </dl>
+    <dl>    
+</div>
+
+</div>
