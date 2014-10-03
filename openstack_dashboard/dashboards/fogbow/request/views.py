@@ -9,7 +9,6 @@ from django.utils.translation import ugettext_lazy as _  # noqa
 
 from horizon import forms
 from horizon import exceptions
-from django.conf import settings
 
 from openstack_dashboard.dashboards.fogbow.request \
     import tabs as project_tabs
@@ -19,7 +18,12 @@ from openstack_dashboard.dashboards.fogbow.request \
     import models as project_models    
 from openstack_dashboard.dashboards.fogbow.request.forms import CreateRequest
 from openstack_dashboard.dashboards.fogbow.request.models import Request
-import openstack_dashboard.dashboards.fogbow.models as fogbow_request
+import openstack_dashboard.models as fogbow_request
+
+REQUEST_TERM = '/fogbow_request?verbose=true'
+STATE_TERM = 'org.fogbowcloud.request.state'
+TYPE_TERM = 'org.fogbowcloud.request.type'
+INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id'
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.RequestsTable
@@ -28,54 +32,42 @@ class IndexView(tables.DataTableView):
     def has_more_data(self, table):
         return self._more
 
-    def get_data(self):                
-        response = fogbow_request.doRequest('get', '/fogbow_request', None)        
-        if response.status_code < 200 and reponse.status_code > 204:
-            print 'erro'                        
+    def get_data(self):             
+        response = fogbow_request.doRequest('get', REQUEST_TERM, None,
+                                             self.request.session.get('token','').id)      
         
-        responseStr = response.text    
-        listRequests = self.returnRequestList(responseStr)
-        
+        listRequests = self.getRequestsList(response.text)        
         self._more = False
         
         return listRequests
 
-    def returnRequestList(self, responseStr):
+    def getRequestsList(self, responseStr):
         listRequests = []
-        requestsId = responseStr.split('\n')
-        for reqst in requestsId:
-            reqst = reqst.split('/fogbow_request/')
-            id = ''
-            if len(reqst) > 1:
-                reqst = reqst[1]
-                reponseGetSpecificRequest = fogbow_request.doRequest('get', '/fogbow_request/' + reqst, None)
-                reponseGetSpecificRequestStr = reponseGetSpecificRequest.text
+        propertiesRequests = responseStr.split('\n')
+        for propertiesOneRequest in propertiesRequests:
+            propertiesOneRequest = propertiesOneRequest.split(REQUEST_TERM + '/')
+            if len(propertiesOneRequest) > 1:
+                propertiesOneRequest = propertiesOneRequest[1]                
+                properties = propertiesOneRequest.split(';')
                 
-                state, type, instanceId = '', '', ''
-                properties = reponseGetSpecificRequestStr.split('\n')
-                for p in properties:
-                    if 'org.fogbowcloud.request.state=' in p:
-                        p = p.split('org.fogbowcloud.request.state=')
-                        p = p[1]
-                        p = p.replace('"', '')
-                        state = p
-                    elif 'org.fogbowcloud.request.type=' in p:
-                        p = p.split('org.fogbowcloud.request.type=')
-                        p = p[1]
-                        p = p.replace('"', '')
-                        type = p
-                    elif 'org.fogbowcloud.request.instance-id' in p:
-                        p = p.split('org.fogbowcloud.request.instance-id')
-                        p = p[1]
-                        p = p.replace('"', '')
-                        p = p.replace('=', '')
-                        instanceId = p 
-                        
-                id = reqst + ':' + instanceId
-                request = {'id' : id, 'requestId' : reqst, 'state' : state, 'type' : type, 'instanceId': instanceId}
+                state, type, instanceId = '-', '-', '-'
+                for propertie in properties:
+                    if STATE_TERM in propertie:                        
+                        state = self.normalizeAttributes(propertie, STATE_TERM)
+                    elif TYPE_TERM in propertie:
+                        type = self.normalizeAttributes(propertie, TYPE_TERM)
+                    elif INSTANCE_ID_TERM in propertie:
+                        instanceId = self.normalizeAttributes(propertie, INSTANCE_ID_TERM)
+                
+                id = properties[0]
+                idRequestTable = id + ':' + instanceId
+                request = {'id' : idRequestTable, 'requestId' : id, 'state' : state, 'type' : type, 'instanceId': instanceId}
                 listRequests.append(Request(request))                
-            
+        
         return listRequests
+    
+    def normalizeAttributes(self, propertie, term):        
+        return propertie.split(term)[1].replace('"', '').replace('=','')
     
 class CreateView(forms.ModalFormView):
     form_class = CreateRequest
@@ -85,4 +77,3 @@ class CreateView(forms.ModalFormView):
 class DetailView(tabs.TabView):
     tab_group_class = project_tabs.RequestDetailTabs
     template_name = 'fogbow/request/detail.html'
-

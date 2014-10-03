@@ -1,17 +1,23 @@
 {% load i18n horizon humanize sizeformat %}
 
 <div class="quota-dynamic">
-  <h3>{% trans "Information Requests" %}</h3>
+  <h3>{% trans "Requests Information" %}</h3>
     <div class="d3_quota_bar">
-    <div class="d3_pie_chart" data-used="{{ cpuUsedPercentage }}"></div>
-     <strong>{% trans "Fullfield" %} <br />
-         {% blocktrans with used=cpuInUse available=cpuTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+    <div class="d3_pie_chart" data-used="{{ requestsFullfieldPercent }}"></div>
+     <strong>{% trans "Requests Fullfield" %} <br />
+         {% blocktrans with used=requestsFullfield available=requestsTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
      </strong>
     </div>
     <div class="d3_quota_bar">
-    <div class="d3_pie_chart" data-used="{{ cpuUsedPercentage }}"></div>
-    <strong>{% trans "Open" %} <br />
-     {% blocktrans with used=memInUse available=memTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+    <div class="d3_pie_chart" data-used="{{ requestsOpenPercent }}"></div>
+    <strong>{% trans "Requests Open" %} <br />
+     {% blocktrans with used=requestsOpen available=requestsTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+    </strong>
+    </div>
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart" data-used="{{ requestsClosedPercent }}"></div>
+    <strong>{% trans "Requests Closed" %} <br />
+     {% blocktrans with used=requestsClosed available=requestsTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
     </strong>
     </div>
 </div>

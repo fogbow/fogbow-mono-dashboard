@@ -13,8 +13,11 @@ from openstack_dashboard.dashboards.fogbow.instance \
     import tables as project_tables
 from openstack_dashboard.dashboards.fogbow.instance \
     import models as project_models    
+import openstack_dashboard.models as fogbow_request
 
 # LOG = logging.getLogger(__name__)
+
+COMPUTE_TERM = '/compute/'
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.InstancesTable
@@ -24,23 +27,22 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        instances = []    
-
-        headers = {'content-type': 'text/occi', 'X-Auth-Token' : settings.MY_TOKEN}
-         
-        r = requests.get(settings.MY_ENDPOINT + '/compute/', headers=headers)
-        data = r.text                
-        
+        response = fogbow_request.doRequest('get', COMPUTE_TERM, None,
+                                                     self.request.session.get('token','').id)   
+        responseStr = response.text
+        instances = []        
         try:
-            instancesIds =  memberProperties = data.split('\n')
-            for instance in instancesIds:
-                instance = instance.replace('X-OCCI-Location: ', '')
-                instance1 = {'id': instance, 'instanceId': instance}
-                instances.append(project_models.Instance(instance1))            
+            properties =  memberProperties = responseStr.split('\n')
+            for propertie in properties:
+                idInstance = self.normalizeAttribute(propertie)
+                instance = {'id': idInstance, 'instanceId': idInstance}
+                instances.append(project_models.Instance(instance))            
         except Exception:
-            x = "" 
+            print ''
         
         self._more = False
         
         return instances  
     
+    def normalizeAttribute(self, propertie):
+        return propertie.replace('X-OCCI-Location: ', '')

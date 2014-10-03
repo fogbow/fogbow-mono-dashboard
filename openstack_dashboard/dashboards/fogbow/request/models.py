@@ -18,7 +18,6 @@ class APIDictWrapper(object):
         try:
             return self.__getattr__(item)
         except AttributeError as e:
-            # caller is expecting a KeyError
             raise KeyError(e)
 
     def get(self, item, default=None):

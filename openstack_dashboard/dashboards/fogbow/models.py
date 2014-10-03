@@ -5,9 +5,12 @@ Stub file to work around django bug: https://code.djangoproject.com/ticket/7198
 from django.conf import settings
 import requests
 
-def doRequest(method, endpoint, headers):
-    headers = {'content-type': 'text/occi', 'X-Auth-Token' : settings.MY_TOKEN} 
-    headers.update(headers)
+def doRequest(method, endpoint, additionalHeaders):
+    token = settings.MY_TOKEN
+    print additionalHeaders
+    headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
+    if additionalHeaders is not None:
+        headers.update(additionalHeaders)    
         
     if method == 'get': 
         response = requests.get(settings.MY_ENDPOINT + endpoint, headers=headers)

@@ -1,17 +1,13 @@
 {% load i18n sizeformat parse_date %}
 {% load url from future %}
 
-<h3>{% trans "Instance Overview" %}: {{ instance.instanceId }}</h3>
-
 <div class="info row-fluid detail">
-  <h4>{% trans "Info" %}</h4>
+  <h3>{% trans "Info" %}</h3>
   <hr class="header_rule">
   <dl>
-    <dt>{% trans "Name" %}</dt>
+    <dt>{% trans "Instance Id" %}</dt>
     {{ instance.instanceId }}
   </dl>
-  <h4>{% trans "More Info" %}</h4>
-  <hr class="header_rule">
   <dl>
     <dt>{% trans "State" %}</dt>
     {{ instance.state }}
@@ -20,7 +16,22 @@
     <dt>{% trans "SHH Public" %}</dt>
     {{ instance.sshPublic }}
   </dl>
+    <dl>       
+  <dl>
+    <dt>{% trans "Memory" %}</dt>
+    {{ instance.memory }}
+  </dl>
+    <dl>
+  <dl>
+    <dt>{% trans "Cores" %}</dt>
+    {{ instance.cores }}
+  </dl>
     <dl>    
+  <dl>
+    <dt>{% trans "Imagem" %}</dt>
+    {{ instance.image }}
+  </dl>
+    <dl>                            
 </div>
 
 </div>

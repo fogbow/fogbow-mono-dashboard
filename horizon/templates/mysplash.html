@@ -10,7 +10,7 @@
   <body id="splash">
     <div class="container">
       <div class="row large-rounded">      	
-      	Token : {{ request.session.token }}
+      	Token : {{ request.user.token }}
         {% include 'auth/my_login.html' %}
       </div>
     </div>

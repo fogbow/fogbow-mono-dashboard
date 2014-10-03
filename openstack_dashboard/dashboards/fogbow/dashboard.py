@@ -2,15 +2,15 @@ from django.utils.translation import ugettext_lazy as _
 
 import horizon
 
-class TestPanel(horizon.PanelGroup):
+class MainPanel(horizon.PanelGroup):
     slug = "mygroup"
     name = _("User Panel")
-    panels = ('members', 'request', 'instance')       
+    panels = ('overview','members', 'request', 'instance')       
 
 class Fogbow(horizon.Dashboard):
-    name = _("Fogbow")
+    name = _("Federation")
     slug = "fogbow"
-    panels = ( TestPanel, ) 
-    default_panel = 'members'
+    panels = ( MainPanel, ) 
+    default_panel = 'overview'
 
 horizon.register(Fogbow)

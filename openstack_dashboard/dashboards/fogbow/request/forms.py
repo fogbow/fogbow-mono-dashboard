@@ -16,78 +16,94 @@ from horizon.utils import validators as utils_validators
 from openstack_dashboard import api
 from openstack_dashboard.utils import filters
 
-import urllib2
-import urllib
+from django.core.urlresolvers import reverse_lazy  # noqa
+import openstack_dashboard.models as fogbow_request
+from horizon import messages
+from django import shortcuts
 
 import collections  
 
+RESOURCE_TERM = '/-/'
+REQUEST_TERM = '/fogbow_request'
+SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
+SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
+
 class CreateRequest(forms.SelfHandlingForm):
-    count = forms.CharField(label=_("Count"),
+    TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
+    success_url = reverse_lazy("horizon:fogbow:request:index")
+    
+    count = forms.CharField(label=_('Count'),
                            error_messages={
                                'required': _('This field is required.'),
-                               'invalid': _("The string may only contain"
-                                            " ASCII characters and numbers.")},
-                           validators=[validators.validate_slug])
-    flavor = forms.CharField(label=_("Flavor"),
-                           error_messages={
-                               'required': _('This field is required.'),
-                               'invalid': _("The string may only contain"
-                                            " ASCII characters and numbers.")},
-                           validators=[validators.validate_slug])
-    image = forms.CharField(label=_("Image"),
-                           error_messages={
-                               'required': _('This field is required.'),
-                               'invalid': _("The string may only contain"
-                                            " ASCII characters and numbers.")},
-                           validators=[validators.validate_slug])
-    type = forms.CharField(label=_("Type"),
-                           error_messages={
-                               'required': _('This field is required.'),
-                               'invalid': _("The string may only contain"
-                                            " ASCII characters and numbers.")},
-                           validators=[validators.validate_slug])    
-    publicKey = forms.CharField(label=_("Public Key"),
-                           error_messages={'invalid': _("The string may only contain"
-                                            " ASCII characters and numbers.")})        
+                               'invalid': _('The string may only contain'
+                                            ' ASCII characters and numbers.')},
+                           validators=[validators.validate_slug],
+                           initial='1')
+    flavor = forms.ChoiceField(label=_('Flavor'),
+                               help_text=_('Flavor Fogbow.'))    
+    image = forms.ChoiceField(label=_('Image'),
+                               help_text=_('Image Fogbow.'))
+    type = forms.ChoiceField(label=_('Type'),
+                               help_text=_('Type Request.'),
+                               choices=TYPE_REQUEST)
+    publicKey = forms.CharField(label=_('Public Key'),
+                           error_messages={'invalid': _('The string may only contain'
+                                            ' ASCII characters and numbers.')},
+                           required=False, widget=forms.Textarea)        
+
+    def __init__(self, request, *args, **kwargs):
+        super(CreateRequest, self).__init__(request, *args, **kwargs)
+        
+        response = fogbow_request.doRequest('get', RESOURCE_TERM, None,
+                                            request.session.get('token','').id)
+        
+        flavorChoices,imageChoices = [],[]
+        resources = response.text.split('\n')
+        for resource in resources:
+            if SCHEME_FLAVOR_TERM in resource and 'fogbow' in resource:
+                resource = self.normalizeNameResource(resource)
+                flavorChoices.append((resource,resource))
+            elif SCHEME_IMAGE_TERM in resource and 'fogbow' in resource:
+                resource = self.normalizeNameResource(resource)
+                imageChoices.append((resource,resource))
+                                        
+        self.fields['flavor'].choices = flavorChoices
+        self.fields['image'].choices = imageChoices
+
+    def normalizeNameResource(self, resource):
+        return resource.split(';')[0].replace('Category: ', '')
 
     def handle(self, request, data):
-        try:            
-#             headers = {'content-type': 'text/occi', 'X-Auth-Token' : settings.MY_TOKEN , "Category" : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"', 'Category' : data['flavor'] + '; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin"', 'Category' : data['image']+ '; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"', 'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=' + data['count'], 'X-OCCI-Attribute' : 'org.fogbowcloud.request.type=' + data['type']}            
-            headers = [('content-type', 'text/occi'), ('X-Auth-Token' , settings.MY_TOKEN) , ("Category" , 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"'), ('Category', data['flavor'] + '; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin"'), ('Category' , data['image']+ '; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"'), ('X-OCCI-Attribute' , 'org.fogbowcloud.request.instance-count=' + data['count']), ('X-OCCI-Attribute' , 'org.fogbowcloud.request.type=' + data['type'])]            
-#             headers = {'content-type': 'text/occi', 'X-Auth-Token' : settings.MY_TOKEN , "Category" : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"', 'Category' : data['flavor'] + '; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin"', 'Category' : data['image']+ '; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"', 'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=' + data['count'], 'X-OCCI-Attribute' : 'org.fogbowcloud.request.type=' + data['type']}            
-#             headers = {'content-type': 'text/occi', 'X-Auth-Token' : settings.MY_TOKEN, 'Category': ['fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"', data['flavor'] + '; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin"']}
-#             self.flatten_headers(headers)
-            
-#             opener = urllib2.build_opener()
-#             opener.addheaders = headers
-#             query_args = { 'q':'query string', 'foo':'bar' }
-# 
-#             url = settings.MY_ENDPOINT + '/fogbow_request'
-# 
-#             data = urllib.urlencode(query_args)
-# 
-#             request = urllib2.Request(url, data)
-#             
-#             r = opener.urlopen(request).read()
-            
-#             r = opener.read()
+        try:
+            publicKeyCategory, publicKeyAttribute = '',''             
+            if data['publicKey'].strip() is not None and data['publicKey'].strip(): 
+                publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'
+                publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
+                                    
+            headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind",%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin",%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
+                        % (data['flavor'].strip(), data['image'].strip(), publicKeyCategory),
+                       'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute)}
 
-#             r = requests.post( settings.MY_ENDPOINT + '/fogbow_request', headers=headers)                                    
+            response = fogbow_request.doRequest('post', REQUEST_TERM,
+                                                headers, request.session.get('token','').id)                        
             
-            messages.error(request, _('Error: %s') % r)
-#             if r.status_code != 200:
-#                 messages.error(request, _('Error: %s') % r)
-#                 messages.error(request, _('Error: %s') % r.text)
-#             else:
-#                 messages.success(request, _('Successfully created Requests: %s') % r)
-#                 messages.success(request, _('Successfully created Requests: %s') % r.text)
+            messages.success(request, _('Requests created : %s' 
+                                        % (self.returnFormatResponse(response.text))) )
+            
+            return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
         except Exception:
             redirect = reverse("horizon:fogbow:request:index")
             exceptions.handle(request,
                               _('Unable to create Requests.'),
-                              redirect=redirect)
+                              redirect=redirect)   
             
-    def flatten_headers(headers):
-        for (k, v) in list(headers.items()):
-            if isinstance(v, collections.Iterable):
-               headers[k] = ','.join(v)
+    def returnFormatResponse(self, responseStr):      
+        responseFormated = ''
+        requests = responseStr.split('\n')
+        for request in requests:
+            if '/fogbow_request/' in request:
+                responseFormated += request.split('/fogbow_request/')[1]
+                print responseFormated
+                if requests[-1] != request:
+                    responseFormated += ' , '
+        return responseFormated

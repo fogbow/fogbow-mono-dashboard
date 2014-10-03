@@ -16,18 +16,23 @@
 
 from django import shortcuts
 from django.views.decorators import vary
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
+from openstack_dashboard.models import User
+from django.contrib.auth.decorators import login_required  # noqa
+from django.contrib.auth import views as django_auth_views
+from openstack_dashboard import forms
+from django.utils import functional
 
 import cgi
 import horizon
 
 from openstack_auth import forms
+from django.contrib.auth import authenticate, login
 
 def get_user_home(user):
     if user.is_superuser:
         return horizon.get_dashboard('fogbow').get_absolute_url()
     return horizon.get_dashboard('fogbow').get_absolute_url()
-
 
 @vary.vary_on_cookie
 def splash(request):
@@ -48,42 +53,20 @@ def loginChico(request):
     request.session.set_test_cookie()  
     return shortcuts.render(request, 'mysplash.html', {'form': form})
 
-def myauthenticate(request):
-    x
-#     user = c()
-#     username = request.POST['username']
-#     username = 'admin'
-#     password = request.POST['password']
-#     password = 'labstack'
-#     
-#     user = authenticate(username=username, password=password)
-#     if user is not None:
-#         if user.is_active:
-#             login(request, user)
-#         else:
-#             x
-#     else:
-#         y
-#     from django.contrib.auth.models import User    
-#     user = User.objects.get(username__exact='admin')
+def myauthenticate(request, **kwargs):
+    user = User('id','token','username')
+    request.session['token'] = user.token
+    request.session['user_id'] = user.id
+    request.session['username'] = user.username
+    request._cached_user = user
+    request.user = user
     
-#     login(request, user)
-#     
-#     form = ""
-#     token = request.POST.get('token', u'Nao existe !')
-#     request.session.clear()
-#     request.session.set_test_cookie()
-#     try:
-#         request.session['mytoken'] == "Pow"
-#     except Exception:
-#         form = forms.Login(request)
-#         return shortcuts.render(request, 'splash.html', {'form': form})
-#     return shortcuts.render(request, 'mysplash.html', {'form': form})
-#     return shortcuts.redirect(horizon.get_dashboard('fogbow').get_absolute_url())
+    print 'Chegando aqui'
     
-# def c():  
-#     user = User.create_user('neto', 'neto@thebeatles.com', 'neto')    
-#     return user
+    if request.user.is_authenticated():
+        return shortcuts.redirect('/fogbow')    
+    else:
+        return shortcuts.redirect('/')
     
 from django.contrib.auth import authenticate, login
     

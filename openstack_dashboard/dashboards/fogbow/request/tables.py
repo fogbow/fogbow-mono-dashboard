@@ -4,27 +4,27 @@ from django.core.urlresolvers import reverse_lazy  # noqa
 import requests
 from django.conf import settings
 from horizon import tables
-import openstack_dashboard.dashboards.fogbow.models as fogbow_request
+import openstack_dashboard.models as fogbow_request
 from horizon import messages
+
+REQUEST_TERM = '/fogbow_request/'
 
 class TerminateRequest(tables.BatchAction):
     name = "terminate"
     action_present = _("Terminate")
-    action_past = _("Scheduled termination of")
+    action_past = _("Terminated")
     data_type_singular = _("Request")
     data_type_plural = _("Requests")
     classes = ('btn-danger', 'btn-terminate')
-#     success_url = reverse_lazy("horizon:fogbow:request:index")   
 
     def allowed(self, request, instance=None):
         return True
 
     def action(self, request, obj_id):        
         requestId = obj_id.split(':')[0]
-        response = fogbow_request.doRequest('delete', '/fogbow_request/' + requestId, None)   
-        if response.status_code >= 200 and response.status_code <= 204:
-            messages.success(request, _('Success : %s Deleted') % requestId)
-        else:
+        response = fogbow_request.doRequest('delete', REQUEST_TERM + requestId, None,
+                                            request.session.get('token','').id)   
+        if response.status_code < 200 and response.status_code > 204:
             messages.error(request, _('Error _ %s') % requestId)            
 
 class CreateRequest(tables.LinkAction):

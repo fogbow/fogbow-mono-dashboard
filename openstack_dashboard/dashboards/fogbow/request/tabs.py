@@ -24,40 +24,63 @@ from django.conf import settings
 
 from openstack_dashboard.api import cinder
 from openstack_dashboard.api import nova
-import openstack_dashboard.dashboards.fogbow.models as fogbow_request
+import openstack_dashboard.models as fogbow_request
 
-class OverviewTab(tabs.Tab):
-    name = _("Overview")
-    slug = "overview"
-    template_name = ("fogbow/request/_detail_overview.html")
+COMPUTE_TERM = '/compute/'
+STATE_TERM = 'occi.compute.state'
+SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
+CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
+MEMORY_TERM = 'occi.compute.memory'
+CORES_TERM = 'occi.compute.cores'
+IMAGE_SCHEME = 'http://schemas.openstack.org/template/os#'
+
+class InstanceDetailTab(tabs.Tab):
+    name = _("Instance Details")
+    slug = "instance_details"
+    template_name = ("fogbow/request/_detail_instance.html")
 
     def get_context_data(self, request):
-        instance_id = self.tab_group.kwargs['instance_id']
-        instance_id = instance_id.split(':')[1]
-        
-        response = fogbow_request.doRequest('get', '/compute/' + instance_id, None)
+        instance_id = self.tab_group.kwargs['instance_id'].split(':')[1]        
+        response = fogbow_request.doRequest('get', COMPUTE_TERM  + instance_id, None, 
+                                            request.session.get('token','').id)
 
-        responseStr = response.text
-        instanceDetails = responseStr.split('\n')
-        state = 'stateDefault'
-        sshPublic = 'sshPublicDefault'
-        for d in instanceDetails:
-            if 'occi.compute.state' in d:
-                d = d.split('occi.compute.state')
-                d = d[1]
-                d = d.replace('=', '')
-                d = d.replace('"', '')
-                state = d
-            elif 'org.fogbowcloud.request.ssh-public-address' in d:
-                d = d.split('org.fogbowcloud.request.ssh-public-address')
-                d = d[1]
-                d = d.replace('"', '')
-                d = d.replace('=', '')
-                sshPublic = d
+        instanceDetails = response.text.split('\n')
+        state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', '-'
+        for detail in instanceDetails:
+            if STATE_TERM in detail:
+                state = self.normalizeAttributes(detail, STATE_TERM)
+            elif SHH_PUBLIC_KEY_TERM in detail:
+                sshPublic = self.normalizeAttributes(detail, SHH_PUBLIC_KEY_TERM)
+            elif MEMORY_TERM in detail:
+                memory = self.normalizeAttributes(detail, MEMORY_TERM)
+            elif CORES_TERM in detail:
+                cores = self.normalizeAttributes(detail, CORES_TERM)
+            elif IMAGE_SCHEME in detail:
+                image = 'fogbow-linux-x86'
         
-        instance = {'instanceId': instance_id , 'state': state, 'sshPublic':sshPublic, 'extra' : instanceDetails}
+        if instance_id == 'null':
+            instance_id = '-'
+        
+        instance = {'instanceId': instance_id , 'state': state, 'sshPublic':sshPublic,
+                     'extra' : instanceDetails,'memory' : memory,
+                     'cores' : cores, 'image' : image}
         return {'instance': instance}
-
+    
+    def normalizeAttributes(self, propertie, term):
+        try:
+            return propertie.split(term)[1].replace('=', '').replace('"', '')
+        except:
+            return ''
+        
+    def getFeatureInCategoryPerScheme(self, featureName, features):
+        features = features.split(';')
+        for feature in features:
+            print feature
+            if featureName in feature:
+                return feature.replace(featureName + '=', '') \
+                              .replace('"','').replace('Image:','')
+        return ''
+                
 class RequestDetailTabs(tabs.TabGroup):
-    slug = "volume_details"
-    tabs = (OverviewTab,)
+    slug = "requests_details"
+    tabs = (InstanceDetailTab,)
