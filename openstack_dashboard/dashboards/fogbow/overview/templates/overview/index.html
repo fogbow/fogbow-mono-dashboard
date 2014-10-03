@@ -1,0 +1,20 @@
+{% extends 'fogbow/base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Overview" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Overview") %}
+{% endblock page_header %}
+
+{% block fogbow_main %}
+	
+	<h1>Fogbow Dashboard</h1>
+	<br>
+	{% include "horizon/common/my_overview_limit_summary.html" %}
+	<br>
+	<hr>
+	<h3>Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares.</h3>
+	<hr>
+	<h3>Bla Bla Bla Bla Bla</h3>
+	<br>
+{% endblock %}
