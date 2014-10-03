@@ -1,0 +1,7 @@
+*.pyc
+.venv/
+/static/dashboard/css/*.css
+.environment_version
+.project
+.pydevproject
+/.settings 
