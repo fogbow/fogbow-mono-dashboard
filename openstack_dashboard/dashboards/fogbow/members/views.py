@@ -70,19 +70,19 @@ class IndexView(tables.DataTableView):
                 if any("id" in s for s in values):
                     id = value
                 elif any("cpuIdle" in s for s in values): 
-                    cpuIdle = int(value)
+                    cpuIdle = float(value)
                 elif any("cpuInUse" in s for s in values): 
-                    cpuInUse = int(value)
+                    cpuInUse = float(value)
                 elif any("memIdle" in s for s in values): 
-                    memIdle = int(value)
+                    memIdle = float(value)
                 elif any("memInUse" in s for s in values):
-                    memInUse = int(value)                    
+                    memInUse = float(value)                    
             if 'flavor' in m:
                 valuesFlavor = m.split('flavor:')
                 for flavor in valuesFlavor:
                    if 'fogbow' in flavor: 
                        flavors = flavors + flavor
-                       flavors = flavors.replace("'", '').replace('"', '').replace(',', " - ").replace(';', ' .    . ')                       
+                       flavors = flavors.replace("'", '').replace('"', '')                       
                                                 
             if id != None:                                                  
                 member = {'id': id , 'idMember' : id, 'cpuIdle': cpuIdle, 'cpuInUse': cpuInUse , 'memIdle': memIdle, 'memInUse': memInUse, 'flavors' : flavors}
