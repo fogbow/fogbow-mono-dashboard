@@ -7,8 +7,11 @@ from django.utils.translation import ugettext_lazy as _  # noqa
 
 from horizon import exceptions
 from horizon import tables
+from horizon import tabs
 from django.conf import settings
 
+from openstack_dashboard.dashboards.fogbow.instance \
+    import tabs as project_tabs
 from openstack_dashboard.dashboards.fogbow.instance \
     import tables as project_tables
 from openstack_dashboard.dashboards.fogbow.instance \
@@ -46,3 +49,8 @@ class IndexView(tables.DataTableView):
     
     def normalizeAttribute(self, propertie):
         return propertie.replace('X-OCCI-Location: ', '')
+    
+class DetailView2(tabs.TabView):
+    tab_group_class = project_tabs.InstanceDetailTabs2
+    template_name = 'fogbow/instance/detail.html'     
+        

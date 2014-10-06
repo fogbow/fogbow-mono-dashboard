@@ -5,19 +5,31 @@
     <div class="d3_quota_bar">
     <div class="d3_pie_chart" data-used="{{ requestsFullfieldPercent }}"></div>
      <strong>{% trans "Requests Fullfield" %} <br />
-         {% blocktrans with used=requestsFullfield available=requestsTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+         {% blocktrans with used=requestsFullfield available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
      </strong>
     </div>
     <div class="d3_quota_bar">
     <div class="d3_pie_chart" data-used="{{ requestsOpenPercent }}"></div>
     <strong>{% trans "Requests Open" %} <br />
-     {% blocktrans with used=requestsOpen available=requestsTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     {% blocktrans with used=requestsOpen available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
     </strong>
     </div>
     <div class="d3_quota_bar">
     <div class="d3_pie_chart" data-used="{{ requestsClosedPercent }}"></div>
     <strong>{% trans "Requests Closed" %} <br />
-     {% blocktrans with used=requestsClosed available=requestsTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     {% blocktrans with used=requestsClosed available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
     </strong>
     </div>
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart" data-used="{{ requestsDeletedPercent }}"></div>
+    <strong>{% trans "Requests Deleted" %} <br />
+     {% blocktrans with used=requestsDeleted available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+    </strong>
+    </div>
+    <div class="d3_quota_bar">
+    <div class="d3_pie_chart" data-used="{{ requestsFailedPercent }}"></div>
+    <strong>{% trans "Requests Failed" %} <br />
+     {% blocktrans with used=requestsFailed available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+    </strong>
+    </div>            
 </div>

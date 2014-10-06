@@ -28,8 +28,16 @@ class TerminateInstance(tables.BatchAction):
         r = fogbow_request.doRequest('delete',COMPUTE_TERM + obj_id, None,
                                       request.session.get('token','').id)        
 
+def get_instance_id(request):
+    value = request.instanceId
+    if 'null' not in value:
+        return value 
+    else:
+        return '-'
+
 class InstancesTable(tables.DataTable):
-    instanceId = tables.Column("instanceId", verbose_name=_("Instance ID"))
+    instanceId = tables.Column(get_instance_id, link=("horizon:fogbow:instance:detail"),
+                                verbose_name=_("Instance ID"))
 
     class Meta:
         name = "instances"

@@ -1,6 +1,7 @@
 from horizon import views
 import horizon
 import requests
+import decimal
 
 from django.core.urlresolvers import reverse_lazy  # noqa
 from django.utils.translation import ugettext_lazy as _  # noqa
@@ -97,10 +98,21 @@ class IndexView(tables.DataTableView):
         return members
     
     def setValuesContext(self, memIdle, memInUse, cpuIdle, cpuInUse):
-        self.memTotal = memIdle + memInUse
-        print self.memTotal
-        self.memInUse = memInUse
-        self.memUsedPercentage = ( (memInUse * 100) / self.memTotal)
-        self.cpuTotal = cpuIdle + cpuInUse
-        self.cpuInUse = cpuInUse
-        self.cpuUsedPercentage = ( (cpuInUse * 100) / self.cpuTotal)
+        self.memTotal = self.convertMbToGb((memIdle + memInUse))
+        self.memInUse = self.convertMbToGb(memInUse)
+        self.memUsedPercentage = self.calculatePercentage(memInUse, (memIdle + memInUse))
+        self.cpuTotal = (cpuIdle + cpuInUse)
+        self.cpuInUse = cpuInUse 
+        self.cpuUsedPercentage = self.calculatePercentage(cpuInUse, (cpuIdle + cpuInUse))
+        
+    def convertMbToGb(self, value):
+        try:
+            return float(value / 1024)
+        except Exception:
+            return 0
+    
+    def calculatePercentage(self, value, valueTotal):
+        try:
+            return ( (value * 100) / valueTotal)
+        except Exception:
+            return 0

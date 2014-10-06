@@ -40,4 +40,4 @@ class APIDictWrapper(object):
         return "<%s: %s>" % (self.__class__.__name__, self._apidict)
 
 class Instance(APIDictWrapper):
-    _attrs = ['id', 'instanceId']
+    _attrs = ['id', 'instanceId', 'details']

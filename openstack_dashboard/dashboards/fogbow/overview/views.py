@@ -1,6 +1,7 @@
 from horizon import views
 
 import openstack_dashboard.models as fogbow_request
+
 REQUEST_TERM = '/fogbow_request?verbose=true'
 
 class IndexView(views.APIView):
@@ -14,7 +15,7 @@ class IndexView(views.APIView):
     
     def setValues(self, responseStr, context):
         requests = responseStr.split('\n')
-        requestsFullfield, requestsOpen, requestsClosed = 0, 0, 0
+        requestsFullfield, requestsOpen, requestsClosed, requestsDeleted ,requestsFailed = 0, 0, 0, 0, 0
         for request in requests:
             if 'FULFILLED' in request:
                 requestsFullfield += 1
@@ -22,13 +23,30 @@ class IndexView(views.APIView):
                 requestsOpen += 1
             elif 'CLOSED' in request:
                 requestsClosed += 1
+            elif 'DELETED' in request:
+                requestsDeleted += 1
+            elif 'FAILED' in request:
+                requestsFailed += 1
 
-        totalRequest = len(requests)
+        totalRequest = requestsFullfield + requestsOpen + requestsClosed + requestsDeleted + requestsFailed 
         context['requestsFullfield'] = requestsFullfield
-        context['requestsFullfieldPercent'] = (requestsFullfield * 100) / totalRequest
         context['requestsOpen'] = requestsOpen
-        context['requestsOpenPercent'] = (requestsOpen * 100) / totalRequest
         context['requestsClosed'] = requestsClosed
-        context['requestsClosedPercent'] = (requestsClosed * 100) / totalRequest
-        context['requestsTotal'] = totalRequest
+        context['requestsDeleted'] = requestsDeleted
+        context['requestsFailed'] = requestsFailed
+        if totalRequest is not 0:
+            context['requestsOpenPercent'] = (requestsOpen * 100) / totalRequest
+            context['requestsClosedPercent'] = (requestsClosed * 100) / totalRequest
+            context['requestsFailedPercent'] = (requestsFailed * 100) / totalRequest            
+            context['requestsDeletedPercent'] = (requestsDeleted * 100) / totalRequest    
+            context['requestsFullfieldPercent'] = (requestsFullfield * 100) / totalRequest
+        else:
+            context['requestsOpenPercent'] = 0
+            context['requestsClosedPercent'] = 0
+            context['requestsFailedPercent'] = 0            
+            context['requestsDeletedPercent'] = 0    
+            context['requestsFullfieldPercent'] = 0        
+        context['requestsTotal'] = totalRequest        
+        
         return context
+       
