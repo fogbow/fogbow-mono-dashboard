@@ -12,17 +12,18 @@
     <dt>{% trans "State" %}</dt>
     {{ instance.state }}
   </dl>
-    <dl>       
+  <dl>
+    <dt>{% trans "Public SSH Address" %}</dt>
+    {{ instance.sshPublic }}
+  </dl>       
   <dl>
     <dt>{% trans "Memory" %}</dt>
     {{ instance.memory }}
   </dl>
-    <dl>
   <dl>
     <dt>{% trans "Cores" %}</dt>
     {{ instance.cores }}
-  </dl>
-    <dl>    
+  </dl>    
   <dl>
     <dt>{% trans "Imagem" %}</dt>
     {{ instance.image }}

@@ -39,9 +39,10 @@ class IndexView(tables.DataTableView):
             for propertie in properties:
                 idInstance = self.normalizeAttribute(propertie)
                 instance = {'id': idInstance, 'instanceId': idInstance}
-                instances.append(project_models.Instance(instance))            
+                if "There are" not in propertie:
+                    instances.append(project_models.Instance(instance))            
         except Exception:
-            print ''
+            print 'error'
         
         self._more = False
         
