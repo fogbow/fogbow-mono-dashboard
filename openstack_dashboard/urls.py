@@ -33,12 +33,13 @@ import horizon
 
 
 urlpatterns = patterns('',
-    url(r'^chico$', 'openstack_dashboard.views.loginChico', name='loginChico'),
-    url(r'^$', 'openstack_dashboard.views.splash', name='splash'),
+#     url(r'^chico$', 'openstack_dashboard.views.loginChico', name='loginChico'),
+    url(r'^old/', 'openstack_dashboard.views.splash', name='splash'),
+    url(r'^$', 'openstack_dashboard.views.splash_fogbow', name='splash_fogbow'),
     url(r'^auth/', include('openstack_auth.urls')),
     url(r'', include(horizon.urls)),
-    url(r'^myauth/', 'openstack_dashboard.views.splash' , name='mylogin'),
-    url(r'^fogbow/auth/', 'openstack_dashboard.views.myauthenticate' , name='fogbow_authenticate'),
+#     url(r'^myauth/', 'openstack_dashboard.views.splash' , name='mylogin'),
+    url(r'^fogbow/auth/', 'openstack_dashboard.views.myLogin' , name='myLogin'),
 )
 
 # Development static app and project media serving using the staticfiles app.

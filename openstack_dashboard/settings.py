@@ -41,8 +41,8 @@ TEMPLATE_DEBUG = DEBUG
 
 SITE_BRANDING = 'OpenStack Dashboard'
 
-LOGIN_URL = '/auth/login/'
-# LOGIN_URL = '/fogbow/auth/'
+# LOGIN_URL = '/auth/login/'
+LOGIN_URL = '/'
 LOGOUT_URL = '/auth/logout/'
 # LOGIN_REDIRECT_URL can be used as an alternative for
 # HORIZON_CONFIG.user_home, if user_home is not set.
@@ -57,7 +57,8 @@ STATIC_URL = '/static/'
 ROOT_URLCONF = 'openstack_dashboard.urls'
 
 HORIZON_CONFIG = {
-    'dashboards': ('project', 'admin', 'settings', 'router', 'fogbow'),
+#     'dashboards': ('project', 'admin', 'settings', 'router', 'fogbow'),
+    'dashboards': ('settings', 'router', 'fogbow'),
     'default_dashboard': 'project',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,
@@ -165,8 +166,8 @@ INSTALLED_APPS = (
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend',)
-# AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.Backend',)
+# AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend', 'openstack_dashboard.backend.Backend')
+AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', )
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'

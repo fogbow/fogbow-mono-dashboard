@@ -30,17 +30,18 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        response = fogbow_request.doRequest('get', COMPUTE_TERM, None,
-                                                     self.request.session.get('token','').id)   
+        response = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request)   
         responseStr = response.text
         instances = []        
         try:
-            properties =  memberProperties = responseStr.split('\n')
-            for propertie in properties:
-                idInstance = self.normalizeAttribute(propertie)
-                instance = {'id': idInstance, 'instanceId': idInstance}
-                if "There are" not in propertie:
-                    instances.append(project_models.Instance(instance))            
+            #TODO this if only for test
+            if 'html>' not in responseStr:                    
+                properties =  memberProperties = responseStr.split('\n')
+                for propertie in properties:
+                    idInstance = self.normalizeAttribute(propertie)
+                    instance = {'id': idInstance, 'instanceId': idInstance}
+                    if "There are" not in propertie:
+                        instances.append(project_models.Instance(instance))            
         except Exception:
             print 'error'
         

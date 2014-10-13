@@ -14,13 +14,26 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
+import os
+# import commands
+import django
 from django import shortcuts
 from django.views.decorators import vary
 # from django.contrib.auth.models import User
 from openstack_dashboard.models import User
+from openstack_dashboard.models import Token
 from django.contrib.auth.decorators import login_required  # noqa
 from django.contrib.auth import views as django_auth_views
 from openstack_dashboard import forms
+from django.utils import functional
+# from openstack_dashboard.forms import Login2
+from openstack_dashboard.forms import TokenForm
+from openstack_dashboard.forms import OpennebulaForm
+from openstack_dashboard.forms import OpenstackForm
+from openstack_dashboard.forms import VomsForm
+from django.contrib import auth
+from openstack_auth import user as auth_user
+from openstack_auth import views
 from django.utils import functional
 
 import cgi
@@ -28,6 +41,12 @@ import horizon
 
 from openstack_auth import forms
 from django.contrib.auth import authenticate, login
+
+AUTH_HORIZON = 'horizon'
+AUTH_TOKEN = 'fogbow authentication'
+AUTH_OPENSTACK = 'keystone'
+AUTH_OPENNEBULA = 'opennebula'
+AUTH_VOMS = 'voms'
 
 def get_user_home(user):
     if user.is_superuser:
@@ -44,40 +63,80 @@ def splash(request):
     
     return shortcuts.render(request, 'splash.html', {'form': form})
 
-def loginChico(request):        
-    field = MyField("Nome")
-    visible_field = []
-    visible_field.append(field)    
-    form = MyForm(visible_field)
-    request.session.clear()
-    request.session.set_test_cookie()  
-    return shortcuts.render(request, 'mysplash.html', {'form': form})
-
-def myauthenticate(request, **kwargs):
-    user = User('id','token','username')
-    request.session['token'] = user.token
-    request.session['user_id'] = user.id
-    request.session['username'] = user.username
-    request._cached_user = user
-    request.user = user
-    
-    print 'Chegando aqui'
-    
+@vary.vary_on_cookie
+def splash_fogbow(request):    
     if request.user.is_authenticated():
-        return shortcuts.redirect('/fogbow')    
-    else:
-        return shortcuts.redirect('/')
+        return shortcuts.redirect(get_user_home(request.user))    
+                 
+    request.session.clear()
+    request.session.set_test_cookie()
     
-from django.contrib.auth import authenticate, login
+    formOption = request.POST.get('form')
     
-class MyForm:
-    visible_fields = None
+    return shortcuts.render(request, 'mysplash2.html', getContextForm(request, formOption))
+
+def myLogin(request, template_name=None, extra_context=None, **kwargs):
+    formChosen = request.POST.get('formChosen')
     
-    def __init__(self, visible_fields):
-        self.visible_fields = visible_fields
+    formReference = ''
+    if formChosen == AUTH_TOKEN :
+        formReference = TokenForm
+    elif formChosen == AUTH_OPENSTACK :
+        formReference = OpenstackForm
+    elif formChosen == AUTH_OPENNEBULA :
+        formReference = OpennebulaForm
+    elif formChosen == AUTH_VOMS :
+        formReference = VomsForm
+    
+    if formChosen != AUTH_HORIZON:                
+        if django.VERSION >= (1, 6):
+            form = functional.curry(formReference)
+        else:
+            form = functional.curry(formReference, request)
         
-class MyField:
-    label_tag = None
+        if not template_name:
+            if request.is_ajax():
+                template_name = 'auth/my_login2.html'
+                extra_context['hide'] = True
+            else:
+                template_name = 'auth/login2.html'
+                
+        if extra_context is None:
+            extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
+            
+        extra_context.update(getContextForm(request, formChosen))
+        del extra_context['form']
+        
+        res = django_auth_views.login(request,
+                                      template_name=template_name,
+                                      authentication_form=form,
+                                      extra_context=extra_context,
+                                      **kwargs)    
+                
+        request._cached_user = request.user
+        request.user = request.user            
+        
+        return res
+    else:
+        return views.login(request)
+
+def getContextForm(request, formOption):
+    listForm = {AUTH_TOKEN, AUTH_OPENSTACK}
+                
+    formChosen = AUTH_OPENSTACK
+    form = OpenstackForm()
+#     form = forms.Login(request) 
+    if formOption == AUTH_TOKEN:
+        formChosen = AUTH_TOKEN
+        form = TokenForm()
+    elif formOption == AUTH_OPENSTACK:
+        formChosen = AUTH_OPENSTACK
+        form = OpenstackForm()
+    elif formOption == AUTH_OPENNEBULA: 
+        formChosen = AUTH_OPENNEBULA      
+        form = OpennebulaForm()
+    elif formOption == AUTH_VOMS:
+        formChosen = AUTH_VOMS
+        form = VomsForm()
     
-    def __init__(self, label_tag):
-        self.label_tag = label_tag
+    return {'form': form, 'listForm': listForm, 'formChosen': formChosen}

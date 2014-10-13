@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # TODO get token in session
-MY_ENDPOINT = 'http://150.165.15.107:8182'
+MY_ENDPOINT = 'http://150.165.15.81:8182'
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
@@ -52,7 +52,8 @@ MY_ENDPOINT = 'http://150.165.15.107:8182'
 
 # Default OpenStack Dashboard configuration.
 HORIZON_CONFIG = {
-    'dashboards': ('settings', 'fogbow', 'project', 'admin'),
+#     'dashboards': ('settings', 'fogbow', 'project', 'admin'),
+    'dashboards': ('settings', 'fogbow'),
     'default_dashboard': 'fogbow',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,
@@ -127,7 +128,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #     ('http://cluster2.example.com:5000/v2.0', 'cluster2'),
 # ]
 
-OPENSTACK_HOST = "150.165.15.107"
+OPENSTACK_HOST = "150.165.15.81"
 OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "admin"
 

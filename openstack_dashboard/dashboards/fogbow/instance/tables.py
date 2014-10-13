@@ -25,8 +25,7 @@ class TerminateInstance(tables.BatchAction):
 
     def action(self, request, obj_id):
         self.current_past_action = 0                
-        r = fogbow_request.doRequest('delete',COMPUTE_TERM + obj_id, None,
-                                      request.session.get('token','').id)        
+        r = fogbow_request.doRequest('delete',COMPUTE_TERM + obj_id, None, request)        
 
 def get_instance_id(request):
     value = request.instanceId

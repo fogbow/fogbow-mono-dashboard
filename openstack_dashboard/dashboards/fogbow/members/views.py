@@ -45,8 +45,7 @@ class IndexView(tables.DataTableView):
     def get_data(self):           
         members = []
         try:
-            token = self.request.session.get('token','').id
-            response = fogbow_request.doRequest('get', '/members', None, token)
+            response = fogbow_request.doRequest('get', '/members', None, self.request)
             members = self.getMembersList(response.text)                                 
         except fogbow_request.ConnectionException:
             messages.error(self.request,'Problem communicating with the Manager !')

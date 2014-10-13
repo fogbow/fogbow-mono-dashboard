@@ -1,0 +1,67 @@
+{% extends "horizon/common/my_modal_form.html" %}
+{% load i18n %}
+{% load url from future %}
+
+{% block modal-header %}{% trans "Log In" %}{% endblock %}
+{% block modal_class %}login {% if hide %}modal hide{% endif %}{% endblock %}
+
+{% block fog %}
+    <div id="fogbow-identity-plugin">
+    	<form id="form_IP" action="{% url 'splash_fogbow' %}" method="post">
+    		<input name="csrfmiddlewaretoken" value="{{ csrf_token }}" type="hidden">
+    		<div class="modal-body clearfix">
+		    	<label>Federation Identity Plugin</label>
+	    		<select name="form" onchange="submitForm()">
+	    			{% for f in listForm %}
+	    				{% if f == formChosen %}
+	    					<option selected value="{{ f }}">{{ f }}</option>
+	    				{% elif f != formChosen %}
+	    					<option value="{{ f }}">{{ f }}</option>
+	    				{% endif %}
+	    			{% endfor %}
+				</select>
+			</div>
+		</form>
+    	<hr>
+    </div>
+{% endblock %}
+
+{% block form_action %}{% url 'myLogin' %}{% endblock %}
+{% block autocomplete %}{{ HORIZON_CONFIG.password_autocomplete }}{% endblock %}
+
+
+{% block modal-body %}    
+  <fieldset>
+    {% if request.user.is_authenticated and 'next' in request.GET %}
+    <div class="control-group clearfix error">
+      <span class="help-inline"><p>{% trans "You don't have permissions to access:" %}</p>
+        <p><b>{{ request.GET.next }}</b></p>
+        <p>{% trans "Login as different user or go back to" %}
+        <a href="{% url 'horizon:user_home' %}">{% trans "home page" %}</a></p>
+      </span>
+    </div>
+    {% endif  %}
+    {% if request.COOKIES.logout_reason %}
+    <div class="control-group clearfix error">
+      <span class="help-inline"><p>{{ request.COOKIES.logout_reason }}</p></span>
+    </div>        
+    {% endif %}
+    {% if next %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ next }}" />{% endif %}
+    {% include "horizon/common/_form_fields.html" %}
+  </fieldset>
+{% endblock %}
+
+{% block modal-footer %}
+  <input id="fogbow_form_chosen" type="hidden" name="formChosen" value="{{ formChosen }}">	
+  <button type="submit" class="btn btn-primary pull-right">{% trans "Sign In" %}</button>
+{% endblock %}
+
+{% block modal-js %}
+  <script type="text/javascript">
+    function submitForm() {
+    	document.getElementById("form_IP").submit();
+    }
+  </script>
+{% endblock %}
+
+

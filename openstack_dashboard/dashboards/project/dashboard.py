@@ -71,4 +71,4 @@ class Project(horizon.Dashboard):
     default_panel = 'overview'
     supports_tenants = True
 
-horizon.register(Project)
+# horizon.register(Project)

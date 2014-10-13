@@ -54,8 +54,7 @@ class CreateRequest(forms.SelfHandlingForm):
     def __init__(self, request, *args, **kwargs):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
         
-        response = fogbow_request.doRequest('get', RESOURCE_TERM, None,
-                                            request.session.get('token','').id)
+        response = fogbow_request.doRequest('get', RESOURCE_TERM, None, request)
         
         flavorChoices,imageChoices = [],[]
         resources = response.text.split('\n')
@@ -84,8 +83,7 @@ class CreateRequest(forms.SelfHandlingForm):
                         % (data['flavor'].strip(), data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute)}
 
-            response = fogbow_request.doRequest('post', REQUEST_TERM,
-                                                headers, request.session.get('token','').id)                        
+            response = fogbow_request.doRequest('post', REQUEST_TERM, headers, request)                        
             
             messages.success(request, _('Requests created : %s' 
                                         % (self.returnFormatResponse(response.text))) )

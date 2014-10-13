@@ -36,8 +36,7 @@ class Admin(horizon.Dashboard):
     name = _("Admin")
     slug = "admin"
     panels = (SystemPanels, IdentityPanels)
-    panels = (SystemPanels, IdentityPanels)
     default_panel = 'overview'
     permissions = ('openstack.roles.admin',)
 
-horizon.register(Admin)
+# horizon.register(Admin)

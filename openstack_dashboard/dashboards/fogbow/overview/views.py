@@ -7,9 +7,8 @@ REQUEST_TERM = '/fogbow_request?verbose=true'
 class IndexView(views.APIView):
     template_name = 'fogbow/overview/index.html'
 
-    def get_data(self, request, context, *args, **kwargs):        
-        response = fogbow_request.doRequest('get', REQUEST_TERM, None,
-                                             self.request.session.get('token','').id)                                
+    def get_data(self, request, context, *args, **kwargs):                        
+        response = fogbow_request.doRequest('get', REQUEST_TERM, None, request)
                                           
         return self.setValues(response.text, context)
     

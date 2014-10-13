@@ -41,8 +41,7 @@ class InstanceDetailTab2(tabs.Tab):
 
     def get_context_data(self, request):
         instance_id = self.tab_group.kwargs['instance_id']    
-        response = fogbow_request.doRequest('get', COMPUTE_TERM  + instance_id, None, 
-                                            request.session.get('token','').id)
+        response = fogbow_request.doRequest('get', COMPUTE_TERM  + instance_id, None, request)
 
         instanceDetails = response.text.split('\n')
         state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', '-'

@@ -33,8 +33,7 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):             
-        response = fogbow_request.doRequest('get', REQUEST_TERM, None,
-                                             self.request.session.get('token','').id)      
+        response = fogbow_request.doRequest('get', REQUEST_TERM, None, self.request)      
         
         listRequests = self.getRequestsList(response.text)        
         self._more = False

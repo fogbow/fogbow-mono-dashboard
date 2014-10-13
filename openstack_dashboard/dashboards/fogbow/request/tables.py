@@ -22,8 +22,7 @@ class TerminateRequest(tables.BatchAction):
 
     def action(self, request, obj_id):        
         requestId = obj_id.split(':')[0]
-        response = fogbow_request.doRequest('delete', REQUEST_TERM + requestId, None,
-                                            request.session.get('token','').id)   
+        response = fogbow_request.doRequest('delete', REQUEST_TERM + requestId, None, request)   
         if response.status_code < 200 and response.status_code > 204:
             messages.error(request, _('Error _ %s') % requestId)            
 
