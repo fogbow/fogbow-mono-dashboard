@@ -72,7 +72,7 @@ def splash_fogbow(request):
     
     formOption = request.POST.get('form')
 
-    return shortcuts.render(request, 'mysplash2.html', getContextForm(request, formOption))
+    return shortcuts.render(request, 'fogbow_splash.html', getContextForm(request, formOption))
 
 def myLogin(request, template_name=None, extra_context=None, **kwargs):
     formChosen = request.POST.get('formChosen')
@@ -95,10 +95,10 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
         
         if not template_name:
             if request.is_ajax():
-                template_name = 'auth/my_login2.html'
+                template_name = 'auth/fogbow_login.html'
                 extra_context['hide'] = True
             else:
-                template_name = 'auth/login2.html'
+                template_name = 'auth/fogbowlogin.html'
                 
         if extra_context is None:
             extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
