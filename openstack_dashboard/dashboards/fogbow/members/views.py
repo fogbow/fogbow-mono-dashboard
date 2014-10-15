@@ -46,7 +46,13 @@ class IndexView(tables.DataTableView):
         members = []
         try:
             response = fogbow_request.doRequest('get', '/members', None, self.request)
-            members = self.getMembersList(response.text)                                 
+            responseStr = response.text
+            print '|||||||||'
+            print responseStr
+            if 'Unauthorized' in responseStr or 'Bad Request' in responseStr:
+                print 'erro'
+            else:                    
+                members = self.getMembersList(responseStr)    
         except fogbow_request.ConnectionException:
             messages.error(self.request,'Problem communicating with the Manager !')
         
@@ -59,7 +65,7 @@ class IndexView(tables.DataTableView):
         membersList = strResponse.split('\n')
         memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0        
         for m in membersList:                
-            id, cpuIdle, cpuInUse, flavors = '-','-','-',''            
+            id, cpuIdle, cpuInUse, flavors, memIdle, memInUse = '-','-','-','','-','-'             
             memberProperties = m.split(';')            
             for properties in memberProperties:
                 values = properties.split('=')
@@ -97,12 +103,15 @@ class IndexView(tables.DataTableView):
         return members
     
     def setValuesContext(self, memIdle, memInUse, cpuIdle, cpuInUse):
-        self.memTotal = self.convertMbToGb((memIdle + memInUse))
-        self.memInUse = self.convertMbToGb(memInUse)
-        self.memUsedPercentage = self.calculatePercentage(memInUse, (memIdle + memInUse))
-        self.cpuTotal = (cpuIdle + cpuInUse)
-        self.cpuInUse = cpuInUse 
-        self.cpuUsedPercentage = self.calculatePercentage(cpuInUse, (cpuIdle + cpuInUse))
+        try:
+            self.memTotal = self.convertMbToGb((memIdle + memInUse))
+            self.memInUse = self.convertMbToGb(memInUse)
+            self.memUsedPercentage = self.calculatePercentage(memInUse, (memIdle + memInUse))
+            self.cpuTotal = (cpuIdle + cpuInUse)
+            self.cpuInUse = cpuInUse 
+            self.cpuUsedPercentage = self.calculatePercentage(cpuInUse, (cpuIdle + cpuInUse))
+        except Exception:
+            print 'erro'
         
     def convertMbToGb(self, value):
         try:

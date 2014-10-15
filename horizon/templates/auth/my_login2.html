@@ -40,7 +40,8 @@
         <a href="{% url 'horizon:user_home' %}">{% trans "home page" %}</a></p>
       </span>
     </div>
-    {% endif  %}
+    {% endif  %}               
+    
     {% if request.COOKIES.logout_reason %}
     <div class="control-group clearfix error">
       <span class="help-inline"><p>{{ request.COOKIES.logout_reason }}</p></span>

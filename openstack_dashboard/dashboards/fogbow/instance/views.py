@@ -30,20 +30,20 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        response = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request)   
-        responseStr = response.text
-        instances = []        
-        try:
-            #TODO this if only for test
-            if 'html>' not in responseStr:                    
+        responseStr = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request).text
+        instances = []
+                
+        try:            
+            if fogbow_request.isResponseOk(responseStr):
+                                    
                 properties =  memberProperties = responseStr.split('\n')
                 for propertie in properties:
                     idInstance = self.normalizeAttribute(propertie)
                     instance = {'id': idInstance, 'instanceId': idInstance}
-                    if "There are" not in propertie:
-                        instances.append(project_models.Instance(instance))            
+                    if areThereInstance(responseStr):
+                        instances.append(project_models.Instance(instance))                                
         except Exception:
-            print 'error'
+            instances = []
         
         self._more = False
         
@@ -51,7 +51,12 @@ class IndexView(tables.DataTableView):
     
     def normalizeAttribute(self, propertie):
         return propertie.replace('X-OCCI-Location: ', '')
-    
+
+def areThereInstance(responseStr):
+    if 'There are not instances' in responseStr:
+        return False
+    return True 
+
 class DetailView2(tabs.TabView):
     tab_group_class = project_tabs.InstanceDetailTabs2
     template_name = 'fogbow/instance/detail.html'     

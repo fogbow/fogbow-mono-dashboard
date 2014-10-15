@@ -22,7 +22,8 @@ class FogbowBackend(object):
 
     def get_user(self, user_id):     
         token = self.request.session['token']
-        return User('meu fog', token, 'Fogbow User', {})
+        token = self.request.session['token']
+        return User('fogbow', token, 'Fogbow User', {})
 
     def authenticate(self, request, formType, credentials=None, endpoint=None):
         id = 'fogbow'        
@@ -41,7 +42,10 @@ class FogbowBackend(object):
         token = Token(tokenStr)
         
         user = User(id, token, username, {})
-                
+        
+        if user.is_authenticated() == False:
+            user.errors = True                
+        
         request.user = user
         request.session['token'] = token
         return user
@@ -53,10 +57,10 @@ class FogbowBackend(object):
         return set()
 
     def has_perm(self, user, perm, obj=None):
-        return True
+        return False
 
     def has_module_perms(self, user, app_label):
-        return True
+        return False
     
 def getToken(endpoint, credentials, type):
     javaCommand = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'            

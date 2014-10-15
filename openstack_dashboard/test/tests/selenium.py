@@ -16,7 +16,6 @@
 
 from horizon.test import helpers as test
 
-
 class BrowserTests(test.SeleniumTestCase):
     def test_splash(self):
         self.selenium.get(self.live_server_url)

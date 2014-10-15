@@ -26,13 +26,16 @@ class OpennebulaForm(django_auth_forms.AuthenticationForm):
  
     @sensitive_variables()
     def clean(self):                
-        keystoneEndpoint = self.cleaned_data.get('endpoint')
+        opennebulaEndpoint = self.cleaned_data.get('endpoint')
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
           
-        credentials = {'username':username, 'password':password} 
+        opennebulaCredentials = {'username':username, 'password':password} 
               
-        self.user_cache = authenticate(request=self.request, formType='opennebula', credentials=keystonecredentials, endpoint=keystoneEndpoint)
+        self.user_cache = authenticate(request=self.request, formType='opennebula', credentials=opennebulaCredentials, endpoint=opennebulaEndpoint)
+        
+        if self.user_cache.errors == True:
+            throwErrorMessage(self, 'Invalid Opennebula Credentials')
         
         return self.cleaned_data
 
@@ -50,7 +53,10 @@ class TokenForm(django_auth_forms.AuthenticationForm):
         
         tokenCredentials = {'token':token}
         
-        self.user_cache = authenticate(request=self.request, formType='token', credentials=tokenCredentials)
+        self.user_cache = authenticate(request=self.request, formType='token', credentials=tokenCredentials)        
+        
+        if self.user_cache.errors == True:
+            throwErrorMessage(self, 'Invalid Token')
         
         return self.cleaned_data
 
@@ -77,7 +83,10 @@ class OpenstackForm(django_auth_forms.AuthenticationForm):
         
         keystonecredentials = {'username':username, 'password':password, 'tenantName':tenantName}
         
-        self.user_cache = authenticate(request=self.request, formType='openstack', credentials=keystonecredentials, endpoint=keystoneEndpoint)
+        self.user_cache = authenticate(request=self.request, formType='openstack', credentials=keystonecredentials, endpoint=keystoneEndpoint)        
+            
+        if self.user_cache.errors == True:
+            throwErrorMessage(self, 'Invalid Keystone Credentials')
         
         return self.cleaned_data
 
@@ -96,4 +105,12 @@ class VomsForm(django_auth_forms.AuthenticationForm):
         vomsCredentials = {'voms':proxyInit}
         
         self.user_cache = authenticate(request=self.request, formType='voms', credentials=vomsCredentials)
+        
+        if self.user_cache.errors == True:
+            throwErrorMessage(self, 'Invalid Voms Proxy Init')
+        
         return self.cleaned_data
+    
+def throwErrorMessage(self, message):
+    self.error_messages.update({'invalid_login_fogbow':_(message)})
+    raise forms.ValidationError(self.error_messages['invalid_login_fogbow'])

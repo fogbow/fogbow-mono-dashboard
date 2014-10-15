@@ -52,8 +52,8 @@ MY_ENDPOINT = 'http://150.165.15.81:8182'
 
 # Default OpenStack Dashboard configuration.
 HORIZON_CONFIG = {
-#     'dashboards': ('settings', 'fogbow', 'project', 'admin'),
-    'dashboards': ('settings', 'fogbow'),
+    'dashboards': ('settings', 'fogbow', 'project', 'admin'),
+#     'dashboards': ('settings', 'fogbow'),
     'default_dashboard': 'fogbow',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,

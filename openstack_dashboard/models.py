@@ -13,17 +13,20 @@ from horizon import messages
 
 LOG = logging.getLogger(__name__)
 
-def set_session_from_user(request, user):
-    request.session['token'] = user.token
-    request.session['user_id'] = user.id
-    request._cached_user = user
-    request.user = user
+class IdentityPluginConstants():
+    AUTH_HORIZON = 'horizon'
+    AUTH_TOKEN = 'fogbow authentication'
+    AUTH_OPENSTACK = 'keystone'
+    AUTH_OPENNEBULA = 'opennebula'
+    AUTH_VOMS = 'voms'
 
 class Token():
     def __init__(self, id=None):
         self.id = id
 
 class User(models.AnonymousUser):
+    errors = False
+    type = 'fogbow_user'    
     
     def __init__(self, id=None, token=None, username=None, roles=None):
         self.id = id
@@ -43,16 +46,15 @@ class User(models.AnonymousUser):
 
     @property
     def is_superuser(self):
-        return True
+        return False
 
-    def is_authenticated(self, margin=None):        
+    def is_authenticated(self, request=None, margin=None):        
         headers = {'content-type': 'text/occi', 'X-Auth-Token' : self.token.id }
         response = requests.get(settings.MY_ENDPOINT + '/-/', headers=headers)
         
         responseStr = response.text
-        print responseStr
         if 'Unauthorized' in responseStr or 'Bad Request' in responseStr:
-            return False
+            return False        
         
         return True
     
@@ -69,33 +71,27 @@ def doRequest(method, endpoint, additionalHeaders, request):
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         
-    responseStr, response = '', ''
+    responseStr, response = '', None
     try:
-        if method == 'get': 
+        if method == 'get':
             response = requests.get(settings.MY_ENDPOINT + endpoint, headers=headers)
         elif method == 'delete':
             response = requests.delete(settings.MY_ENDPOINT + endpoint, headers=headers)
-        elif method == 'post':        
+        elif method == 'post':   
             response = requests.post(settings.MY_ENDPOINT + endpoint, headers=headers)
-        responseStr = response.text
+        responseStr = response.text     
     except Exception:
         messages.error(self.request,'Problem communicating with the Manager.')
-#         raise ConnectionException()
     
     if 'Unauthorized' in responseStr:
         messages.error(request,'Token Unauthorized.')
     elif 'Bad Request' in responseStr:
         messages.error(request,'Bad Request.')
-#         raise BadRequestException()
     
-    return response    
+    return response
 
-class BadRequestException(Exception):
-    
-  def __init__(self):
-    Exception.__init__(self)    
-    
-class ConnectionException(Exception):
-    
-  def __init__(self):
-    Exception.__init__(self)        
+def isResponseOk(responseStr):
+    if 'Unauthorized' not in responseStr and 'Bad Request' not in responseStr:
+        print 'True'
+        return True
+    return False    

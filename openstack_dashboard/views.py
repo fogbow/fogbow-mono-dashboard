@@ -15,18 +15,18 @@
 #    under the License.
 
 import os
-# import commands
 import django
+import horizon
+
 from django import shortcuts
 from django.views.decorators import vary
-# from django.contrib.auth.models import User
 from openstack_dashboard.models import User
 from openstack_dashboard.models import Token
+from openstack_dashboard.models import IdentityPluginConstants as IPConstants
 from django.contrib.auth.decorators import login_required  # noqa
 from django.contrib.auth import views as django_auth_views
 from openstack_dashboard import forms
 from django.utils import functional
-# from openstack_dashboard.forms import Login2
 from openstack_dashboard.forms import TokenForm
 from openstack_dashboard.forms import OpennebulaForm
 from openstack_dashboard.forms import OpenstackForm
@@ -35,18 +35,16 @@ from django.contrib import auth
 from openstack_auth import user as auth_user
 from openstack_auth import views
 from django.utils import functional
-
-import cgi
-import horizon
-
+from django.template import RequestContext
+from horizon import messages
 from openstack_auth import forms
 from django.contrib.auth import authenticate, login
 
-AUTH_HORIZON = 'horizon'
-AUTH_TOKEN = 'fogbow authentication'
-AUTH_OPENSTACK = 'keystone'
-AUTH_OPENNEBULA = 'opennebula'
-AUTH_VOMS = 'voms'
+# AUTH_HORIZON = 'horizon'
+# AUTH_TOKEN = 'fogbow authentication'
+# AUTH_OPENSTACK = 'keystone'
+# AUTH_OPENNEBULA = 'opennebula'
+# AUTH_VOMS = 'voms'
 
 def get_user_home(user):
     if user.is_superuser:
@@ -64,31 +62,32 @@ def splash(request):
     return shortcuts.render(request, 'splash.html', {'form': form})
 
 @vary.vary_on_cookie
-def splash_fogbow(request):    
+def splash_fogbow(request):
+    
     if request.user.is_authenticated():
-        return shortcuts.redirect(get_user_home(request.user))    
+        return shortcuts.redirect(get_user_home(request.user))     
                  
     request.session.clear()
     request.session.set_test_cookie()
     
     formOption = request.POST.get('form')
-    
+
     return shortcuts.render(request, 'mysplash2.html', getContextForm(request, formOption))
 
 def myLogin(request, template_name=None, extra_context=None, **kwargs):
     formChosen = request.POST.get('formChosen')
     
     formReference = ''
-    if formChosen == AUTH_TOKEN :
+    if formChosen == IPConstants.AUTH_TOKEN :
         formReference = TokenForm
-    elif formChosen == AUTH_OPENSTACK :
+    elif formChosen == IPConstants.AUTH_OPENSTACK :
         formReference = OpenstackForm
-    elif formChosen == AUTH_OPENNEBULA :
+    elif formChosen == IPConstants.AUTH_OPENNEBULA :
         formReference = OpennebulaForm
-    elif formChosen == AUTH_VOMS :
+    elif formChosen == IPConstants.AUTH_VOMS :
         formReference = VomsForm
     
-    if formChosen != AUTH_HORIZON:                
+    if formChosen != IPConstants.AUTH_HORIZON:                
         if django.VERSION >= (1, 6):
             form = functional.curry(formReference)
         else:
@@ -105,14 +104,16 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
             extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
             
         extra_context.update(getContextForm(request, formChosen))
-        del extra_context['form']
-        
+        del extra_context['form']               
+
+        print extra_context
+
         res = django_auth_views.login(request,
                                       template_name=template_name,
                                       authentication_form=form,
                                       extra_context=extra_context,
-                                      **kwargs)    
-                
+                                      **kwargs)                
+        
         request._cached_user = request.user
         request.user = request.user            
         
@@ -121,22 +122,25 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
         return views.login(request)
 
 def getContextForm(request, formOption):
-    listForm = {AUTH_TOKEN, AUTH_OPENSTACK}
+    listForm = {IPConstants.AUTH_TOKEN, IPConstants.AUTH_OPENSTACK, 
+                IPConstants.AUTH_OPENNEBULA, IPConstants.AUTH_HORIZON}
                 
-    formChosen = AUTH_OPENSTACK
+    formChosen = IPConstants.AUTH_OPENSTACK
     form = OpenstackForm()
-#     form = forms.Login(request) 
-    if formOption == AUTH_TOKEN:
-        formChosen = AUTH_TOKEN
+    if formOption == IPConstants.AUTH_TOKEN:
+        formChosen = IPConstants.AUTH_TOKEN
         form = TokenForm()
-    elif formOption == AUTH_OPENSTACK:
-        formChosen = AUTH_OPENSTACK
+    elif formOption == IPConstants.AUTH_OPENSTACK:
+        formChosen = IPConstants.AUTH_OPENSTACK
         form = OpenstackForm()
-    elif formOption == AUTH_OPENNEBULA: 
-        formChosen = AUTH_OPENNEBULA      
+    elif formOption == IPConstants.AUTH_OPENNEBULA: 
+        formChosen = IPConstants.AUTH_OPENNEBULA      
         form = OpennebulaForm()
-    elif formOption == AUTH_VOMS:
-        formChosen = AUTH_VOMS
+    elif formOption == IPConstants.AUTH_VOMS:
+        formChosen = IPConstants.AUTH_VOMS
         form = VomsForm()
+    elif formOption == IPConstants.AUTH_HORIZON:
+        formChosen = IPConstants.AUTH_HORIZON
+        form = forms.Login(request) 
     
     return {'form': form, 'listForm': listForm, 'formChosen': formChosen}

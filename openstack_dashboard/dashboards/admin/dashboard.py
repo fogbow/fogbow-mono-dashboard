@@ -39,4 +39,4 @@ class Admin(horizon.Dashboard):
     default_panel = 'overview'
     permissions = ('openstack.roles.admin',)
 
-# horizon.register(Admin)
+horizon.register(Admin)
