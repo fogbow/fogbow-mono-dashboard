@@ -44,7 +44,7 @@ class InstanceDetailTab2(tabs.Tab):
         response = fogbow_request.doRequest('get', COMPUTE_TERM  + instance_id, None, request)
 
         instanceDetails = response.text.split('\n')
-        state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', '-'
+        state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', 'fogbow-image'
         for detail in instanceDetails:
             if STATE_TERM in detail:
                 state = self.normalizeAttributes(detail, STATE_TERM)
@@ -55,7 +55,7 @@ class InstanceDetailTab2(tabs.Tab):
             elif CORES_TERM in detail:
                 cores = self.normalizeAttributes(detail, CORES_TERM)
             elif IMAGE_SCHEME in detail:
-                image = 'fogbow-linux-x86'
+                image = self.getFeatureInCategoryPerScheme('title', detail)
         
         if instance_id == 'null':
             instance_id = '-'

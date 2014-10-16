@@ -47,8 +47,6 @@ class IndexView(tables.DataTableView):
         try:
             response = fogbow_request.doRequest('get', '/members', None, self.request)
             responseStr = response.text
-            print '|||||||||'
-            print responseStr
             if 'Unauthorized' in responseStr or 'Bad Request' in responseStr:
                 print 'erro'
             else:                    

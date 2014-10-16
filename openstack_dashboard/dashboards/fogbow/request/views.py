@@ -32,9 +32,8 @@ class IndexView(tables.DataTableView):
     def has_more_data(self, table):
         return self._more
 
-    def get_data(self):             
+    def get_data(self):
         response = fogbow_request.doRequest('get', REQUEST_TERM, None, self.request)      
-        
         listRequests = self.getRequestsList(response.text)        
         self._more = False
         

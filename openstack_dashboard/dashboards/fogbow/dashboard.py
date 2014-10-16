@@ -3,7 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 import horizon
 
 class MainPanel(horizon.PanelGroup):
-    slug = "mygroup"
+    slug = "fogbow-group"
     name = _("User Panel")
     panels = ('overview','members', 'request', 'instance')       
 

@@ -2,7 +2,7 @@
 {% load i18n %}
 {% load url from future %}
 
-{% block modal-header %}{% trans "Log In" %}{% endblock %}
+{% block modal-header %}<div class="title-login">{% trans "Log In" %}</div>{% endblock %}
 {% block modal_class %}login {% if hide %}modal hide{% endif %}{% endblock %}
 
 {% block fog %}
@@ -10,7 +10,7 @@
     	<form id="form_IP" action="{% url 'splash_fogbow' %}" method="post">
     		<input name="csrfmiddlewaretoken" value="{{ csrf_token }}" type="hidden">
     		<div class="modal-body clearfix">
-		    	<label>Federation Identity Plugin</label>
+		    	<label>{% trans "Federation Identity Plugin" %}</label>
 	    		<select name="form" onchange="submitForm()">
 	    			{% for f in listForm %}
 	    				{% if f == formChosen %}
@@ -64,5 +64,3 @@
     }
   </script>
 {% endblock %}
-
-

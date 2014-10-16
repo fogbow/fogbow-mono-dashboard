@@ -167,7 +167,8 @@ INSTALLED_APPS = (
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend', 'openstack_dashboard.backend.Backend')
-AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', 'openstack_auth.backend.KeystoneBackend')
+# AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', 'openstack_auth.backend.KeystoneBackend')
+AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', 'openstack_dashboard.backend.KeystoneBackend')
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
@@ -179,18 +180,18 @@ SESSION_TIMEOUT = 1800
 gettext_noop = lambda s: s
 LANGUAGES = (
     ('en', gettext_noop('English')),
-    ('en-au', gettext_noop('Australian English')),
-    ('en-gb', gettext_noop('British English')),
-    ('es', gettext_noop('Spanish')),
-    ('fr', gettext_noop('French')),
-    ('ja', gettext_noop('Japanese')),
-    ('ko', gettext_noop('Korean (Korea)')),
-    ('nl', gettext_noop('Dutch (Netherlands)')),
-    ('pl', gettext_noop('Polish')),
+#     ('en-au', gettext_noop('Australian English')),
+#     ('en-gb', gettext_noop('British English')),
+#     ('es', gettext_noop('Spanish')),
+#     ('fr', gettext_noop('French')),
+#     ('ja', gettext_noop('Japanese')),
+#     ('ko', gettext_noop('Korean (Korea)')),
+#     ('nl', gettext_noop('Dutch (Netherlands)')),
+#     ('pl', gettext_noop('Polish')),
     ('pt-br', gettext_noop('Portuguese (Brazil)')),
-    ('ru', gettext_noop('Russian')),
-    ('zh-cn', gettext_noop('Simplified Chinese')),
-    ('zh-tw', gettext_noop('Traditional Chinese')),
+#     ('ru', gettext_noop('Russian')),
+#     ('zh-cn', gettext_noop('Simplified Chinese')),
+#     ('zh-tw', gettext_noop('Traditional Chinese')),
 )
 LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'horizon_language'

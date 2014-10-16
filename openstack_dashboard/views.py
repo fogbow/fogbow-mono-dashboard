@@ -31,8 +31,9 @@ from openstack_dashboard.forms import TokenForm
 from openstack_dashboard.forms import OpennebulaForm
 from openstack_dashboard.forms import OpenstackForm
 from openstack_dashboard.forms import VomsForm
+from openstack_dashboard.forms import KeystoneFogbow
 from django.contrib import auth
-from openstack_auth import user as auth_user
+from openstack_dashboard import models as auth_user
 from openstack_auth import views
 from django.utils import functional
 from django.template import RequestContext
@@ -40,11 +41,15 @@ from horizon import messages
 from openstack_auth import forms
 from django.contrib.auth import authenticate, login
 
-# AUTH_HORIZON = 'horizon'
-# AUTH_TOKEN = 'fogbow authentication'
-# AUTH_OPENSTACK = 'keystone'
-# AUTH_OPENNEBULA = 'opennebula'
-# AUTH_VOMS = 'voms'
+from django import shortcuts
+from django.utils import functional
+from django.utils import http
+from django.views.decorators.cache import never_cache  # noqa
+from django.views.decorators.csrf import csrf_protect  # noqa
+from django.views.decorators.debug import sensitive_post_parameters  # noqa
+
+from keystoneclient import exceptions as keystone_exceptions
+from keystoneclient.v2_0 import client as keystone_client_v2
 
 def get_user_home(user):
     if user.is_superuser:
@@ -55,14 +60,16 @@ def get_user_home(user):
 def splash(request):
     if request.user.is_authenticated():
         return shortcuts.redirect(get_user_home(request.user))
-    form = forms.Login(request)
+    form = KeystoneFogbow()
     request.session.clear()
     request.session.set_test_cookie()
     
     return shortcuts.render(request, 'splash.html', {'form': form})
 
+from django.conf import settings
+
 @vary.vary_on_cookie
-def splash_fogbow(request):
+def splash_fogbow(request):         
     
     if request.user.is_authenticated():
         return shortcuts.redirect(get_user_home(request.user))     
@@ -87,12 +94,14 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
     elif formChosen == IPConstants.AUTH_VOMS :
         formReference = VomsForm
     
-    if formChosen != IPConstants.AUTH_HORIZON:                
-        if django.VERSION >= (1, 6):
-            form = functional.curry(formReference)
+    if formChosen != IPConstants.AUTH_KEYSTONE:
+        if request.method == "POST":                
+            if django.VERSION >= (1, 6):
+                form = functional.curry(formReference)
+            else:
+                form = functional.curry(formReference, request)
         else:
-            form = functional.curry(formReference, request)
-        
+            form = functional.curry(formReference, initial=initial)
         if not template_name:
             if request.is_ajax():
                 template_name = 'auth/fogbow_login.html'
@@ -106,8 +115,6 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
         extra_context.update(getContextForm(request, formChosen))
         del extra_context['form']               
 
-        print extra_context
-
         res = django_auth_views.login(request,
                                       template_name=template_name,
                                       authentication_form=form,
@@ -119,14 +126,14 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
         
         return res
     else:
-        return views.login(request)
+        return login(request)
 
 def getContextForm(request, formOption):
-    listForm = {IPConstants.AUTH_TOKEN, IPConstants.AUTH_OPENSTACK, 
-                IPConstants.AUTH_OPENNEBULA, IPConstants.AUTH_HORIZON}
+    listForm = {IPConstants.AUTH_TOKEN, IPConstants.AUTH_OPENNEBULA, 
+                IPConstants.AUTH_KEYSTONE}
                 
-    formChosen = IPConstants.AUTH_OPENSTACK
-    form = OpenstackForm()
+    formChosen = IPConstants.AUTH_KEYSTONE
+    form = KeystoneFogbow()
     if formOption == IPConstants.AUTH_TOKEN:
         formChosen = IPConstants.AUTH_TOKEN
         form = TokenForm()
@@ -139,8 +146,59 @@ def getContextForm(request, formOption):
     elif formOption == IPConstants.AUTH_VOMS:
         formChosen = IPConstants.AUTH_VOMS
         form = VomsForm()
-    elif formOption == IPConstants.AUTH_HORIZON:
-        formChosen = IPConstants.AUTH_HORIZON
-        form = forms.Login(request) 
+    elif formOption == IPConstants.AUTH_KEYSTONE:
+        formChosen = IPConstants.AUTH_KEYSTONE
+        form = KeystoneFogbow()
     
     return {'form': form, 'listForm': listForm, 'formChosen': formChosen}
+
+@sensitive_post_parameters()
+@csrf_protect
+@never_cache
+def login(request, template_name=None, extra_context=None, **kwargs):
+    if (request.user.is_authenticated() and
+            auth.REDIRECT_FIELD_NAME not in request.GET and
+            auth.REDIRECT_FIELD_NAME not in request.POST):
+        return shortcuts.redirect(settings.LOGIN_REDIRECT_URL)
+
+    initial = {}
+    current_region = request.session.get('region_endpoint', None)
+    requested_region = request.GET.get('region', None)
+    regions = dict(getattr(settings, "AVAILABLE_REGIONS", []))
+    if requested_region in regions and requested_region != current_region:
+        initial.update({'region': requested_region})
+
+    if request.method == "POST":
+        if django.VERSION >= (1, 6):
+            form = functional.curry(KeystoneFogbow)
+        else:
+            form = functional.curry(KeystoneFogbow, request)
+    else:
+        form = functional.curry(KeystoneFogbow, initial=initial)
+
+    if extra_context is None:
+        extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
+
+    extra_context.update(getContextForm(request, IPConstants.AUTH_KEYSTONE))
+    del extra_context['form']
+
+    if not template_name:
+        if request.is_ajax():
+            template_name = 'auth/fogbow_login.html'
+            extra_context['hide'] = True
+        else:
+            template_name = 'auth/fogbowlogin.html'
+
+    res = django_auth_views.login(request,
+                                  template_name=template_name,
+                                  authentication_form=form,
+                                  extra_context=extra_context,
+                                  **kwargs)
+    if request.user.is_authenticated():
+        auth_user.set_session_from_user(request, request.user)
+        regions = dict(forms.Login.get_region_choices())
+        region = request.user.endpoint
+        region_name = regions.get(region)
+        request.session['region_endpoint'] = region
+        request.session['region_name'] = region_name
+    return res

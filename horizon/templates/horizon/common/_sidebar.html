@@ -5,8 +5,7 @@
   <h1 class="brand clearfix"><a href="{% url 'horizon:user_home' %}">{% site_branding %}</a></h1>
 
   {% horizon_main_nav %}
-
-  {% if request.horizon.dashboard.supports_tenants %}
+  {% if request.horizon.dashboard.supports_tenants and request.user.type != 'fogbow_user'%}
   <div id="tenant_switcher" class="dropdown switcher_bar" tabindex="1">
     {% with num_of_tenants=authorized_tenants|length %}
       {% if num_of_tenants > 1 %}

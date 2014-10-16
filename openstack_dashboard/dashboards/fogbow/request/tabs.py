@@ -74,7 +74,6 @@ class InstanceDetailTab(tabs.Tab):
     def getFeatureInCategoryPerScheme(self, featureName, features):
         features = features.split(';')
         for feature in features:
-            print feature
             if featureName in feature:
                 return feature.replace(featureName + '=', '') \
                               .replace('"','').replace('Image:','')

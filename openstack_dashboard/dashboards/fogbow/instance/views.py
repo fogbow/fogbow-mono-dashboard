@@ -32,7 +32,7 @@ class IndexView(tables.DataTableView):
     def get_data(self):
         responseStr = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request).text
         instances = []
-                
+        print 'Instances.view'        
         try:            
             if fogbow_request.isResponseOk(responseStr):
                                     

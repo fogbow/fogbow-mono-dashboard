@@ -4,10 +4,10 @@ from horizon import tables
 
 class MembersTable(tables.DataTable):
     idMember = tables.Column("idMember", verbose_name=_("Member ID")) 
-    cpuIdle = tables.Column("cpuIdle", verbose_name=_("CpuIdle"))
-    cpuInUse = tables.Column("cpuInUse", verbose_name=_("CpuInUse"))
-    memIdle = tables.Column("memIdle", verbose_name=_("MemIdle"))
-    memInUse = tables.Column("memInUse", verbose_name=_("MemInUse"))
+    cpuIdle = tables.Column("cpuIdle", verbose_name=_("Cpu Idle"))
+    cpuInUse = tables.Column("cpuInUse", verbose_name=_("Cpu In Use"))
+    memIdle = tables.Column("memIdle", verbose_name=_("Mem Idle"))
+    memInUse = tables.Column("memInUse", verbose_name=_("Mem In Use"))
     flavors = tables.Column("flavors", verbose_name=_("Flavors"))
 
     class Meta:

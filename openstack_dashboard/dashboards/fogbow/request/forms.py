@@ -101,7 +101,6 @@ class CreateRequest(forms.SelfHandlingForm):
         for request in requests:
             if '/fogbow_request/' in request:
                 responseFormated += request.split('/fogbow_request/')[1]
-                print responseFormated
                 if requests[-1] != request:
                     responseFormated += ' , '
         return responseFormated

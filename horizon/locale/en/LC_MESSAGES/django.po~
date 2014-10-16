@@ -400,6 +400,34 @@ msgstr ""
 
 ## ------ Fogbow -------
 
+#: fogbow-dashboard/openstack_dashboard/models.py:18
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:17
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
+#, python-format
+msgid "fogbow token"
+msgstr "Fogbow Token"
+
+#: fogbow-dashboard/openstack_dashboard/models.py:19
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:17
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
+#, python-format
+msgid "keystone"
+msgstr "Keystone"
+
+#: fogbow-dashboard/openstack_dashboard/models.py:20
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:17
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
+#, python-format
+msgid "opennebula"
+msgstr "Open Nebula"
+
+#: fogbow-dashboard/openstack_dashboard/models.py:21
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:17
+#: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
+#, python-format
+msgid "voms"
+msgstr "Voms"
+
 #: templates/auth/fogbow_login.html:13
 msgid "Federation Identity Plugin"
 msgstr ""

@@ -129,6 +129,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # ]
 
 OPENSTACK_HOST = "150.165.15.81"
+# OPENSTACK_HOST = "150.165.15.12"
 OPENSTACK_KEYSTONE_URL = "http://%s:5000/v2.0" % OPENSTACK_HOST
 OPENSTACK_KEYSTONE_DEFAULT_ROLE = "admin"
 
