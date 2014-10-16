@@ -5,3 +5,4 @@
 .project
 .pydevproject
 .settings 
+fogbow-dashboard/openstack_dashboard/local/local_settings.py
