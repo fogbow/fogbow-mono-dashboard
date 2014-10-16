@@ -149,9 +149,7 @@ class KeystoneFogbow(django_auth_forms.AuthenticationForm):
                                  'Default')
         
         endpoint = self.cleaned_data.get('endpoint')
-        newEndpoint = 'http://%s:5000/v2.0' % endpoint
-#         settings.OPENSTACK_KEYSTONE_URL = endpoint
-#         settings.OPENSTACK_KEYSTONE_URL = newEndpoint        
+        newEndpoint = '%s/v2.0' % endpoint             
         
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
