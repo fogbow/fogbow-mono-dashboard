@@ -32,7 +32,7 @@ SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
 CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
 MEMORY_TERM = 'occi.compute.memory'
 CORES_TERM = 'occi.compute.cores'
-IMAGE_SCHEME = 'http://schemas.openstack.org/template/os#'                
+IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'         
                 
 class InstanceDetailTab2(tabs.Tab):
     name = _("Instance Details")
@@ -72,13 +72,16 @@ class InstanceDetailTab2(tabs.Tab):
             return ''
         
     def getFeatureInCategoryPerScheme(self, featureName, features):
-        features = features.split(';')
-        for feature in features:
-            print feature
-            if featureName in feature:
-                return feature.replace(featureName + '=', '') \
-                              .replace('"','').replace('Image:','')
-        return ''                
+        try:
+            features = features.split(';')
+            for feature in features:
+                print feature
+                if featureName in feature:
+                    return feature.replace(featureName + '=', '') \
+                                  .replace('"','').replace('Image:','')
+            return ''
+        except Exception:
+            return '-'                
                 
 class InstanceDetailTabs2(tabs.TabGroup):
     slug = "instance_details"
