@@ -13,6 +13,19 @@ from horizon import messages
 
 LOG = logging.getLogger(__name__)
 
+class FogbowConstants():
+    COMPUTE_TERM = '/compute/'
+    REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
+    REQUEST_TERM = '/fogbow_request/'
+    MEMBER_TERM = '/members'
+        
+    STATE_TERM = 'occi.compute.state'
+    SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
+    CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
+    MEMORY_TERM = 'occi.compute.memory'
+    CORES_TERM = 'occi.compute.cores'
+    IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'       
+
 class IdentityPluginConstants():
     AUTH_KEYSTONE = 'Keystone'
     AUTH_TOKEN = 'Fogbow Raw Token'

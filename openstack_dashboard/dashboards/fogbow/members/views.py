@@ -1,33 +1,23 @@
-from horizon import views
 import horizon
 import requests
 import decimal
-
-from django.core.urlresolvers import reverse_lazy  # noqa
-from django.utils.translation import ugettext_lazy as _  # noqa
-from django.conf import settings
-
-from horizon import exceptions
-from horizon import tables
-from django.http import HttpRequest
-
 import openstack_dashboard.models as fogbow_request
-from django.shortcuts import render
-from django.shortcuts import redirect
-from django.http import Http404
-from horizon import messages
 
+from django.utils.translation import ugettext_lazy as _  # noqa
+from horizon import tables
+from horizon import messages
 from openstack_dashboard.dashboards.fogbow.members.models import Member
 from openstack_dashboard.dashboards.fogbow.members \
     import tables as project_tables
 from openstack_dashboard.dashboards.fogbow.members \
     import models as project_models
 
+MEMBER_TERM = fogbow_request.FogbowConstants.MEMBER_TERM
+
 class IndexView(tables.DataTableView):
     table_class = project_tables.MembersTable
     template_name = 'fogbow/members/index.html'
     memTotal, memInUse, memUsedPercentage, cpuTotal, cpuInUse, cpuUsedPercentage = 0,0,0,0,0,0
-
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -43,16 +33,12 @@ class IndexView(tables.DataTableView):
         return self._more
     
     def get_data(self):           
+        response = fogbow_request.doRequest('get', MEMBER_TERM, None, self.request)
+        
         members = []
-        try:
-            response = fogbow_request.doRequest('get', '/members', None, self.request)
-            responseStr = response.text
-            if 'Unauthorized' in responseStr or 'Bad Request' in responseStr:
-                print 'erro'
-            else:                    
-                members = self.getMembersList(responseStr)    
-        except fogbow_request.ConnectionException:
-            messages.error(self.request,'Problem communicating with the Manager !')
+        responseStr = response.text
+        if fogbow_request.isResponseOk(responseStr) == True:
+            members = self.getMembersList(responseStr)
         
         self._more = False                
 
@@ -63,7 +49,7 @@ class IndexView(tables.DataTableView):
         membersList = strResponse.split('\n')
         memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0        
         for m in membersList:                
-            id, cpuIdle, cpuInUse, flavors, memIdle, memInUse = '-','-','-','','-','-'             
+            id, cpuIdle, cpuInUse, flavors, memIdle, memInUse = '-','0','0','','0','0'             
             memberProperties = m.split(';')            
             for properties in memberProperties:
                 values = properties.split('=')
@@ -100,17 +86,14 @@ class IndexView(tables.DataTableView):
         
         return members
     
-    def setValuesContext(self, memIdle, memInUse, cpuIdle, cpuInUse):
-        try:
-            self.memTotal = self.convertMbToGb((memIdle + memInUse))
-            self.memInUse = self.convertMbToGb(memInUse)
-            self.memUsedPercentage = self.calculatePercentage(memInUse, (memIdle + memInUse))
-            self.cpuTotal = (cpuIdle + cpuInUse)
-            self.cpuInUse = cpuInUse 
-            self.cpuUsedPercentage = self.calculatePercentage(cpuInUse, (cpuIdle + cpuInUse))
-        except Exception:
-            print 'erro'
-        
+    def setValuesContext(self, memIdle, memInUse, cpuIdle, cpuInUse):    
+        self.memTotal = self.convertMbToGb((memIdle + memInUse))
+        self.memInUse = self.convertMbToGb(memInUse)
+        self.memUsedPercentage = self.calculatePercentage(memInUse, (memIdle + memInUse))
+        self.cpuTotal = (cpuIdle + cpuInUse)
+        self.cpuInUse = cpuInUse 
+        self.cpuUsedPercentage = self.calculatePercentage(cpuInUse, (cpuIdle + cpuInUse))
+                
     def convertMbToGb(self, value):
         try:
             return float(value / 1024)

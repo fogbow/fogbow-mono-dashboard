@@ -17,8 +17,10 @@ horizon.d3_pie_chart = {
   r: 45,
   bkgrnd: "#F2F2F2",
   frgrnd: "#006CCF",
-  full: "#D0342B",
-  nearlyfull: "orange",
+//  full: "#D0342B",
+  full: "#006CCF",
+//  nearlyfull: "orange",
+  nearlyfull: "006CCF",
 
   init: function() {
     var self = this;
@@ -29,6 +31,12 @@ horizon.d3_pie_chart = {
 
     for (var i = 0; i < pie_chart_data.length; i++) {
       used = parseInt(pie_chart_data[i].dataset.used);
+      // Fogbow - Added to show some information ih the chart.      
+      fogbowPercent = pie_chart_data[i].dataset.used
+      if (fogbowPercent != 0 && fogbowPercent <= 1 ){
+    	  used = 1;
+      }
+      // End Fogbow 
       self.data = [{"percentage":used}, {"percentage":100 - used}];
       self.pieChart(i);
     }

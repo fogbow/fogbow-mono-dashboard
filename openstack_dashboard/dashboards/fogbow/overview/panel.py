@@ -4,10 +4,8 @@ import horizon
 
 from openstack_dashboard.dashboards.fogbow import dashboard
 
-
 class Overview(horizon.Panel):
     name = _("Overview")
     slug = "overview"
-
 
 dashboard.Fogbow.register(Overview)

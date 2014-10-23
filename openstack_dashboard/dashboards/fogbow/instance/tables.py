@@ -28,9 +28,8 @@ class TerminateInstance(tables.BatchAction):
         r = fogbow_request.doRequest('delete',COMPUTE_TERM + obj_id, None, request)        
 
 def get_instance_id(request):
-    value = request.instanceId
-    if 'null' not in value:
-        return value 
+    if 'null' not in request.instanceId:
+        return request.instanceId 
     else:
         return '-'
 

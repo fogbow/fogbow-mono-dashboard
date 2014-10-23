@@ -5,5 +5,5 @@ from openstack_dashboard.dashboards.fogbow.instance import views
 
 urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^(?P<instance_id>[^/]+)/details$', views.DetailView2.as_view(), name='detail')
+    url(r'^(?P<instance_id>[^/]+)/details$', views.DetailViewInstance.as_view(), name='detail')
 )

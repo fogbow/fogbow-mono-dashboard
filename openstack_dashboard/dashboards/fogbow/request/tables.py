@@ -1,13 +1,10 @@
 from django.utils.translation import ugettext_lazy as _
 
-from django.core.urlresolvers import reverse_lazy  # noqa
-import requests
-from django.conf import settings
 from horizon import tables
 import openstack_dashboard.models as fogbow_request
 from horizon import messages
 
-REQUEST_TERM = '/fogbow_request/'
+REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM
 
 class TerminateRequest(tables.BatchAction):
     name = "terminate"
@@ -23,8 +20,8 @@ class TerminateRequest(tables.BatchAction):
     def action(self, request, obj_id):        
         requestId = obj_id.split(':')[0]
         response = fogbow_request.doRequest('delete', REQUEST_TERM + requestId, None, request)   
-        if response.status_code < 200 and response.status_code > 204:
-            messages.error(request, _('Error _ %s') % requestId)            
+        if fogbow_request.isResponseOk(response.text) == False:
+            messages.error(request, _('Is was not possible to delete : %s') % requestId)            
 
 class CreateRequest(tables.LinkAction):
     name = "create"
@@ -33,9 +30,8 @@ class CreateRequest(tables.LinkAction):
     classes = ("ajax-modal", "btn-create")
     
 def get_instance_id(request):
-    value = request.instanceId
-    if 'null' not in value:
-        return value 
+    if 'null' not in request.instanceId:
+        return request.instanceId 
     else:
         return '-'
 

@@ -1,14 +1,7 @@
 from horizon import views
-
-import requests
-
-from django.core.urlresolvers import reverse_lazy  # noqa
 from django.utils.translation import ugettext_lazy as _  # noqa
-
-from horizon import exceptions
 from horizon import tables
 from horizon import tabs
-from django.conf import settings
 
 from openstack_dashboard.dashboards.fogbow.instance \
     import tabs as project_tabs
@@ -20,7 +13,7 @@ import openstack_dashboard.models as fogbow_request
 
 # LOG = logging.getLogger(__name__)
 
-COMPUTE_TERM = '/compute/'
+COMPUTE_TERM = fogbow_request.FogbowConstants.COMPUTE_TERM
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.InstancesTable
@@ -32,10 +25,9 @@ class IndexView(tables.DataTableView):
     def get_data(self):
         responseStr = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request).text
         instances = []
-        print 'Instances.view'        
+
         try:            
-            if fogbow_request.isResponseOk(responseStr):
-                                    
+            if fogbow_request.isResponseOk(responseStr):                                    
                 properties =  memberProperties = responseStr.split('\n')
                 for propertie in properties:
                     idInstance = self.normalizeAttribute(propertie)
@@ -57,7 +49,7 @@ def areThereInstance(responseStr):
         return False
     return True 
 
-class DetailView2(tabs.TabView):
-    tab_group_class = project_tabs.InstanceDetailTabs2
+class DetailViewInstance(tabs.TabView):
+    tab_group_class = project_tabs.InstanceDetailTabGroupInstancePanel
     template_name = 'fogbow/instance/detail.html'     
         

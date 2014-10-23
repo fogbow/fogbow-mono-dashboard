@@ -4,7 +4,6 @@ import horizon
 
 from openstack_dashboard.dashboards.fogbow import dashboard
 
-
 class Request(horizon.Panel):
     name = _("Requests")
     slug = "request"

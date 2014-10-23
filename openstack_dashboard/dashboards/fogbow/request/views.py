@@ -1,15 +1,11 @@
-from horizon import views
-
 import requests
-from horizon import tables
-from horizon import tabs
-
-from django.core.urlresolvers import reverse_lazy  # noqa
-from django.utils.translation import ugettext_lazy as _  # noqa
+import openstack_dashboard.models as fogbow_request
 
 from horizon import forms
-from horizon import exceptions
-
+from horizon import tables
+from horizon import tabs
+from django.core.urlresolvers import reverse_lazy  # noqa
+from django.utils.translation import ugettext_lazy as _  # noqa
 from openstack_dashboard.dashboards.fogbow.request \
     import tabs as project_tabs
 from openstack_dashboard.dashboards.fogbow.request \
@@ -18,9 +14,8 @@ from openstack_dashboard.dashboards.fogbow.request \
     import models as project_models    
 from openstack_dashboard.dashboards.fogbow.request.forms import CreateRequest
 from openstack_dashboard.dashboards.fogbow.request.models import Request
-import openstack_dashboard.models as fogbow_request
 
-REQUEST_TERM = '/fogbow_request?verbose=true'
+REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
 STATE_TERM = 'org.fogbowcloud.request.state'
 TYPE_TERM = 'org.fogbowcloud.request.type'
 INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id'
@@ -33,8 +28,9 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        response = fogbow_request.doRequest('get', REQUEST_TERM, None, self.request)      
-        listRequests = self.getRequestsList(response.text)        
+        response = fogbow_request.doRequest('get', REQUEST_TERM, None, self.request)
+              
+        listRequests = self.getRequestsList(response.text)                
         self._more = False
         
         return listRequests
@@ -58,8 +54,9 @@ class IndexView(tables.DataTableView):
                         instanceId = self.normalizeAttributes(propertie, INSTANCE_ID_TERM)
                 
                 id = properties[0]
-                idRequestTable = id + ':' + instanceId
-                request = {'id' : idRequestTable, 'requestId' : id, 'state' : state, 'type' : type, 'instanceId': instanceId}
+                idRequestTable = '%s:%s' % (id, instanceId)
+                request = {'id' : idRequestTable, 'requestId' : id, 'state' : state, 'type' : type,
+                            'instanceId': instanceId}
                 listRequests.append(Request(request))                
         
         return listRequests
