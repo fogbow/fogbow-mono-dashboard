@@ -35,6 +35,13 @@ def get_instance_id(request):
     else:
         return '-'
 
+class RequestsFilterAction(tables.FilterAction):
+
+    def filter(self, table, requests, filter_string):
+        q = filter_string.lower()
+        return [request for request in requests
+                if q in request.name.lower()]
+
 class RequestsTable(tables.DataTable):
     requestId = tables.Column("requestId", verbose_name=_("Request ID"))
     state = tables.Column("state", verbose_name=_("State"))
@@ -44,6 +51,6 @@ class RequestsTable(tables.DataTable):
     class Meta:
         name = "request"
         verbose_name = _("Requests")        
-        table_actions = (CreateRequest, TerminateRequest,)
+        table_actions = (CreateRequest, TerminateRequest,  RequestsFilterAction)
         row_actions = (TerminateRequest, )
         

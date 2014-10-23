@@ -33,6 +33,13 @@ def get_instance_id(request):
     else:
         return '-'
 
+class InstancesFilterAction(tables.FilterAction):
+
+    def filter(self, table, instances, filter_string):
+        q = filter_string.lower()
+        return [instance for instance in instances
+                if q in instance.name.lower()]
+
 class InstancesTable(tables.DataTable):
     instanceId = tables.Column(get_instance_id, link=("horizon:fogbow:instance:detail"),
                                 verbose_name=_("Instance ID"))
@@ -40,6 +47,6 @@ class InstancesTable(tables.DataTable):
     class Meta:
         name = "instances"
         verbose_name = _("Instances")        
-        table_actions = (TerminateInstance, )
+        table_actions = (TerminateInstance, InstancesFilterAction)
         row_actions = (TerminateInstance, )
         

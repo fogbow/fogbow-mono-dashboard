@@ -18,6 +18,7 @@ class FogbowConstants():
     REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
     REQUEST_TERM = '/fogbow_request/'
     MEMBER_TERM = '/members'
+    RESOURCE_TERM = '/-/'
         
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'

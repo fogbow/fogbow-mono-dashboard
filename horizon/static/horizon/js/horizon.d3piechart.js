@@ -31,7 +31,29 @@ horizon.d3_pie_chart = {
 
     for (var i = 0; i < pie_chart_data.length; i++) {
       used = parseInt(pie_chart_data[i].dataset.used);
-      // Fogbow - Added to show some information ih the chart.      
+      // Fogbow - Added to show some information ih the chart.
+      
+      fogbowColor = pie_chart_data[i].dataset.color      
+      switch(fogbowColor) {
+      case "fogbow-color-green":
+          self.color = "#79CD38"
+          break;
+      case "fogbow-color-blue":
+    	  self.color = "#3C96CE"
+          break;
+      case "fogbow-color-red":
+    	  self.color = "#FF5555"
+          break;
+      case "fogbow-color-orange":
+    	  self.color = "#F59A59"
+          break;
+      case "fogbow-color-gray":
+    	  self.color = "#696969"
+          break;          
+      default:
+          self.color = "#3C96CE"
+      }
+      
       fogbowPercent = pie_chart_data[i].dataset.used
       if (fogbowPercent != 0 && fogbowPercent <= 1 ){
     	  used = 1;
@@ -68,6 +90,11 @@ horizon.d3_pie_chart = {
           .attr("class","arc")
           .attr("d", arc)
           .style("fill", function(d){
+        	// Fogbow
+        	  if (self.color != null && self.color != ""){
+        		  return self.color;
+        	  }
+        	// End Fogbow
             if (self.data[0].percentage >= 100) {
               return self.full;
             } else if (self.data[0].percentage >= 80) {

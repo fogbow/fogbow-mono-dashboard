@@ -1,30 +1,21 @@
 import netaddr
 import requests
+import openstack_dashboard.models as fogbow_request
 
-from django.conf import settings  # noqa
 from django.core.urlresolvers import reverse  # noqa
 from django.core import validators
-from django.forms import ValidationError  # noqa
 from django.utils.translation import ugettext_lazy as _  # noqa
-
 from horizon import exceptions
 from horizon import forms
 from horizon import messages
 from horizon.utils import fields
-from horizon.utils import validators as utils_validators
-
 from openstack_dashboard import api
-from openstack_dashboard.utils import filters
-
 from django.core.urlresolvers import reverse_lazy  # noqa
-import openstack_dashboard.models as fogbow_request
 from horizon import messages
 from django import shortcuts
 
-import collections  
-
-RESOURCE_TERM = '/-/'
-REQUEST_TERM = '/fogbow_request'
+RESOURCE_TERM = fogbow_request.FogbowConstants.RESOURCE_TERM
+REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
 SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
 
@@ -98,8 +89,8 @@ class CreateRequest(forms.SelfHandlingForm):
         responseFormated = ''
         requests = responseStr.split('\n')
         for request in requests:
-            if '/fogbow_request/' in request:
-                responseFormated += request.split('/fogbow_request/')[1]
+            if fogbow_request.FogbowConstants.REQUEST_TERM in request:
+                responseFormated += request.split(fogbow_request.FogbowConstants.REQUEST_TERM)[1]
                 if requests[-1] != request:
                     responseFormated += ' , '
         return responseFormated
