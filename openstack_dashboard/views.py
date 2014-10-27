@@ -18,15 +18,9 @@ from openstack_dashboard.forms import KeystoneFogbow
 from django.contrib import auth
 from openstack_dashboard import models as auth_user
 from openstack_auth import views
-from django.template import RequestContext
-from horizon import messages
 from openstack_auth import forms
 from django.contrib.auth import authenticate, login
 from django.conf import settings
-from django.utils import functional
-from django.views.decorators.cache import never_cache  # noqa
-from django.views.decorators.csrf import csrf_protect  # noqa
-from django.views.decorators.debug import sensitive_post_parameters  # noqa
 
 def get_user_home(user):
     return horizon.get_dashboard('fogbow').get_absolute_url()
@@ -54,7 +48,7 @@ def splash_fogbow(request):
     return shortcuts.render(request, 'fogbow_splash.html',
                              getContextForm(request, formOption))
 
-def myLogin(request, template_name=None, extra_context=None, **kwargs):
+def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
     formChosen = request.POST.get('formChosen')
     
     formReference = ''
@@ -106,17 +100,17 @@ def myLogin(request, template_name=None, extra_context=None, **kwargs):
                                   authentication_form=form,
                                   extra_context=extra_context,
                                   **kwargs)
-             
-    if formChosen == IPConstants.AUTH_KEYSTONE:
-        auth_user.set_session_from_user(request, request.user)
-        regions = dict(forms.Login.get_region_choices())
-        region = request.user.endpoint
-        region_name = regions.get(region)
-        request.session['region_endpoint'] = region
-        request.session['region_name'] = region_name        
-    else:
-        request._cached_user = request.user
-        request.user = request.user
+    if request.user.is_authenticated():
+        if formChosen == IPConstants.AUTH_KEYSTONE:
+            auth_user.set_session_from_user(request, request.user)
+            regions = dict(forms.Login.get_region_choices())
+            region = request.user.endpoint
+            region_name = regions.get(region)
+            request.session['region_endpoint'] = region
+            request.session['region_name'] = region_name        
+        else:
+            request._cached_user = request.user
+            request.user = request.user
                     
     return res
 
