@@ -1,19 +1,3 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-
-# Copyright 2012 Nebula, Inc.
-#
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
-
 import os
 import django
 import horizon
@@ -29,7 +13,6 @@ from openstack_dashboard import forms
 from django.utils import functional
 from openstack_dashboard.forms import TokenForm
 from openstack_dashboard.forms import OpennebulaForm
-from openstack_dashboard.forms import OpenstackForm
 from openstack_dashboard.forms import VomsForm
 from openstack_dashboard.forms import KeystoneFogbow
 from django.contrib import auth
@@ -48,7 +31,6 @@ from django.views.decorators.debug import sensitive_post_parameters  # noqa
 def get_user_home(user):
     return horizon.get_dashboard('fogbow').get_absolute_url()
 
-# Pure Horizon
 @vary.vary_on_cookie
 def splash(request):
     if request.user.is_authenticated():
@@ -158,56 +140,3 @@ def getContextForm(request, formOption):
         form = KeystoneFogbow()
     
     return {'form': form, 'listForm': listForm, 'formChosen': formChosen}
-
-
-## Sem Uso
-# @sensitive_post_parameters()
-# @csrf_protect
-# @never_cache
-# def login(request, template_name=None, extra_context=None, **kwargs):
-#     if (request.user.is_authenticated() and
-#             auth.REDIRECT_FIELD_NAME not in request.GET and
-#             auth.REDIRECT_FIELD_NAME not in request.POST):
-#         return shortcuts.redirect(settings.LOGIN_REDIRECT_URL)
-# 
-#     initial = {}
-#     current_region = request.session.get('region_endpoint', None)
-#     requested_region = request.GET.get('region', None)
-#     regions = dict(getattr(settings, 'AVAILABLE_REGIONS', []))
-#     if requested_region in regions and requested_region != current_region:
-#         initial.update({'region': requested_region})
-# 
-#     if request.method == "POST":
-#         if django.VERSION >= (1, 6):
-#             form = functional.curry(KeystoneFogbow)
-#         else:
-#             form = functional.curry(KeystoneFogbow, request)
-#     else:
-#         form = functional.curry(KeystoneFogbow, initial=initial)
-# 
-#     if extra_context is None:
-#         extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
-# 
-#     extra_context.update(getContextForm(request, IPConstants.AUTH_KEYSTONE))
-#     del extra_context['form']
-# 
-#     if not template_name:
-#         if request.is_ajax():
-#             template_name = 'auth/fogbow_login.html'
-#             extra_context['hide'] = True
-#         else:
-#             template_name = 'auth/fogbowlogin.html'
-# 
-#     res = django_auth_views.login(request,
-#                                   template_name=template_name,
-#                                   authentication_form=form,
-#                                   extra_context=extra_context,
-#                                   **kwargs)
-#     if request.user.is_authenticated():
-#         auth_user.set_session_from_user(request, request.user)
-#         regions = dict(forms.Login.get_region_choices())
-#         region = request.user.endpoint
-#         region_name = regions.get(region)
-#         request.session['region_endpoint'] = region
-#         request.session['region_name'] = region_name
-#     return res

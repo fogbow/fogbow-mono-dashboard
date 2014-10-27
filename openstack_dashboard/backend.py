@@ -3,47 +3,46 @@ import commands
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-
 from keystoneclient import exceptions as keystone_exceptions
-
 from openstack_auth import exceptions
 from openstack_auth import user as auth_user
 from openstack_auth import utils
 from openstack_dashboard.models import User
 from openstack_dashboard.models import Token
+import openstack_dashboard.forms as form_fogbow
+import openstack_dashboard.models as fogbow_request
 
 LOG = logging.getLogger(__name__)
 
+FOGBOW_CLI_JAVA_COMMAND = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'
+
 class FogbowBackend(object):
+
+    DEFAULT_FOGBOW_NAME = 'Fogbow User'
 
     def check_auth_expiry(self, user, margin=None):
         return True
 
     def get_user(self, user_id):     
         token = self.request.session['token']
-        token = self.request.session['token']
-        return User('fogbow', token, 'Fogbow User', {})
+        return User('fogbow', token, self.DEFAULT_FOGBOW_NAME, {})
 
     def authenticate(self, request, formType, credentials=None, endpoint=None):
-        id = 'fogbow'        
-        username = 'Fogbow User'
         tokenStr = ''
         
-        if formType == 'token' :
-            tokenStr = credentials['token']
-        elif formType == 'voms' :
-            tokenStr = credentials['voms']        
-        elif formType == 'openstack' :
-            tokenStr = getToken(endpoint, credentials, 'openstack')
-        elif formType == 'opennebula' :
-            tokenStr = getToken(endpoint, credentials, 'opennebula')            
-            
+        if formType == form_fogbow.FORM_TYPE_TOKEN:
+            tokenStr = credentials[formType]
+        elif formType == form_fogbow.FORM_TYPE_VOMS :
+            tokenStr = credentials[formType]
+        elif formType == form_fogbow.FORM_TYPE_OPENNEBULA:
+            tokenStr = getToken(endpoint, credentials, formType)            
+        
         token = Token(tokenStr)
         
-        user = User(id, token, username, {})
-        
-        if user.is_authenticated() == False:
-            user.errors = True                
+        user = User('', token, '', {})
+                
+        if fogbow_request.checkUserAuthenticated(request, token) == False:
+            user.errors = True
         
         request.user = user
         request.session['token'] = token
@@ -61,20 +60,17 @@ class FogbowBackend(object):
     def has_module_perms(self, user, app_label):
         return False
     
-def getToken(endpoint, credentials, type):
-    javaCommand = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'            
-    
+def getToken(endpoint, credentials, type):            
     credentialsStr = '' 
     for key in credentials.keys():
         credentialsStr += '-D%s=%s ' % (key, credentials[key])
     
-    command = '%s token --create -DauthUrl=%s %s --type %s' % (javaCommand, endpoint, credentialsStr, type)
-
-    print command
+    command = '%s token --create -DauthUrl=%s %s --type %s' % (FOGBOW_CLI_JAVA_COMMAND, endpoint,
+                                                                credentialsStr, type)
     
     reponseStr = commands.getoutput(command)    
-    
-    if reponseStr == None or 'Bad Request' in reponseStr or 'Unauthorized' in reponseStr:        
+
+    if fogbow_request.isResponseOk(reponseStr) == False:        
         return 'None'
     
     return reponseStr
@@ -118,7 +114,6 @@ class KeystoneBackend(object):
         endpoint_type = getattr(
             settings, 'OPENSTACK_ENDPOINT_TYPE', 'publicURL')
 
-        # keystone client v3 does not support logging in on the v2 url any more
         if utils.get_keystone_version() >= 3:
             if utils.has_in_url_path(auth_url, "/v2.0"):
                 LOG.warning("The settings.py file points to a v2.0 keystone "
