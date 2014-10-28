@@ -41,7 +41,7 @@ class FogbowBackend(object):
         
         user = User('', token, '', {})                    
                 
-        if fogbow_request.checkUserAuthenticated(request, token) == False:
+        if fogbow_request.checkUserAuthenticated(token) == False:
             user.errors = True        
         
         request.user = user

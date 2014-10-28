@@ -46,7 +46,7 @@ def splash_fogbow(request):
     formOption = request.POST.get('form')
 
     return shortcuts.render(request, 'fogbow_splash.html',
-                             getContextForm(request, formOption))
+                             getContextForm(formOption))
 
 def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
     formChosen = request.POST.get('formChosen')
@@ -92,7 +92,7 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
     if extra_context is None:
         extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
         
-    extra_context.update(getContextForm(request, formChosen))
+    extra_context.update(getContextForm(formChosen))
     del extra_context['form']               
 
     res = django_auth_views.login(request,
@@ -114,7 +114,7 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
                     
     return res
 
-def getContextForm(request, formOption):
+def getContextForm(formOption):
     listForm = {IPConstants.AUTH_TOKEN, IPConstants.AUTH_OPENNEBULA, 
                 IPConstants.AUTH_VOMS, IPConstants.AUTH_KEYSTONE}
                 

@@ -64,7 +64,6 @@ class User(models.AnonymousUser):
         return False
 
     def is_authenticated(self, request=None, margin=None):
-#         return checkUserAuthenticated(request, self.token)
         return self.token is not None
     
     def save(*args, **kwargs):
@@ -73,9 +72,10 @@ class User(models.AnonymousUser):
     def has_perms(self, perm_list, obj=None):
         return True
     
-def checkUserAuthenticated(request, token):
+def checkUserAuthenticated(token):
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
-    response = requests.get(settings.MY_ENDPOINT + '/-/', headers=headers)
+    response = request_client.get(settings.MY_ENDPOINT + FogbowConstants.RESOURCE_TERM ,
+                                   headers=headers)
     responseStr = response.text
     
     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
@@ -112,7 +112,9 @@ def isResponseOk(responseStr):
         return True
     return False    
 
-# OpenStack_auth ------------------------
+#
+# OpenStack_auth / Fogbow
+#
 
 def set_session_from_user(request, user):
     request.session['token'] = user.token
@@ -226,11 +228,9 @@ class UserOriginal(models.AnonymousUser):
         return not utils.is_token_valid(self.token, margin)
 
     def is_authenticated(self, margin=None):
-#         print self.token.id
-#         print checkUserAuthenticated(request, self.token)
         return (self.token is not None and
                 utils.is_token_valid(self.token, margin) and 
-                checkUserAuthenticated(request, self.token))
+                checkUserAuthenticated(self.token))
 
     def is_anonymous(self, margin=None):
         return not self.is_authenticated(margin)

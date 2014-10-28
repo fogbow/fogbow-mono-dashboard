@@ -461,7 +461,7 @@ msgstr "Resumo dos Recursos"
 
 #: templates/horizon/common/fogbow_overview_limit_summary.html:4
 msgid "Request Information"
-msgstr "Informações dos Requests"
+msgstr "Informações das Requisições"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/dashboard.py:7
 msgid "User Panel"
@@ -493,35 +493,39 @@ msgstr "Flavors (Tamanho da Imagem)"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:4
 msgid "Requests Information"
-msgstr "Informação dos Requests"
+msgstr "Informação das Requisições"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:7
 msgid "Requests Fullfield"
-msgstr "Requests Atendidos"
+msgstr "Requisições Atendidas"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:13
 msgid "Requests Open"
-msgstr "Requests Abertos"
+msgstr "Requisições Abertas"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:19
 msgid "Requests Closed"
-msgstr "Requests Fechado"
+msgstr "Requisições Fechadas"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:25
 msgid "Requests Deleted"
-msgstr "Requests Deletados"
+msgstr "Requisições Deletadas"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:31
 msgid "Requests Failed"
-msgstr "Requests Falhos"
+msgstr "Requisições Falhas"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:28
 msgid "Create Request"
-msgstr "Criar Requests"
+msgstr "Criar Requisições"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:46
+msgid "Request ID"
+msgstr "ID da Requisição"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:26
 msgid "Count"
-msgstr "Quantidade de Request"
+msgstr "Quantidade de Requisições"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:33
 msgid "Flavor"
@@ -537,11 +541,19 @@ msgstr "Tipo"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:79
 msgid "Requests created"
-msgstr "Requets Criados"
+msgstr "Requisições Criadas"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request
+msgid "Requests"
+msgstr "Requisições"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/
+msgid "Request"
+msgstr "Requisição"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_create.html
 msgid "Create Requests"
-msgstr "Criar Requests"
+msgstr "Criar Requisições"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html
 msgid "Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares"

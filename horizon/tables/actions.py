@@ -627,21 +627,39 @@ class BatchAction(Action):
             params = {"action": self._conjugate(action_not_allowed).lower(),
                       "objs": functions.lazy_join(", ", action_not_allowed)}
             messages.error(request, msg % params)
+            #Fogbow
+            if isEmptyObjs(params['objs']) == True:
+                msg = _('%(action)s')
+            #End Fogbow            
             success_message_level = messages.info
         if action_failure:
             msg = _('Unable to %(action)s: %(objs)s')
             params = {"action": self._conjugate(action_failure).lower(),
                       "objs": functions.lazy_join(", ", action_failure)}
             messages.error(request, msg % params)
+            #Fogbow
+            if isEmptyObjs(params['objs']) == True:
+                msg = _('%(action)s')     
+            #End Fogbow
             success_message_level = messages.info
         if action_success:
             msg = _('%(action)s: %(objs)s')
             params = {"action": self._conjugate(action_success, True),
                       "objs": functions.lazy_join(", ", action_success)}
+            #Fogbow
+            if isEmptyObjs(params['objs']) == True:
+                msg = _('%(action)s')
+            #End Fogbow
             success_message_level(request, msg % params)
 
         return shortcuts.redirect(self.get_success_url(request))
-
+    
+# Fogbow
+def isEmptyObjs(objs):
+    if 'N/A' in objs:
+        return True
+    return False
+    
 
 class DeleteAction(BatchAction):
     name = "delete"
