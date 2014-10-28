@@ -7,10 +7,10 @@
 {% endblock page_header %}
 
 {% block fogbow_main %}
-	<h1>Fogbow Dashboard</h1>
+	<h1>{% trans "Fogbow Dashboard" %}</h1>
 	<br>
 	{% include "horizon/common/fogbow_overview_limit_summary.html" %}
 	<br>
 	<hr>
-	<h4>Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares.</h4>
+	<h4>{{ text_description_fogbow }}</h4>
 {% endblock %}

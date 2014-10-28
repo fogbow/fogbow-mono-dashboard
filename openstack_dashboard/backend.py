@@ -39,10 +39,10 @@ class FogbowBackend(object):
         
         token = Token(tokenStr)
         
-        user = User('', token, '', {})
+        user = User('', token, '', {})                    
                 
         if fogbow_request.checkUserAuthenticated(request, token) == False:
-            user.errors = True
+            user.errors = True        
         
         request.user = user
         request.session['token'] = token

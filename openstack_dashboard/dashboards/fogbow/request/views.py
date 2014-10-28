@@ -4,8 +4,8 @@ import openstack_dashboard.models as fogbow_request
 from horizon import forms
 from horizon import tables
 from horizon import tabs
-from django.core.urlresolvers import reverse_lazy  # noqa
-from django.utils.translation import ugettext_lazy as _  # noqa
+from django.core.urlresolvers import reverse_lazy 
+from django.utils.translation import ugettext_lazy as _ 
 from openstack_dashboard.dashboards.fogbow.request \
     import tabs as project_tabs
 from openstack_dashboard.dashboards.fogbow.request \
@@ -55,7 +55,7 @@ class IndexView(tables.DataTableView):
                 
                 id = properties[0]
                 idRequestTable = '%s:%s' % (id, instanceId)
-                request = {'id' : idRequestTable, 'requestId' : id, 'state' : state, 'type' : type,
+                request = {'id' : idRequestTable, 'requestId' : id, 'state' : _(state), 'type' : type,
                             'instanceId': instanceId}
                 listRequests.append(Request(request))                
         

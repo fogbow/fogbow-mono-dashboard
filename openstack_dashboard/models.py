@@ -2,11 +2,11 @@ import hashlib
 import logging
 import requests
 import horizon
+import models as fogbow_request
 
 from django.conf import settings
 from django.contrib.auth import models
-import models as fogbow_request
-
+from django.utils.translation import ugettext_lazy as _
 from keystoneclient import exceptions as keystone_exceptions
 from openstack_auth import utils
 from horizon import messages
@@ -77,12 +77,13 @@ def checkUserAuthenticated(request, token):
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
     response = requests.get(settings.MY_ENDPOINT + '/-/', headers=headers)
     responseStr = response.text
-    if 'Unauthorized' in responseStr or 'Bad Request' in responseStr:
+    
+    if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
         return False    
     return True
 
 def doRequest(method, endpoint, additionalHeaders, request):
-    token = request.session.get('token','').id    
+    token = request.session.get('token','').id
     
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
@@ -98,16 +99,16 @@ def doRequest(method, endpoint, additionalHeaders, request):
             response = requests.post(settings.MY_ENDPOINT + endpoint, headers=headers)
         responseStr = response.text     
     except Exception:
-        messages.error(self.request,'Problem communicating with the Manager.')
+        messages.error(self.request, _('Problem communicating with the Manager.'))
     
-    if 'Unauthorized' in responseStr:
-        messages.error(request,'Token Unauthorized.')
+    if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
+        messages.error(request, _('Token Unauthorized.'))
     elif 'Bad Request' in responseStr:
-        messages.error(request,'Bad Request.')
+        messages.error(request, _('Bad Request.'))
     return response
 
 def isResponseOk(responseStr):
-    if 'Unauthorized' not in responseStr and 'Bad Request' not in responseStr:
+    if 'Unauthorized' not in responseStr and 'Bad Request' not in responseStr and 'Authentication required.' not in responseStr:
         return True
     return False    
 

@@ -54,8 +54,9 @@ horizon.d3_pie_chart = {
           self.color = "#3C96CE"
       }
       
-      fogbowPercent = pie_chart_data[i].dataset.used
-      if (fogbowPercent != 0 && fogbowPercent <= 1 ){
+      fogbowPercent = pie_chart_data[i].dataset.used;
+      fogbowPercent = parseFloat(fogbowPercent.replace(",", "."));
+      if (fogbowPercent > 0 && fogbowPercent < 1 ) {
     	  used = 1;
       }
       // End Fogbow 

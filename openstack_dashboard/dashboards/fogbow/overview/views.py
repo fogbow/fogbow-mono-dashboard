@@ -1,5 +1,6 @@
-from horizon import views
 import openstack_dashboard.models as fogbow_request
+from horizon import views
+from django.utils.translation import ugettext_lazy as _
 
 REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
 FULFILLED_STATUS_REQUEST = 'FULFILLED'
@@ -17,7 +18,7 @@ class IndexView(views.APIView):
                                           
         return self.getContextOverview(response.text, context)
     
-    def getContextOverview(self, responseStr, context):                
+    def getContextOverview(self, responseStr, context):    
         mapCountRequests = getMapCountRequests(responseStr)    
         context['requestsFullfield'] = mapCountRequests[FULFILLED_STATUS_REQUEST]
         context['requestsOpen'] = mapCountRequests[OPEN_STATUS_REQUEST]
@@ -35,6 +36,8 @@ class IndexView(views.APIView):
                                                            mapCountRequests[TOTAL])
         context['requestsFullfieldPercent'] = calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])             
+        
+        context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares')
         
         return context
        

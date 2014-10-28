@@ -434,7 +434,17 @@ msgstr "Open Nebula"
 msgid "voms"
 msgstr "Voms"
 
-#---
+#: fogbow-dashboard/openstack_dashboard/models.py
+msgid "Problem communicating with the Manager."
+msgstr "Problemas na Comunicação com o Manager."
+
+#: fogbow-dashboard/openstack_dashboard/models.py
+msgid "Token Unauthorized."
+msgstr "Token sem Authorização"
+
+#: fogbow-dashboard/openstack_dashboard/models.py
+msgid "Bad Request."
+msgstr "Conflito"
 
 #: templates/auth/fogbow_login.html:13
 msgid "Federation Identity Plugin"
@@ -449,6 +459,10 @@ msgstr "Federação"
 msgid "Resource Summary"
 msgstr "Resumo dos Recursos"
 
+#: templates/horizon/common/fogbow_overview_limit_summary.html:4
+msgid "Request Information"
+msgstr "Informações dos Requests"
+
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/dashboard.py:7
 msgid "User Panel"
 msgstr "Panel do Usuário"
@@ -458,24 +472,24 @@ msgid "Member ID"
 msgstr "ID do Membro"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
-msgid "CpuIdle"
+msgid "Cpu Idle"
 msgstr "CPU Ociosa"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:8
-msgid "CpuInUse"
+msgid "Cpu In Use"
 msgstr "CPU em Uso"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:9
-msgid "MemIdle"
+msgid "Mem Idle"
 msgstr "Memória Ociosa"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:10
-msgid "MemInUse"
+msgid "Mem In Use"
 msgstr "Memória em Uso"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:11
 msgid "Flavors"
-msgstr "Flavors"
+msgstr "Flavors (Tamanho da Imagem)"
 
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:4
 msgid "Requests Information"
@@ -501,11 +515,115 @@ msgstr "Requests Deletados"
 msgid "Requests Failed"
 msgstr "Requests Falhos"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py:31
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:28
 msgid "Create Request"
 msgstr "Criar Requests"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:15
-msgid "Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares."
-msgstr "Federação, oportunimos and greenness"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:46
+msgid "Request ID"
+msgstr "ID do Request"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:26
+msgid "Count"
+msgstr "Quantidade de Request"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:33
+msgid "Flavor"
+msgstr "Flavor(Tamanho de Imagem)"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:35
+msgid "Image"
+msgstr "Imagem"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:37
+msgid "Type"
+msgstr "Tipo"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:79
+msgid "Requests created"
+msgstr "Requets Criados"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_create.html
+msgid "Create Requests"
+msgstr "Criar Requests"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html
+msgid "Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares"
+msgstr "Federação, oportunimos and ''greennes''"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:10
+msgid "Fogbow Dashboard"
+msgstr "Painel de Instruções do Fogbow"
+
+#: fogbow-dashboard/openstack_dashboard/forms:0
+msgid "Endpoint"
+msgstr "Endereço"
+
+#: fogbow-dashboard/openstack_dashboard/forms:0
+msgid "Server Name"
+msgstr "Nome do Servidor"
+
+#: fogbow-dashboard/openstack_dashboard/forms:0
+msgid "Tenant Name"
+msgstr "Nome do Projeto"
+
+#: fogbow-dashboard/openstack_dashboard/forms:0
+msgid "User Key"
+msgstr "Chave do Usuário"
+
+#: fogbow-dashboard/openstack_dashboard/forms:0
+msgid "User Credentials"
+msgstr "Credenciais do Usuário"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/views.py
+msgid "CLOSED"
+msgstr "FECHADO"
+
+msgid "OPEN"
+msgstr "ABERTO"
+
+msgid "FULLFIELD"
+msgstr "ATENDIDO"
+
+msgid "FAILED"
+msgstr "FALHO"
+
+msgid "DELETED"
+msgstr "DELETADO"
+
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+msgid "Public SSH Address"
+msgstr "Endereço do SSH Público"
+
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+msgid "Memory"
+msgstr "Memória"
+
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+msgid "Cores"
+msgstr "Núcleos"
+
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+msgid "Info"
+msgstr "Informações"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
+msgid "Terminate"
+msgstr "Terminar"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
+msgid "Terminated"
+msgstr "Terminado"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
+msgid "instance"
+msgstr "Instância"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
+msgid "instances"
+msgstr "Instâncias"
 

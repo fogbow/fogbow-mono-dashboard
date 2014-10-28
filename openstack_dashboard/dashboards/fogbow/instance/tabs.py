@@ -27,7 +27,7 @@ def getInstancePerResponse(instanceId, response):
         instanceId = '-'
     
     instanceDetails = response.text.split('\n')
-    state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', 'fogbow-image'
+    state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', '-'
     for detail in instanceDetails:
         if STATE_TERM in detail:
             state = normalizeAttributes(detail, STATE_TERM)

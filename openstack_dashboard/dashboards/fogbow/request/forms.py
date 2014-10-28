@@ -2,15 +2,15 @@ import netaddr
 import requests
 import openstack_dashboard.models as fogbow_request
 
-from django.core.urlresolvers import reverse  # noqa
+from django.core.urlresolvers import reverse 
 from django.core import validators
-from django.utils.translation import ugettext_lazy as _  # noqa
+from django.utils.translation import ugettext_lazy as _  
 from horizon import exceptions
 from horizon import forms
 from horizon import messages
 from horizon.utils import fields
 from openstack_dashboard import api
-from django.core.urlresolvers import reverse_lazy  # noqa
+from django.core.urlresolvers import reverse_lazy
 from horizon import messages
 from django import shortcuts
 
@@ -31,11 +31,11 @@ class CreateRequest(forms.SelfHandlingForm):
                            validators=[validators.validate_slug],
                            initial='1')
     flavor = forms.ChoiceField(label=_('Flavor'),
-                               help_text=_('Flavor Fogbow.'))    
+                               help_text=_('Flavor Fogbow'))    
     image = forms.ChoiceField(label=_('Image'),
-                               help_text=_('Image Fogbow.'))
+                               help_text=_('Image Fogbow'))
     type = forms.ChoiceField(label=_('Type'),
-                               help_text=_('Type Request.'),
+                               help_text=_('Type Request'),
                                choices=TYPE_REQUEST)
     publicKey = forms.CharField(label=_('Public Key'),
                            error_messages={'invalid': _('The string may only contain'
@@ -76,7 +76,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
             response = fogbow_request.doRequest('post', REQUEST_TERM, headers, request)                        
             
-            messages.success(request, _('Requests created '))
+            messages.success(request, _('Requests created'))
             
             return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
         except Exception:

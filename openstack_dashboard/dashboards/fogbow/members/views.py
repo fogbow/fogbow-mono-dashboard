@@ -38,7 +38,7 @@ class IndexView(tables.DataTableView):
         members = []
         responseStr = response.text
         if fogbow_request.isResponseOk(responseStr) == True:
-            members = self.getMembersList(responseStr)
+            members = self.getMembersList(responseStr)    
         
         self._more = False                
 
@@ -87,10 +87,10 @@ class IndexView(tables.DataTableView):
         return members
     
     def setValuesContext(self, memIdle, memInUse, cpuIdle, cpuInUse):    
-        self.memTotal = self.convertMbToGb((memIdle + memInUse))
+        self.memTotal = "{0:.2f}".format(self.convertMbToGb((memIdle + memInUse)))
         self.memInUse = self.convertMbToGb(memInUse)
         self.memUsedPercentage = self.calculatePercentage(memInUse, (memIdle + memInUse))
-        self.cpuTotal = (cpuIdle + cpuInUse)
+        self.cpuTotal = "{0:.2f}".format((cpuIdle + cpuInUse))
         self.cpuInUse = cpuInUse 
         self.cpuUsedPercentage = self.calculatePercentage(cpuInUse, (cpuIdle + cpuInUse))
                 
@@ -102,6 +102,6 @@ class IndexView(tables.DataTableView):
     
     def calculatePercentage(self, value, valueTotal):
         try:
-            return ( (value * 100) / valueTotal)
+            return ((value * 100) / valueTotal)
         except Exception:
             return 0

@@ -72,17 +72,30 @@ class TokenForm(django_auth_forms.AuthenticationForm):
 
 class VomsForm(django_auth_forms.AuthenticationForm):
 
-    vomsProxyInit = forms.CharField( label=_("ProxyInit"), widget=forms.Textarea )
+    serverName = forms.CharField(label=_('Server Name'))
+    password = forms.CharField(label=_('Password'),
+                               widget=forms.PasswordInput(render_value=False))
+    pathUserCred = forms.FileField(label=_('User Credentials'), required=False)
+    pathUserKey = forms.FileField(label=_('User Key'), required=False)
+                               
     
     def __init__(self, *args, **kwargs):
         super(VomsForm, self).__init__(*args, **kwargs)
-        self.fields.keyOrder = ['vomsProxyInit']
+        self.fields.keyOrder = ['serverName', 'password', 'pathUserCred', 'pathUserKey']
                 
     @sensitive_variables()
     def clean(self):
-        proxyInit = self.cleaned_data.get('vomsProxyInit')
+        serverName = self.cleaned_data.get('serverName')
+        password = self.cleaned_data.get('password')
+        pathUserCred = self.cleaned_data.get('pathUserCred')
+        pathUserKey = self.cleaned_data.get('pathUserKey')
         
-        vomsCredentials = {'voms':proxyInit}
+        print password
+        print pathUserCred
+        print pathUserKey
+        
+        # Implement ...
+        vomsCredentials = {'voms':''}
         
         self.user_cache = authenticate(request=self.request, formType=FORM_TYPE_VOMS,
                                         credentials=vomsCredentials)
@@ -165,35 +178,3 @@ def throwErrorMessage(self, message):
     self.error_messages.update({'invalid_login_fogbow':_(message)})
     LOG.warning('Invalid Login.')
     raise forms.ValidationError(self.error_messages['invalid_login_fogbow'])
-
-# class OpenstackForm(django_auth_forms.AuthenticationForm):
-#     endpoint = forms.CharField(label=_("Endpoint"),
-#         widget=forms.TextInput(attrs={"autofocus": "autofocus"}))
-#     username = forms.CharField(label=_("User Name"),
-#         widget=forms.TextInput(attrs={"autofocus": "autofocus"}))
-#     password = forms.CharField(label=_("Password"),
-#                                widget=forms.PasswordInput(render_value=False))
-#     tenantName = forms.CharField(label=_("Tenant Name"),
-#         widget=forms.TextInput(attrs={"autofocus": "autofocus"}))    
-#     
-#     def __init__(self, *args, **kwargs):
-#         super(OpenstackForm, self).__init__(*args, **kwargs)
-#         self.fields.keyOrder = ['endpoint', 'username', 'password', 'tenantName']
-#         
-#     @sensitive_variables()    
-#     def clean(self):        
-#         keystoneEndpoint = self.cleaned_data.get('endpoint')
-#         username = self.cleaned_data.get('username')
-#         password = self.cleaned_data.get('password')
-#         tenantName = self.cleaned_data.get('tenantName')        
-#         
-#         keystonecredentials = {'username':username, 'password':password, 'tenantName':tenantName}
-#         
-#         self.user_cache = authenticate(request=self.request, formType='openstack', credentials=keystonecredentials, endpoint=keystoneEndpoint)        
-#             
-#         if self.user_cache.errors == True:
-#             throwErrorMessage(self, 'Invalid Keystone Credentials')
-#         
-#         LOG.info('Successful login')
-#         
-#         return self.cleaned_data

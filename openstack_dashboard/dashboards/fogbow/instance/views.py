@@ -27,7 +27,7 @@ class IndexView(tables.DataTableView):
         instances = []
 
         try:            
-            if fogbow_request.isResponseOk(responseStr):                                    
+            if fogbow_request.isResponseOk(responseStr) and 'Authentication required.' not in responseStr:                         
                 properties =  memberProperties = responseStr.split('\n')
                 for propertie in properties:
                     idInstance = self.normalizeAttribute(propertie)
