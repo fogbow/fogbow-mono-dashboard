@@ -16,9 +16,9 @@ from openstack_dashboard.dashboards.fogbow.request.forms import CreateRequest
 from openstack_dashboard.dashboards.fogbow.request.models import Request
 
 REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
-STATE_TERM = 'org.fogbowcloud.request.state'
-TYPE_TERM = 'org.fogbowcloud.request.type'
-INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id'
+STATE_TERM = fogbow_request.FogbowConstants.FOGBOW_STATE_TERM
+TYPE_TERM = fogbow_request.FogbowConstants.FOGBOW_TYPE_TERM
+INSTANCE_ID_TERM = fogbow_request.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.RequestsTable
@@ -54,6 +54,8 @@ class IndexView(tables.DataTableView):
                         instanceId = self.normalizeAttributes(propertie, INSTANCE_ID_TERM)
                 
                 id = properties[0]
+                if instanceId == 'null':
+                    instanceId = ''
                 idRequestTable = '%s:%s' % (id, instanceId)
                 request = {'id' : idRequestTable, 'requestId' : id, 'state' : _(state), 'type' : type,
                             'instanceId': instanceId}

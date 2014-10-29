@@ -3,12 +3,12 @@ from horizon import tabs
 import openstack_dashboard.dashboards.fogbow.instance.tabs as tabsInstanceDashboard
 import openstack_dashboard.models as fogbow_request
 
-COMPUTE_TERM = '/compute/'
+COMPUTE_TERM = fogbow_request.FogbowConstants.COMPUTE_TERM
 
 class InstanceDetailTab(tabs.Tab):
     name = _("Instance Details")
     slug = "instance_details"
-    template_name = ("fogbow/request/_detail_instance.html")
+    template_name = ("fogbow/instance/_detail_instance.html")
 
     def get_context_data(self, request):
         instanceId = self.tab_group.kwargs['instance_id'].split(':')[1]

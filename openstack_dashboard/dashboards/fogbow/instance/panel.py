@@ -4,7 +4,6 @@ import horizon
 
 from openstack_dashboard.dashboards.fogbow import dashboard
 
-
 class Instance(horizon.Panel):
     name = _("Instances")
     slug = "instance"

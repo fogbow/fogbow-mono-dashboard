@@ -26,15 +26,15 @@ class IndexView(views.APIView):
         context['requestsDeleted'] = mapCountRequests[DELETED_STATUS_REQUEST]
         context['requestsFailed'] = mapCountRequests[FAILED_STATUS_REQUEST]
         context['requestsTotal'] = mapCountRequests[TOTAL]        
-        context['requestsOpenPercent'] = calculatePercent(mapCountRequests[OPEN_STATUS_REQUEST],
+        context['requestsOpenPercent'] = fogbow_request.calculatePercent(mapCountRequests[OPEN_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])
-        context['requestsClosedPercent'] = calculatePercent(mapCountRequests[CLOSED_STATUS_REQUEST],
+        context['requestsClosedPercent'] = fogbow_request.calculatePercent(mapCountRequests[CLOSED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])
-        context['requestsFailedPercent'] = calculatePercent(mapCountRequests[FAILED_STATUS_REQUEST],
+        context['requestsFailedPercent'] = fogbow_request.calculatePercent(mapCountRequests[FAILED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])          
-        context['requestsDeletedPercent'] = calculatePercent(mapCountRequests[DELETED_STATUS_REQUEST], 
+        context['requestsDeletedPercent'] = fogbow_request.calculatePercent(mapCountRequests[DELETED_STATUS_REQUEST], 
                                                            mapCountRequests[TOTAL])
-        context['requestsFullfieldPercent'] = calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
+        context['requestsFullfieldPercent'] = fogbow_request.calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])             
         
         context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares')
@@ -62,9 +62,3 @@ def getMapCountRequests(responseStr):
             CLOSED_STATUS_REQUEST: requestsClosed, DELETED_STATUS_REQUEST: requestsDeleted,
             FAILED_STATUS_REQUEST: requestsFailed, TOTAL: totalRequest}
     
-def calculatePercent(value, valueTotal):
-    defaultValue = 0
-    try:
-        return (value * 100) / valueTotal
-    except Exception:
-        return defaultValue

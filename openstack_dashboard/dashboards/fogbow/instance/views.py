@@ -13,6 +13,8 @@ import openstack_dashboard.models as fogbow_request
 
 # LOG = logging.getLogger(__name__)
 
+THERE_ARE_NOT_INSTANCE = 'There are not instances'
+X_OCCI_LOCATION = 'X-OCCI-Location: '
 COMPUTE_TERM = fogbow_request.FogbowConstants.COMPUTE_TERM
 
 class IndexView(tables.DataTableView):
@@ -23,9 +25,19 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        responseStr = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request).text
-        instances = []
+        responseStr = fogbow_request.doRequest('get', COMPUTE_TERM, None, self.request).text        
+        
+        instances = self.getInstances(responseStr)
+        
+        self._more = False
+        
+        return instances
+    
+    def normalizeAttribute(self, propertie):
+        return propertie.replace(X_OCCI_LOCATION, '')
 
+    def getInstances(self, responseStr):
+        instances = []
         try:            
             if fogbow_request.isResponseOk(responseStr):                         
                 properties =  memberProperties = responseStr.split('\n')
@@ -36,16 +48,11 @@ class IndexView(tables.DataTableView):
                         instances.append(project_models.Instance(instance))                                
         except Exception:
             instances = []
+            
+        return instances
         
-        self._more = False
-        
-        return instances  
-    
-    def normalizeAttribute(self, propertie):
-        return propertie.replace('X-OCCI-Location: ', '')
-
 def areThereInstance(responseStr):
-    if 'There are not instances' in responseStr:
+    if THERE_ARE_NOT_INSTANCE in responseStr:
         return False
     return True 
 

@@ -25,7 +25,11 @@ class FogbowConstants():
     CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
     MEMORY_TERM = 'occi.compute.memory'
     CORES_TERM = 'occi.compute.cores'
-    IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'       
+    IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'      
+    
+    FOGBOW_STATE_TERM = 'org.fogbowcloud.request.state'
+    FOGBOW_TYPE_TERM = 'org.fogbowcloud.request.type'
+    FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id' 
 
 class IdentityPluginConstants():
     AUTH_KEYSTONE = 'Keystone'
@@ -74,7 +78,7 @@ class User(models.AnonymousUser):
     
 def checkUserAuthenticated(token):
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
-    response = request_client.get(settings.MY_ENDPOINT + FogbowConstants.RESOURCE_TERM ,
+    response = request_client.get('%s%s' % (settings.MY_ENDPOINT + FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers)
     responseStr = response.text
     
@@ -111,6 +115,13 @@ def isResponseOk(responseStr):
     if 'Unauthorized' not in responseStr and 'Bad Request' not in responseStr and 'Authentication required.' not in responseStr:
         return True
     return False    
+
+def calculatePercent(value, valueTotal):
+    defaultValue = 0
+    try:
+        return (value * 100) / valueTotal
+    except Exception:
+        return defaultValue
 
 #
 # OpenStack_auth / Fogbow
