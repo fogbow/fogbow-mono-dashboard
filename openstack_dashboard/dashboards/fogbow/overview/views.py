@@ -1,8 +1,8 @@
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
 from horizon import views
 from django.utils.translation import ugettext_lazy as _
 
-REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
+REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
 FULFILLED_STATUS_REQUEST = 'FULFILLED'
 OPEN_STATUS_REQUEST = 'OPEN'
 CLOSED_STATUS_REQUEST = 'CLOSED'
@@ -14,7 +14,7 @@ class IndexView(views.APIView):
     template_name = 'fogbow/overview/index.html'
 
     def get_data(self, request, context, *args, **kwargs):                        
-        response = fogbow_request.doRequest('get', REQUEST_TERM, None, request)
+        response = fogbow_models.doRequest('get', REQUEST_TERM, None, request)
                                           
         return self.getContextOverview(response.text, context)
     
@@ -26,15 +26,15 @@ class IndexView(views.APIView):
         context['requestsDeleted'] = mapCountRequests[DELETED_STATUS_REQUEST]
         context['requestsFailed'] = mapCountRequests[FAILED_STATUS_REQUEST]
         context['requestsTotal'] = mapCountRequests[TOTAL]        
-        context['requestsOpenPercent'] = fogbow_request.calculatePercent(mapCountRequests[OPEN_STATUS_REQUEST],
+        context['requestsOpenPercent'] = fogbow_models.calculatePercent(mapCountRequests[OPEN_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])
-        context['requestsClosedPercent'] = fogbow_request.calculatePercent(mapCountRequests[CLOSED_STATUS_REQUEST],
+        context['requestsClosedPercent'] = fogbow_models.calculatePercent(mapCountRequests[CLOSED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])
-        context['requestsFailedPercent'] = fogbow_request.calculatePercent(mapCountRequests[FAILED_STATUS_REQUEST],
+        context['requestsFailedPercent'] = fogbow_models.calculatePercent(mapCountRequests[FAILED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])          
-        context['requestsDeletedPercent'] = fogbow_request.calculatePercent(mapCountRequests[DELETED_STATUS_REQUEST], 
+        context['requestsDeletedPercent'] = fogbow_models.calculatePercent(mapCountRequests[DELETED_STATUS_REQUEST], 
                                                            mapCountRequests[TOTAL])
-        context['requestsFullfieldPercent'] = fogbow_request.calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
+        context['requestsFullfieldPercent'] = fogbow_models.calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])             
         
         context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares')

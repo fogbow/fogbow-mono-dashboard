@@ -1,6 +1,6 @@
 import netaddr
 import requests
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
 
 from django.core.urlresolvers import reverse 
 from django.core import validators
@@ -14,8 +14,8 @@ from django.core.urlresolvers import reverse_lazy
 from horizon import messages
 from django import shortcuts
 
-RESOURCE_TERM = fogbow_request.FogbowConstants.RESOURCE_TERM
-REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM
+RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
+REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
 SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
 
@@ -45,7 +45,7 @@ class CreateRequest(forms.SelfHandlingForm):
     def __init__(self, request, *args, **kwargs):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
         
-        response = fogbow_request.doRequest('get', RESOURCE_TERM, None, request)
+        response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
         
         flavorChoices,imageChoices = [],[]
         resources = response.text.split('\n')
@@ -70,11 +70,11 @@ class CreateRequest(forms.SelfHandlingForm):
                 publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'
                 publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
                                     
-            headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind",%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin",%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
+            headers = {'Category' : 'fogbow_models; scheme="http://schemas.fogbowcloud.org/request#"; class="kind",%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin",%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
                         % (data['flavor'].strip(), data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute)}
 
-            response = fogbow_request.doRequest('post', REQUEST_TERM, headers, request)                        
+            response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)                        
             
             messages.success(request, _('Requests created'))
             
@@ -89,8 +89,8 @@ class CreateRequest(forms.SelfHandlingForm):
         responseFormated = ''
         requests = responseStr.split('\n')
         for request in requests:
-            if fogbow_request.FogbowConstants.REQUEST_TERM in request:
-                responseFormated += request.split(fogbow_request.FogbowConstants.REQUEST_TERM)[1]
+            if fogbow_models.FogbowConstants.REQUEST_TERM in request:
+                responseFormated += request.split(fogbow_models.FogbowConstants.REQUEST_TERM)[1]
                 if requests[-1] != request:
                     responseFormated += ' , '
         return responseFormated

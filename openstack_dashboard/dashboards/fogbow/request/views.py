@@ -1,5 +1,5 @@
 import requests
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
 
 from horizon import forms
 from horizon import tables
@@ -15,10 +15,10 @@ from openstack_dashboard.dashboards.fogbow.request \
 from openstack_dashboard.dashboards.fogbow.request.forms import CreateRequest
 from openstack_dashboard.dashboards.fogbow.request.models import Request
 
-REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
-STATE_TERM = fogbow_request.FogbowConstants.FOGBOW_STATE_TERM
-TYPE_TERM = fogbow_request.FogbowConstants.FOGBOW_TYPE_TERM
-INSTANCE_ID_TERM = fogbow_request.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
+REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
+STATE_TERM = fogbow_models.FogbowConstants.FOGBOW_STATE_TERM
+TYPE_TERM = fogbow_models.FogbowConstants.FOGBOW_TYPE_TERM
+INSTANCE_ID_TERM = fogbow_models.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.RequestsTable
@@ -28,7 +28,7 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        response = fogbow_request.doRequest('get', REQUEST_TERM, None, self.request)
+        response = fogbow_models.doRequest('get', REQUEST_TERM, None, self.request)
               
         listRequests = self.getRequestsList(response.text)                
         self._more = False

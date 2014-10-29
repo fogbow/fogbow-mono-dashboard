@@ -2,11 +2,11 @@ import logging
 import commands
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login  # noqa
+from django.contrib.auth import authenticate, login
 from django.contrib.auth import forms as django_auth_forms
 from django import forms
 from django.utils.translation import ugettext_lazy as _
-from django.views.decorators.debug import sensitive_variables  # noqa
+from django.views.decorators.debug import sensitive_variables
 
 from openstack_auth import exceptions
 
@@ -40,7 +40,7 @@ class OpennebulaForm(django_auth_forms.AuthenticationForm):
                                 credentials=opennebulaCredentials, endpoint=opennebulaEndpoint)
         
         if self.user_cache.errors == True:
-            throwErrorMessage(self, 'Invalid Opennebula Credentials')
+            throwErrorMessage(self, _('Invalid Opennebula Credentials'))
         
         LOG.info('Successful login')
         
@@ -64,8 +64,7 @@ class TokenForm(django_auth_forms.AuthenticationForm):
                                         credentials=tokenCredentials)        
         
         if self.user_cache.errors == True:
-            throwErrorMessage(self, 'Invalid Token')
-        
+            throwErrorMessage(self, _('Invalid Token'))
         LOG.info('Successful login')
         
         return self.cleaned_data
@@ -101,7 +100,7 @@ class VomsForm(django_auth_forms.AuthenticationForm):
                                         credentials=vomsCredentials)
         
         if self.user_cache.errors == True:
-            throwErrorMessage(self, 'Invalid Voms Proxy Init')
+            throwErrorMessage(self, _('Invalid Voms Proxy Init'))
         
         LOG.info('Successful login')
         

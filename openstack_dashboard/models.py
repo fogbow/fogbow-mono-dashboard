@@ -2,7 +2,7 @@ import hashlib
 import logging
 import requests
 import horizon
-import models as fogbow_request
+import models as fogbow_models
 
 from django.conf import settings
 from django.contrib.auth import models
@@ -15,8 +15,8 @@ LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
     COMPUTE_TERM = '/compute/'
-    REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
-    REQUEST_TERM = '/fogbow_request/'
+    REQUEST_TERM_WITH_VERBOSE = '/fogbow_models?verbose=true'
+    REQUEST_TERM = '/fogbow_models/'
     MEMBER_TERM = '/members'
     RESOURCE_TERM = '/-/'
         
@@ -77,11 +77,13 @@ class User(models.AnonymousUser):
         return True
     
 def checkUserAuthenticated(token):
+    print 'PUts'
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
-    response = request_client.get('%s%s' % (settings.MY_ENDPOINT + FogbowConstants.RESOURCE_TERM) ,
+    response = requests.get('%s%s' % (settings.MY_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers)
-    responseStr = response.text
     
+    responseStr = response.text
+
     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
         return False    
     return True

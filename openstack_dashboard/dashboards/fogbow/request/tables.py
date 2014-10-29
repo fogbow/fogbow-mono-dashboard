@@ -1,10 +1,10 @@
 from django.utils.translation import ugettext_lazy as _
 
 from horizon import tables
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
 from horizon import messages
 
-REQUEST_TERM = fogbow_request.FogbowConstants.REQUEST_TERM
+REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 
 class TerminateRequest(tables.BatchAction):
     name = 'terminate'
@@ -19,8 +19,8 @@ class TerminateRequest(tables.BatchAction):
 
     def action(self, request, obj_id):        
         requestId = obj_id.split(':')[0]
-        response = fogbow_request.doRequest('delete', REQUEST_TERM + requestId, None, request)   
-        if fogbow_request.isResponseOk(response.text) == False:
+        response = fogbow_models.doRequest('delete', REQUEST_TERM + requestId, None, request)   
+        if fogbow_models.isResponseOk(response.text) == False:
             messages.error(request, _('Is was not possible to delete : %s') % requestId)      
 
 class CreateRequest(tables.LinkAction):

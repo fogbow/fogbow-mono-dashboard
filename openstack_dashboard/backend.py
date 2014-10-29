@@ -10,7 +10,7 @@ from openstack_auth import utils
 from openstack_dashboard.models import User
 from openstack_dashboard.models import Token
 import openstack_dashboard.forms as form_fogbow
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
 
 LOG = logging.getLogger(__name__)
 
@@ -39,10 +39,12 @@ class FogbowBackend(object):
         
         token = Token(tokenStr)
         
-        user = User('', token, '', {})                    
+        user = User('', token, '', {})                                   
                 
-        if fogbow_request.checkUserAuthenticated(token) == False:
+        if fogbow_models.checkUserAuthenticated(token) == False:
             user.errors = True        
+
+        print user.token.id
         
         request.user = user
         request.session['token'] = token
@@ -70,7 +72,7 @@ def getToken(endpoint, credentials, type):
     
     reponseStr = commands.getoutput(command)    
 
-    if fogbow_request.isResponseOk(reponseStr) == False:        
+    if fogbow_models.isResponseOk(reponseStr) == False:        
         return 'None'
     
     return reponseStr

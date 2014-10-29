@@ -635,3 +635,19 @@ msgstr "Instância"
 msgid "instances"
 msgstr "Instâncias"
 
+#: fogbow-dashboard/openstack_dashboard/forms
+msgid "Invalid tenant."
+msgstr "Projeto Inválido"
+
+#: fogbow-dashboard/openstack_dashboard/forms
+msgid "Invalid Token"
+msgstr "Token Inválido"
+
+#: fogbow-dashboard/openstack_dashboard/forms
+msgid "Invalid Opennebula Credentials"
+msgstr "Credencial do Opennebula Inválida"
+
+#: fogbow-dashboard/openstack_dashboard/forms
+msgid "Invalid Voms Proxy Init"
+msgstr "Voms Proxy init Inválido"
+

@@ -7,7 +7,7 @@ from django.conf import settings
 import requests
 from horizon import tables
 
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
 
 COMPUTE_TERM = '/compute/'
 
@@ -25,7 +25,7 @@ class TerminateInstance(tables.BatchAction):
 
     def action(self, request, obj_id):
         self.current_past_action = 0                
-        r = fogbow_request.doRequest('delete',COMPUTE_TERM + obj_id, None, request)        
+        r = fogbow_models.doRequest('delete',COMPUTE_TERM + obj_id, None, request)        
 
 def get_instance_id(request):
     if 'null' not in request.instanceId:

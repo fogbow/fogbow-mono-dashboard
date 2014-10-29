@@ -167,7 +167,7 @@ INSTALLED_APPS = (
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 # AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend', 'openstack_dashboard.backend.Backend')
-# AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', 'openstack_auth.backend.KeystoneBackend')
+# AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', )
 AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', 'openstack_dashboard.backend.KeystoneBackend')
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 

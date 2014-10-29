@@ -1,14 +1,14 @@
 from django.utils.translation import ugettext_lazy as _
 from horizon import tabs
-import openstack_dashboard.models as fogbow_request
+import openstack_dashboard.models as fogbow_models
                 
-COMPUTE_TERM = fogbow_request.FogbowConstants.COMPUTE_TERM
-STATE_TERM = fogbow_request.FogbowConstants.STATE_TERM
-SHH_PUBLIC_KEY_TERM = fogbow_request.FogbowConstants.SHH_PUBLIC_KEY_TERM
-CONSOLE_VNC_TERM = fogbow_request.FogbowConstants.CONSOLE_VNC_TERM
-MEMORY_TERM = fogbow_request.FogbowConstants.MEMORY_TERM
-CORES_TERM = fogbow_request.FogbowConstants.CORES_TERM
-IMAGE_SCHEME = fogbow_request.FogbowConstants.IMAGE_SCHEME     
+COMPUTE_TERM = fogbow_models.FogbowConstants.COMPUTE_TERM
+STATE_TERM = fogbow_models.FogbowConstants.STATE_TERM
+SHH_PUBLIC_KEY_TERM = fogbow_models.FogbowConstants.SHH_PUBLIC_KEY_TERM
+CONSOLE_VNC_TERM = fogbow_models.FogbowConstants.CONSOLE_VNC_TERM
+MEMORY_TERM = fogbow_models.FogbowConstants.MEMORY_TERM
+CORES_TERM = fogbow_models.FogbowConstants.CORES_TERM
+IMAGE_SCHEME = fogbow_models.FogbowConstants.IMAGE_SCHEME     
 
 class InstanceDetailTabInstancePanel(tabs.Tab):
     name = _("Instance Details")
@@ -17,7 +17,7 @@ class InstanceDetailTabInstancePanel(tabs.Tab):
 
     def get_context_data(self, request):
         instanceId = self.tab_group.kwargs['instance_id']
-        response = fogbow_request.doRequest('get', COMPUTE_TERM  + instanceId,
+        response = fogbow_models.doRequest('get', COMPUTE_TERM  + instanceId,
                                              None, request)
 
         return {'instance' : getInstancePerResponse(instanceId, response)}
