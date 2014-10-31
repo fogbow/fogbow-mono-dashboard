@@ -15,8 +15,8 @@ LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
     COMPUTE_TERM = '/compute/'
-    REQUEST_TERM_WITH_VERBOSE = '/fogbow_models?verbose=true'
-    REQUEST_TERM = '/fogbow_models/'
+    REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
+    REQUEST_TERM = '/fogbow_request/'
     MEMBER_TERM = '/members'
     RESOURCE_TERM = '/-/'
         
@@ -77,7 +77,6 @@ class User(models.AnonymousUser):
         return True
     
 def checkUserAuthenticated(token):
-    print 'PUts'
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
     response = requests.get('%s%s' % (settings.MY_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers)
@@ -90,7 +89,7 @@ def checkUserAuthenticated(token):
 
 def doRequest(method, endpoint, additionalHeaders, request):
     token = request.session.get('token','').id
-    
+     
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
