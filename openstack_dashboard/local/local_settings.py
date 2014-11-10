@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # TODO get token in session
-MY_ENDPOINT = 'http://150.165.15.81:8182'
+FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182'
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this

@@ -13,10 +13,10 @@ def doRequest(method, endpoint, additionalHeaders):
         headers.update(additionalHeaders)    
         
     if method == 'get': 
-        response = requests.get(settings.MY_ENDPOINT + endpoint, headers=headers)
+        response = requests.get(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
     elif method == 'delete':
-        response = requests.delete(settings.MY_ENDPOINT + endpoint, headers=headers)
+        response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
     elif method == 'post':        
-        response = requests.post(settings.MY_ENDPOINT + endpoint, headers=headers)
+        response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
     
     return response

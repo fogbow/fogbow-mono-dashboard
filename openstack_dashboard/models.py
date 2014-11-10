@@ -78,7 +78,7 @@ class User(models.AnonymousUser):
     
 def checkUserAuthenticated(token):
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
-    response = requests.get('%s%s' % (settings.MY_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
+    response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers)
     
     responseStr = response.text
@@ -97,11 +97,11 @@ def doRequest(method, endpoint, additionalHeaders, request):
     responseStr, response = '', None
     try:
         if method == 'get':
-            response = requests.get(settings.MY_ENDPOINT + endpoint, headers=headers)
+            response = requests.get(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
         elif method == 'delete':
-            response = requests.delete(settings.MY_ENDPOINT + endpoint, headers=headers)
+            response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
         elif method == 'post':   
-            response = requests.post(settings.MY_ENDPOINT + endpoint, headers=headers)
+            response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
         responseStr = response.text     
     except Exception:
         messages.error(self.request, _('Problem communicating with the Manager.'))

@@ -39,9 +39,8 @@ if ROOT_PATH not in sys.path:
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-SITE_BRANDING = 'OpenStack Dashboard'
+SITE_BRANDING = 'Fogbow Dashboard'
 
-# LOGIN_URL = '/auth/login/'
 LOGIN_URL = '/'
 LOGOUT_URL = '/auth/logout/'
 # LOGIN_REDIRECT_URL can be used as an alternative for
@@ -57,8 +56,7 @@ STATIC_URL = '/static/'
 ROOT_URLCONF = 'openstack_dashboard.urls'
 
 HORIZON_CONFIG = {
-#     'dashboards': ('project', 'admin', 'settings', 'router', 'fogbow'),
-    'dashboards': ('settings', 'router', 'fogbow'),
+    'dashboards': ('project', 'admin', 'settings', 'router', 'fogbow'),
     'default_dashboard': 'project',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,
@@ -166,8 +164,6 @@ INSTALLED_APPS = (
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-# AUTHENTICATION_BACKENDS = ('openstack_auth.backend.KeystoneBackend', 'openstack_dashboard.backend.Backend')
-# AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', )
 AUTHENTICATION_BACKENDS = ('openstack_dashboard.backend.FogbowBackend', 'openstack_dashboard.backend.KeystoneBackend')
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 
