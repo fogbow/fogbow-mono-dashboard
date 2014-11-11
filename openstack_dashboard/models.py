@@ -94,6 +94,7 @@ def doRequest(method, endpoint, additionalHeaders, request):
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         
+    print settings.FOGBOW_MANAGER_ENDPOINT + endpoint
     responseStr, response = '', None
     try:
         if method == 'get':
@@ -102,9 +103,11 @@ def doRequest(method, endpoint, additionalHeaders, request):
             response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
         elif method == 'post':   
             response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers)
-        responseStr = response.text     
+        responseStr = response.text
     except Exception:
-        messages.error(self.request, _('Problem communicating with the Manager.'))
+        messages.error(request, _('Problem communicating with the Manager.'))
+    
+    print responseStr
     
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
         messages.error(request, _('Token Unauthorized.'))

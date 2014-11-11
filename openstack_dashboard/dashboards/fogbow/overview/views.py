@@ -16,9 +16,28 @@ class IndexView(views.APIView):
     def get_data(self, request, context, *args, **kwargs):                        
         response = fogbow_models.doRequest('get', REQUEST_TERM, None, request)
                                           
-        return self.getContextOverview(response.text, context)
+        return self.getContextOverview(response, context)
     
-    def getContextOverview(self, responseStr, context):    
+    def getContextOverview(self, response, context):
+        context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares')
+        
+        if response == None:
+            context['requestsFullfield'] = 0
+            context['requestsOpen'] = 0
+            context['requestsClosed'] = 0
+            context['requestsDeleted'] = 0
+            context['requestsFailed'] = 0
+            context['requestsTotal'] = 0
+            context['requestsOpenPercent'] = 0
+            context['requestsClosedPercent'] = 0
+            context['requestsFailedPercent'] = 0        
+            context['requestsDeletedPercent'] = 0
+            context['requestsFullfieldPercent'] = 0           
+                        
+            return context
+        
+        responseStr = response.text
+        
         mapCountRequests = getMapCountRequests(responseStr)    
         context['requestsFullfield'] = mapCountRequests[FULFILLED_STATUS_REQUEST]
         context['requestsOpen'] = mapCountRequests[OPEN_STATUS_REQUEST]
@@ -35,9 +54,7 @@ class IndexView(views.APIView):
         context['requestsDeletedPercent'] = fogbow_models.calculatePercent(mapCountRequests[DELETED_STATUS_REQUEST], 
                                                            mapCountRequests[TOTAL])
         context['requestsFullfieldPercent'] = fogbow_models.calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
-                                                           mapCountRequests[TOTAL])             
-        
-        context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares')
+                                                           mapCountRequests[TOTAL])
         
         return context
        

@@ -70,11 +70,11 @@ class CreateRequest(forms.SelfHandlingForm):
                 publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'
                 publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
                                     
-            headers = {'Category' : 'fogbow_models; scheme="http://schemas.fogbowcloud.org/request#"; class="kind",%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin",%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
+            headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind",%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin",%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
                         % (data['flavor'].strip(), data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute)}
 
-            response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)                        
+            response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)                                                
             
             messages.success(request, _('Requests created'))
             

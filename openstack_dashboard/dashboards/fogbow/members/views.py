@@ -36,11 +36,13 @@ class IndexView(tables.DataTableView):
         response = fogbow_models.doRequest('get', MEMBER_TERM, None, self.request)
         
         members = []
+        self._more = False
+        if response == None:
+            return members 
+                
         responseStr = response.text
         if fogbow_models.isResponseOk(responseStr) == True:
-            members = self.getMembersList(responseStr)    
-        
-        self._more = False                
+            members = self.getMembersList(responseStr)                              
 
         return members
     

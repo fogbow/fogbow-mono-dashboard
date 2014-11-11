@@ -29,9 +29,13 @@ class IndexView(tables.DataTableView):
 
     def get_data(self):
         response = fogbow_models.doRequest('get', REQUEST_TERM, None, self.request)
+        
+        listRequests = []
+        self._more = False
+        if response == None:
+            return listRequests 
               
         listRequests = self.getRequestsList(response.text)                
-        self._more = False
         
         return listRequests
 

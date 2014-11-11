@@ -25,11 +25,15 @@ class IndexView(tables.DataTableView):
         return self._more
 
     def get_data(self):
-        responseStr = fogbow_models.doRequest('get', COMPUTE_TERM, None, self.request).text        
+        response = fogbow_models.doRequest('get', COMPUTE_TERM, None, self.request)        
         
-        instances = self.getInstances(responseStr)
-        
+        instances = []
         self._more = False
+        if response == None:
+            return instances
+        
+        responseStr = response.text        
+        instances = self.getInstances(responseStr)        
         
         return instances
     
