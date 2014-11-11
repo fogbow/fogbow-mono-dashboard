@@ -107,8 +107,6 @@ def doRequest(method, endpoint, additionalHeaders, request):
     except Exception:
         messages.error(request, _('Problem communicating with the Manager.'))
     
-    print responseStr
-    
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
         messages.error(request, _('Token Unauthorized.'))
     elif 'Bad Request' in responseStr:

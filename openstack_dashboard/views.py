@@ -116,7 +116,7 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
 
 def getContextForm(formOption):
     listForm = {IPConstants.AUTH_TOKEN, IPConstants.AUTH_OPENNEBULA, 
-                IPConstants.AUTH_VOMS, IPConstants.AUTH_KEYSTONE}
+                IPConstants.AUTH_KEYSTONE}
                 
     formChosen = IPConstants.AUTH_KEYSTONE
     form = KeystoneFogbow()
