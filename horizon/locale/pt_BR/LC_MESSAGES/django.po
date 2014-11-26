@@ -472,16 +472,16 @@ msgid "Member ID"
 msgstr "ID do Membro"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
-msgid "Cpu Idle"
-msgstr "CPU Ociosa"
+msgid "Cpu Quota"
+msgstr "Cota de CPU"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:8
 msgid "Cpu In Use"
 msgstr "CPU em Uso"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:9
-msgid "Mem Idle"
-msgstr "Memória Ociosa"
+msgid "Mem Quota"
+msgstr "Cota de Memória"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:10
 msgid "Mem In Use"

@@ -7,7 +7,7 @@ from openstack_dashboard import exceptions
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-# TODO get token in session
+# Endpoint Manager 
 FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182'
 
 # Required for Django 1.5.
