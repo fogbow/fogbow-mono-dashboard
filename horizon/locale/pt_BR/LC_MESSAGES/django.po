@@ -472,11 +472,11 @@ msgid "Member ID"
 msgstr "ID do Membro"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
-msgid "Cpu Quota"
+msgid "CPU Quota"
 msgstr "Cota de CPU"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:8
-msgid "Cpu In Use"
+msgid "CPU In Use"
 msgstr "CPU em Uso"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:9
