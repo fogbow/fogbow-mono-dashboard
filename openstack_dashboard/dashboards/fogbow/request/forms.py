@@ -76,7 +76,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)                                                
             
-            if response != None and fogbow_models.isResponseOk(response.text) == true: 
+            if response != None and fogbow_models.isResponseOk(response.text) == True: 
                 messages.success(request, _('Requests created'))
             
             return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
