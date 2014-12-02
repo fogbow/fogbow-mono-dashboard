@@ -28,7 +28,6 @@ def getInstancePerResponse(instanceId, response):
     
     instanceDetails = response.text.split('\n')
     
-    print instanceDetails
     state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', '-'
     for detail in instanceDetails:
         if STATE_TERM in detail:
