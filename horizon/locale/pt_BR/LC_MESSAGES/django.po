@@ -473,7 +473,7 @@ msgstr "ID do Membro"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
 msgid "CPU Quota"
-msgstr "Cota de CPU"
+msgstr "Cota de CPU Disponível"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:8
 msgid "CPU In Use"
@@ -481,7 +481,7 @@ msgstr "CPU em Uso"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:9
 msgid "Mem Quota"
-msgstr "Cota de Memória"
+msgstr "Cota de Memória Disponível"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:10
 msgid "Mem In Use"
@@ -557,7 +557,7 @@ msgstr "Criar Requisições"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html
 msgid "Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares"
-msgstr "Federação, oportunimos and ''greennes''"
+msgstr "Federação, oportunismos and ''greenness''"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:10
 msgid "Fogbow Dashboard"

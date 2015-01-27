@@ -469,6 +469,14 @@ msgstr ""
 msgid "Cpu Idle"
 msgstr ""
 
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
+msgid "CPU Quota"
+msgstr "Available CPU Quota"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
+msgid "Mem Quota"
+msgstr "Available Mem Quota"
+
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:8
 msgid "Cpu In Use"
 msgstr ""
@@ -547,77 +555,77 @@ msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:10
 msgid "Fogbow Dashboard"
-msgstr "Painel de Instruções do Fogbow"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/forms:0
 msgid "Endpoint"
-msgstr "Endereço"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/forms:0
 msgid "Server Name"
-msgstr "Nome do Servidor"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/forms:0
 msgid "Tenant Name"
-msgstr "Nome do Projeto"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/forms:0
 msgid "User Key"
-msgstr "Chave do Usuário"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/forms:0
 msgid "User Credentials"
-msgstr "Credenciais do Usuário"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/views.py
 msgid "CLOSED"
-msgstr "FECHADO"
+msgstr ""
 
 msgid "OPEN"
-msgstr "ABERTO"
+msgstr ""
 
 msgid "FULLFIELD"
-msgstr "ATENDIDO"
+msgstr ""
 
 msgid "FAILED"
-msgstr "FALHO"
+msgstr ""
 
 msgid "DELETED"
-msgstr "DELETADO"
+msgstr ""
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
 msgid "Public SSH Address"
-msgstr "Endereço do SSH Público"
+msgstr ""
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
 msgid "Memory"
-msgstr "Memória"
+msgstr ""
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
 msgid "Cores"
-msgstr "Núcleos"
+msgstr ""
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
 msgid "Info"
-msgstr "Informações"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
 msgid "Terminate"
-msgstr "Terminar"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
 msgid "Terminated"
-msgstr "Terminado"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
 msgid "instance"
-msgstr "Instância"
+msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
 msgid "instances"
-msgstr "Instâncias"
+msgstr ""
 
