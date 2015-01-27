@@ -50,9 +50,9 @@ class IndexView(tables.DataTableView):
         members = []
         membersList = strResponse.split('\n')
         memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0
-        for m in membersList:                
+        for m in membersList:
             id, cpuIdle, cpuInUse, flavors, memIdle, memInUse = '-','0','0','','0','0'             
-            memberProperties = m.split(';')            
+            memberProperties = m.split(';')
             for properties in memberProperties:
                 values = properties.split('=')
                 value = None
@@ -67,14 +67,13 @@ class IndexView(tables.DataTableView):
                 elif any("memIdle" in s for s in values): 
                     memIdle = float(value)
                 elif any("memInUse" in s for s in values):
-                    memInUse = float(value)                    
-            if 'flavor' in m:
+                    memInUse = float(value)                                         
+            if 'flavor:' in m:
                 valuesFlavor = m.split('flavor:')
                 for flavor in valuesFlavor:
-                   if 'fogbow' in flavor: 
+                   if 'fogbow_' in flavor and 'capacity' in flavor:
                        flavors = flavors + flavor
-                       flavors = flavors.replace("'", '').replace('"', '')                       
-                                                
+                       flavors = flavors.replace("'", '').replace('"', '')                        
             if id != None:                                                  
                 member = {'id': id , 'idMember' : id, 'cpuIdle': cpuIdle, 'cpuInUse': cpuInUse , 'memIdle': memIdle, 'memInUse': memInUse, 'flavors' : flavors}
                 members.append(Member(member));                
