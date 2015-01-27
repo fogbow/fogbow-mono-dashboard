@@ -51,13 +51,22 @@ class IndexView(tables.DataTableView):
         membersList = strResponse.split('\n')
         memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0
         for m in membersList:
-            id, cpuIdle, cpuInUse, flavors, memIdle, memInUse = '-','0','0','','0','0'             
+            print m
+            id, cpuIdle, cpuInUse, memIdle, memInUse = '-','0','0','0','0'             
             memberProperties = m.split(';')
+            flavors = []
+            
             for properties in memberProperties:
+                if properties.startswith('flavor:'):
+                    flavor = properties.split(':')[1].strip()
+                    flavors.append(flavor.replace("'", '').replace('"', ''))
+                    continue
+                
                 values = properties.split('=')
                 value = None
                 if len(values) > 1: 
-                    value = values[1]                    
+                    value = values[1]
+                                        
                 if any("id" in s for s in values):
                     id = value
                 elif any("cpuIdle" in s for s in values): 
@@ -68,14 +77,11 @@ class IndexView(tables.DataTableView):
                     memIdle = float(value)
                 elif any("memInUse" in s for s in values):
                     memInUse = float(value)                                         
-            if 'flavor:' in m:
-                valuesFlavor = m.split('flavor:')
-                for flavor in valuesFlavor:
-                   if 'fogbow_' in flavor and 'capacity' in flavor:
-                       flavors = flavors + flavor
-                       flavors = flavors.replace("'", '').replace('"', '')                        
+                      
             if id != None:                                                  
-                member = {'id': id , 'idMember' : id, 'cpuIdle': cpuIdle, 'cpuInUse': cpuInUse , 'memIdle': memIdle, 'memInUse': memInUse, 'flavors' : flavors}
+                member = {'id': id , 'idMember' : id, 'cpuIdle': cpuIdle, 'cpuInUse': 
+                          cpuInUse , 'memIdle': memIdle, 'memInUse': memInUse, 
+                          'flavors' : '; '.join(flavors)}
                 members.append(Member(member));                
             
             memInUseTotal += memInUse
