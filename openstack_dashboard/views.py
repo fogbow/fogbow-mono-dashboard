@@ -45,27 +45,12 @@ def splash_fogbow(request):
     request.session.clear()
     request.session.set_test_cookie()
     
-    #formOption = request.POST.get('form')
     formOption = settings.FOGBOW_LOCAL_AUTH_TYPE
 
     return shortcuts.render(request, 'fogbow_splash.html',
                              getContextForm(formOption))
 
 def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
-    #formChosen = request.POST.get('formChosen')    
-#     formChosen = settings.FOGBOW_LOCAL_AUTH_TYPE
-    
-#     formReference = ''
-#     if formChosen == IPConstants.AUTH_TOKEN :
-#         formReference = TokenForm
-#     elif formChosen == IPConstants.AUTH_OPENNEBULA :
-#         formReference = OpennebulaForm
-#     elif formChosen == IPConstants.AUTH_VOMS :
-#         formReference = VomsForm
-#     elif formChosen == IPConstants.AUTH_KEYSTONE :
-#         formReference = KeystoneFogbow        
-    
-    #Test
     formChosen = ''
     formReference = AllForm
     
@@ -110,7 +95,6 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
                                   **kwargs)
     
     if request.user.is_authenticated():
-        print 'user is authenticated'
         if formChosen == IPConstants.AUTH_KEYSTONE:
             auth_user.set_session_from_user(request, request.user)
             regions = dict(forms.Login.get_region_choices())
@@ -124,34 +108,9 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
                     
     return res
 
-def getContextForm(formOption):
-#     listForm = {IPConstants.AUTH_TOKEN, IPConstants.AUTH_OPENNEBULA, 
-#                 IPConstants.AUTH_KEYSTONE}
-                
-#     print '>>>>>>>>>>>>>>>>>>>>>.'
-                
-    formChosen = IPConstants.AUTH_KEYSTONE
-#     form = KeystoneFogbow()
-#     if formOption == IPConstants.AUTH_TOKEN:
-#         formChosen = IPConstants.AUTH_TOKEN
-#         formName = 'Raw Token'
-#         form = TokenForm()
-#     elif formOption == IPConstants.AUTH_OPENNEBULA: 
-#         formChosen = IPConstants.AUTH_OPENNEBULA      
-#         form = OpennebulaForm()
-#         formName = 'Opennebula'
-#     elif formOption == IPConstants.AUTH_VOMS:
-#         formChosen = IPConstants.AUTH_VOMS
-#         form = VomsForm()
-#         formName = 'Voms'
-#     elif formOption == IPConstants.AUTH_KEYSTONE:
-#         formChosen = IPConstants.AUTH_KEYSTONE
-#         form = KeystoneFogbow()
-    
+def getContextForm(formOption):    
     localForm = fogbow_models.getTitle(settings.FOGBOW_LOCAL_AUTH_TYPE)
     federationForm = fogbow_models.getTitle(settings.FOGBOW_FEDERATION_AUTH_TYPE)
-    formName = 'Keystone'
     form = AllForm()
     
-    return {'form': form, 'localForm': localForm, 'federationForm' : federationForm, 
-            'formChosen': formChosen}
+    return {'form': form, 'localForm': localForm, 'federationForm' : federationForm}

@@ -20,6 +20,7 @@ class FogbowConstants():
     REQUEST_TERM = '/fogbow_request/'
     MEMBER_TERM = '/members'
     RESOURCE_TERM = '/-/'
+    TOKEN_TERM = '/token'
         
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
@@ -116,6 +117,17 @@ def checkUserAuthenticated(token):
     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
         return False    
     return True
+
+# def checkUserAuthenticatedLocalToken(token):    
+#     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
+#     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.TOKEN_TERM) ,
+#                                    headers=headers, timeout=10)
+#     
+#     responseStr = response.text
+# 
+#     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
+#         return False    
+#     return True
 
 def doRequest(method, endpoint, additionalHeaders, request):
     #token = request.session.get('token','').id

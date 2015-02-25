@@ -13,15 +13,17 @@ FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182'
 # FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.107:8182'
 
 FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000'
+# FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.85.80:5000'
+# FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000'
 # types : keystone, opennebula, voms, token
+# FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
 FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
-# FOGBOW_LOCAL_AUTH_TYPE = 'token'
 
 FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
 # types : keystone, opennebula, voms, token
 # FOGBOW_FEDERATION_AUTH_TYPE = 'token'
+# FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
 FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
-# FOGBOW_FEDERATION_AUTH_TYPE = 'opennebula'
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this

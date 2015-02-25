@@ -115,7 +115,7 @@ class OpennebulaFields():
     def getFields(self):
         listFields = {}
         listFields[self.username] = forms.CharField(label=_("User Name"),
-            widget=forms.TextInput(attrs={"autofocus": "autofocus"}))
+            widget=forms.TextInput(attrs={"autofocus": "autofocus"}), required=False)
         listFields[self.password] = forms.CharField(label=_("Password"),
                                    widget=forms.PasswordInput(render_value=False),
                                    required=False)
@@ -147,7 +147,6 @@ def throwErrorMessage(self, message):
     raise forms.ValidationError(self.error_messages['invalid_login_fogbow'])
 
 def getFieldsPerFormType(valueAuthType, authType):
-    print valueAuthType
     fields = KeystoneFields(authType)                                                
     if valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
         fields = KeystoneFields(authType)

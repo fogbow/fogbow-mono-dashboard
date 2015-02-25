@@ -18,6 +18,25 @@ LOG = logging.getLogger(__name__)
 
 FOGBOW_CLI_JAVA_COMMAND = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'
 
+def getCorrectToken(formAuthType, credentials, endpoint):
+    print formAuthType
+    print credentials
+    print endpoint
+    if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
+        tokenStr = credentials[formAuthType]
+        auxList = {'token': tokenStr}
+        tokenStr = auxList['token'].replace('\r\n', '')
+    elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS:
+        tokenStr = credentials[formAuthType]
+        auxList = {'token': tokenStr}
+        tokenStr = auxList['token'].replace('\r\n', '')
+    elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
+        tokenStr = getToken(endpoint, credentials, formAuthType)     
+    elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
+        tokenStr = getToken(endpoint, credentials, 'openstack')
+    
+    return tokenStr 
+
 class FogbowBackend(object):
   
     _cached_tokens = {}
@@ -34,54 +53,29 @@ class FogbowBackend(object):
     def authenticate(self, request, localCredentials, federationCredentials,
                       localEndpoint=None, federationEndpoint=None):
         tokenStr,localTokenStr = '',''
-                  
-        # Todo Refator
-        federationFormType = settings.FOGBOW_FEDERATION_AUTH_TYPE
-        if federationFormType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
-            tokenStr = federationCredentials[federationFormType]
-            x = {'x': tokenStr}
-            tokenStr = x['x'].replace('\r\n', '')
-        elif federationFormType == fogbow_models.IdentityPluginConstants.AUTH_VOMS:
-            tokenStr = federationCredentials[federationFormType]
-            x = {'x': tokenStr}
-            tokenStr = x['x'].replace('\r\n', '')
-        elif federationFormType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
-            tokenStr = getToken(federationEndpoint, federationCredentials, federationFormType)     
-        elif federationFormType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
-            tokenStr = getToken(federationEndpoint, federationCredentials, 'openstack')                        
+                              
+        tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)
         
-        # Method
         emptyValuesLocalCredentials = True
         for key in localCredentials.keys():
             if localCredentials[key] != '':
-                emptyValuesLocalCredentials = False                
+                emptyValuesLocalCredentials = False       
         
-        # Todo Refator
-        localFormType = ''
-        if emptyValuesLocalCredentials == False:
-            localFormType = settings.FOGBOW_LOCAL_AUTH_TYPE
-            if localFormType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
-                localTokenStr = federationCredentials[federationFormType]
-                x = {'x': tokenStr}
-                localTokenStr = x['x'].replace('\r\n', '')
-            elif localFormType == fogbow_models.IdentityPluginConstants.AUTH_VOMS :
-                localTokenStr = federationCredentials[federationFormType]
-                x = {'x': tokenStr}
-                localTokenStr = x['x'].replace('\r\n', '')
-            elif localFormType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
-                localTokenStr = getToken(localEndpoint, localCredentials, localFormType) 
-            elif localFormType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
-                localTokenStr = getToken(localEndpoint, localCredentials, 'openstack')                       
+        localFormType = settings.FOGBOW_LOCAL_AUTH_TYPE
+        if emptyValuesLocalCredentials == False:  
+            localTokenStr = getCorrectToken(settings.FOGBOW_LOCAL_AUTH_TYPE, localCredentials, localEndpoint)             
         else:
-            localTokenStr = tokenStr
+            localTokenStr = tokenStr            
+                        
+        print localTokenStr
                         
         federatioToken = Token(tokenStr)
-        localToken = Token(localTokenStr)                
+        localToken = Token(localTokenStr)             
         
         user = User('', federatioToken, '', {}, localToken=localToken)
         
         try:           
-            if fogbow_models.checkUserAuthenticated(localToken) == False:
+            if localTokenStr == 'None' or localTokenStr == '' or localTokenStr == None:
                 user.errors = True
                 user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)
             
@@ -127,50 +121,6 @@ def getToken(endpoint, credentials, type):
         return 'None'
       
     return reponseStr
-
-# class FogbowBackend(object):
-#  
-#     DEFAULT_FOGBOW_NAME = 'Fogbow User'
-#  
-#     def check_auth_expiry(self, user, margin=None):
-#         return True
-#  
-#     def get_user(self, user_id):     
-#         token = self.request.session['token']
-#         return User('fogbow', token, self.DEFAULT_FOGBOW_NAME, {})
-#  
-#     def authenticate(self, request, formType, credentials=None, endpoint=None):
-#         tokenStr = ''
-#          
-#         if formType == form_fogbow.FORM_TYPE_TOKEN:
-#             tokenStr = credentials[formType]
-#         elif formType == form_fogbow.FORM_TYPE_VOMS :
-#             tokenStr = credentials[formType]
-#         elif formType == form_fogbow.FORM_TYPE_OPENNEBULA:
-#             tokenStr = getToken(endpoint, credentials, formType)            
-#          
-#         token = Token(tokenStr)
-#          
-#         user = User('', token, '', {})                                   
-#                  
-#         if fogbow_models.checkUserAuthenticated(token) == False:
-#             user.errors = True
-#          
-#         request.user = user
-#         request.session['token'] = token
-#         return user
-#      
-#     def get_group_permissions(self, user, obj=None):
-#         return set()
-#  
-#     def get_all_permissions(self, user, obj=None):
-#         return set()
-#  
-#     def has_perm(self, user, perm, obj=None):
-#         return False
-#
-#     def has_module_perms(self, user, app_label):
-#         return False
     
 def getToken(endpoint, credentials, type):            
     credentialsStr = '' 
