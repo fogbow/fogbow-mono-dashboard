@@ -126,8 +126,8 @@ def doRequest(method, endpoint, additionalHeaders, request):
     except:
         localToken = token
     
-#     headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token, 'X-Local-Auth-Token' : localToken}    
-    headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
+    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token, 'X-Local-Auth-Token' : localToken}    
+#     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         
