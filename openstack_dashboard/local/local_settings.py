@@ -16,7 +16,7 @@ FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://localhost:5000'
 # types : keystone, opennebula, token
 FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
 
-# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
+FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
 # types : keystone, opennebula, voms, token
 FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
 
