@@ -8,11 +8,9 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Endpoint Manager 
-# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.85.80:8182'
 FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182'
-# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.107:8182'
 
-FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://localhost:5000'
+FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000'
 # types : keystone, opennebula, token
 FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
 

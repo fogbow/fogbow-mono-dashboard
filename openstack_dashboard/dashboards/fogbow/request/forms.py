@@ -38,8 +38,7 @@ class CreateRequest(forms.SelfHandlingForm):
                            error_messages={
                                'required': _('This field is required.'),
                                'invalid': _('The string may only contain'
-                                            ' ASCII characters and numbers.')},
-                           validators=[validators.validate_slug])
+                                            ' ASCII characters and numbers.')})
     type = forms.ChoiceField(label=_('Type'),
                                help_text=_('Type Request'),
                                choices=TYPE_REQUEST)
