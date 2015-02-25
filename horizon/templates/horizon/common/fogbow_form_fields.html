@@ -39,7 +39,8 @@
       <hr>
   	  <div id="local_identity_plugin_button">
     	<h4 class="title-splash">
-           <div class="title-login">    		
+           <div class="title-login">    	
+           	  <img id="arrow_login" alt="set" src="static/dashboard/img/right20.png">	
       	      Local Identity Plugin (Optional) : {{ localForm }}
       	   </div>
     	</h4>
@@ -79,8 +80,10 @@
 	$('#local_identity_plugin_button').click(function() {
 		if (!$('#local_identity_plugin_box').is(':visible')) {
 			$('#local_identity_plugin_box').show('slow');
+			$('#arrow_login').attr('src','static/dashboard/img/down36.png');
 			return;
 		}
+		$('#arrow_login').attr('src','static/dashboard/img/right20.png');
 		$('#local_identity_plugin_box').hide('slow');
 	});
 </script>

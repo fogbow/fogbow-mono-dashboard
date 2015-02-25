@@ -79,14 +79,18 @@ class FogbowBackend(object):
         localToken = Token(localTokenStr)                
         
         user = User('', federatioToken, '', {}, localToken=localToken)
-                                  
-        if fogbow_models.checkUserAuthenticated(localToken) == False:
-            user.errors = True
-            user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)
         
-        if fogbow_models.checkUserAuthenticated(federatioToken) == False:
+        try:           
+            if fogbow_models.checkUserAuthenticated(localToken) == False:
+                user.errors = True
+                user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)
+            
+            if fogbow_models.checkUserAuthenticated(federatioToken) == False:
+                user.errors = True
+                user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)                
+        except:
             user.errors = True
-            user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)                
+            user.typeError = 'Manager connection failed.'
         
         request.user = user
         federation_token_id = uuid.uuid4()
