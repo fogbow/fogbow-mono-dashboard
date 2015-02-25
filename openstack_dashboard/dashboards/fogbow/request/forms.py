@@ -32,8 +32,14 @@ class CreateRequest(forms.SelfHandlingForm):
                            initial='1')
     flavor = forms.ChoiceField(label=_('Flavor'),
                                help_text=_('Flavor Fogbow'))    
-    image = forms.ChoiceField(label=_('Image'),
-                               help_text=_('Image Fogbow'))
+#     image = forms.ChoiceField(label=_('Image'),
+#                                help_text=_('Image Fogbow'))
+    image = forms.CharField(label=_('Image'),
+                           error_messages={
+                               'required': _('This field is required.'),
+                               'invalid': _('The string may only contain'
+                                            ' ASCII characters and numbers.')},
+                           validators=[validators.validate_slug])
     type = forms.ChoiceField(label=_('Type'),
                                help_text=_('Type Request'),
                                choices=TYPE_REQUEST)
@@ -53,12 +59,12 @@ class CreateRequest(forms.SelfHandlingForm):
             if SCHEME_FLAVOR_TERM in resource and 'fogbow' in resource:
                 resource = self.normalizeNameResource(resource)
                 flavorChoices.append((resource,resource))
-            elif SCHEME_IMAGE_TERM in resource and 'fogbow' in resource:
-                resource = self.normalizeNameResource(resource)
-                imageChoices.append((resource,resource))
+#             elif SCHEME_IMAGE_TERM in resource and 'fogbow' in resource:
+#                 resource = self.normalizeNameResource(resource)
+#                 imageChoices.append((resource,resource))
                                         
         self.fields['flavor'].choices = flavorChoices
-        self.fields['image'].choices = imageChoices
+#         self.fields['image'].choices = imageChoices
 
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')

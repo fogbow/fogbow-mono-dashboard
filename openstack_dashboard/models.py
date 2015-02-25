@@ -1,4 +1,5 @@
 import hashlib
+import traceback
 import logging
 import requests
 import horizon
@@ -32,26 +33,31 @@ class FogbowConstants():
     FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id' 
 
 class IdentityPluginConstants():
-    AUTH_KEYSTONE = 'Keystone'
-    AUTH_TOKEN = 'Fogbow Raw Token'
-    AUTH_OPENSTACK = 'Keystone'
-    AUTH_OPENNEBULA = 'OpenNebula'
-    AUTH_VOMS = 'Voms'
+    AUTH_KEYSTONE = 'keystone'
+    AUTH_TOKEN = 'token'
+    AUTH_OPENNEBULA = 'opennebula'
+    AUTH_VOMS = 'voms'    
 
 class Token():
     def __init__(self, id=None):
-        self.id = id
+        self.id = id        
+        
+    def getId(self):
+        return self.id
 
 class User(models.AnonymousUser):
     errors = False
+    typeError = ''
     type = 'fogbow_user'
     authorized_tenants = {}
     
-    def __init__(self, id=None, token=None, username=None, roles=None):
+    def __init__(self, id=None, token=None, username=None, roles=None, localToken=None):
         self.id = id
         self.token = token
+        self.localToken = localToken
         self.username = username
         self.roles = roles
+        self.localToken = localToken
 
     def __unicode__(self):
         return self.username
@@ -76,10 +82,34 @@ class User(models.AnonymousUser):
     def has_perms(self, perm_list, obj=None):
         return True
     
-def checkUserAuthenticated(token):
+def getTitle(typeToken):
+    title = '' 
+    if typeToken == IdentityPluginConstants.AUTH_KEYSTONE:
+        title = 'Keystone'
+    elif typeToken == IdentityPluginConstants.AUTH_TOKEN:
+        title = 'Token'        
+    elif typeToken == IdentityPluginConstants.AUTH_OPENNEBULA:
+        title = 'Opennebula'        
+    elif typeToken == IdentityPluginConstants.AUTH_VOMS:
+        title = 'VOMS'                        
+    return title
+
+def getErrorMessage(typeToken):
+    errorStr = '' 
+    if typeToken == IdentityPluginConstants.AUTH_KEYSTONE:
+        errorStr = 'Keystone credentials are invalid.'
+    elif typeToken == IdentityPluginConstants.AUTH_TOKEN:
+        errorStr = 'Token invalid.'
+    elif typeToken == IdentityPluginConstants.AUTH_OPENNEBULA:
+        errorStr = 'Opennebula credentials are invalid.'        
+    elif typeToken == IdentityPluginConstants.AUTH_VOMS:
+        errorStr = 'VOMS certificate proxy is invalid.'
+    return errorStr 
+
+def checkUserAuthenticated(token):    
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
-                                   headers=headers)
+                                   headers=headers, timeout=10)    
     
     responseStr = response.text
 
@@ -88,13 +118,20 @@ def checkUserAuthenticated(token):
     return True
 
 def doRequest(method, endpoint, additionalHeaders, request):
-    token = request.session.get('token','').id
-     
+    #token = request.session.get('token','').id
+    token = request.user.token.id
+    localToken = ''
+    try:
+#         localToken = request.session.get('localToken','').id
+        localToken = request.user.localToken.id
+    except:
+        localToken = token
+    
+#     headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token, 'X-Local-Auth-Token' : localToken}    
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         
-    print settings.FOGBOW_MANAGER_ENDPOINT + endpoint
     responseStr, response = '', None
     try:
         if method == 'get':

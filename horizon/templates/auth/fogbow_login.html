@@ -6,29 +6,10 @@
 {% block modal_class %}login {% if hide %}modal hide{% endif %}{% endblock %}
 
 {% block fog %}
-    <div id="fogbow-identity-plugin">
-    	<form id="form_IP" action="{% url 'splash_fogbow' %}" method="post">
-    		<input name="csrfmiddlewaretoken" value="{{ csrf_token }}" type="hidden">
-    		<div class="modal-body clearfix">
-		    	<label>{% trans "Federation Identity Plugin" %}</label>
-	    		<select name="form" onchange="submitForm()">
-	    			{% for f in listForm %}
-	    				{% if f == formChosen %}
-	    					<option selected value="{{ f }}">{{ f }}</option>
-	    				{% elif f != formChosen %}
-	    					<option value="{{ f }}">{{ f }}</option>
-	    				{% endif %}
-	    			{% endfor %}
-				</select>
-			</div>
-		</form>
-    	<hr>
-    </div>
 {% endblock %}
 
 {% block form_action %}{% url 'fogbow_Login' %}{% endblock %}
 {% block autocomplete %}{{ HORIZON_CONFIG.password_autocomplete }}{% endblock %}
-
 
 {% block modal-body %}    
   <fieldset>
@@ -40,7 +21,7 @@
         <a href="{% url 'horizon:user_home' %}">{% trans "home page" %}</a></p>
       </span>
     </div>
-    {% endif  %}               
+    {% endif  %}  
     
     {% if request.COOKIES.logout_reason %}
     <div class="control-group clearfix error">
@@ -48,7 +29,7 @@
     </div>        
     {% endif %}
     {% if next %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ next }}" />{% endif %}
-    {% include "horizon/common/_form_fields.html" %}
+    {% include "horizon/common/fogbow_form_fields.html" %}
   </fieldset>
 {% endblock %}
 
