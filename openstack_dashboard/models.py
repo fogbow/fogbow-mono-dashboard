@@ -118,23 +118,10 @@ def checkUserAuthenticated(token):
         return False    
     return True
 
-# def checkUserAuthenticatedLocalToken(token):    
-#     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
-#     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.TOKEN_TERM) ,
-#                                    headers=headers, timeout=10)
-#     
-#     responseStr = response.text
-# 
-#     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
-#         return False    
-#     return True
-
 def doRequest(method, endpoint, additionalHeaders, request):
-    #token = request.session.get('token','').id
     token = request.user.token.id
     localToken = ''
     try:
-#         localToken = request.session.get('localToken','').id
         localToken = request.user.localToken.id
     except:
         localToken = token
@@ -163,7 +150,7 @@ def doRequest(method, endpoint, additionalHeaders, request):
     return response
 
 def isResponseOk(responseStr):
-    if 'Unauthorized' not in responseStr and 'Bad Request' not in responseStr and 'Authentication required.' not in responseStr:
+    if 'Unauthorized' not in responseStr and 'Bad Request' not in responseStr and 'Authentication required.' not in responseStr and 'NullPointerException' not in responseStr:
         return True
     return False    
 
