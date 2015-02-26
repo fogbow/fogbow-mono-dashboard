@@ -57,10 +57,11 @@ class FogbowBackend(object):
         user = User('', federatioToken, '', {}, localToken=localToken)
         
         try:            
-            if checkUserAuthenticated(localToken, localFormType, localEndpoint) == False:
-                LOG.error('Local Token is Invalid')
-                user.errors = True
-                user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)        
+            if tokenStr != localTokenStr:
+                if checkUserAuthenticated(localToken, localFormType, localEndpoint) == False:
+                    LOG.error('Local Token is Invalid')
+                    user.errors = True
+                    user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)        
             
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')
@@ -97,7 +98,7 @@ def getToken(endpoint, credentials, type):
         credentialsStr += '-D%s=%s ' % (key, credentials[key])
       
     command = '%s token --create -DauthUrl=%s %s --type %s' % (FOGBOW_CLI_JAVA_COMMAND, endpoint,
-                                                                credentialsStr, type)
+                                                                credentialsStr, type)    
     
     reponseStr = commands.getoutput(command)
   
@@ -107,12 +108,12 @@ def getToken(endpoint, credentials, type):
     return reponseStr
 
 def checkUserAuthenticated(token, type, endpoint):
-    if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE or type == fogbow_models.IdentityPluginConstants.AUTH_TOKEN :
+    if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE :
         type = 'openstack'
     
     command = '%s token --check -DauthUrl=%s --type %s --token %s' % (FOGBOW_CLI_JAVA_COMMAND,
                                  endpoint, type, token.id)
-     
+         
     responseStr = commands.getoutput(command) 
  
     if 'Unauthorized' in responseStr:
@@ -130,7 +131,9 @@ def getCorrectToken(formAuthType, credentials, endpoint):
             auxList = {'token': tokenStr}
             tokenStr = auxList['token'].replace('\r\n', '')
         elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
-            tokenStr = getToken(endpoint, credentials, formAuthType)     
+            tokenStr = getToken(endpoint, credentials, formAuthType)
+            print 'cabrasafado'     
+            print tokenStr
         elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
             tokenStr = getToken(endpoint, credentials, 'openstack')
     except:

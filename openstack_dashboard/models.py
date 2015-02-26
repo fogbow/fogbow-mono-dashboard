@@ -127,10 +127,6 @@ def doRequest(method, endpoint, additionalHeaders, request):
     except:
         localToken = federationToken
     
-    print federationToken
-    print '-------------------------------------------------------#'
-    print localToken
-    
     headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : localToken}    
 #     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
