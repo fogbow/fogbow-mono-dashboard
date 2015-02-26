@@ -6,6 +6,7 @@ from django.core.urlresolvers import reverse  # noqa
 from django.conf import settings
 import requests
 from horizon import tables
+from horizon import messages
 
 import openstack_dashboard.models as fogbow_models
 
@@ -25,7 +26,9 @@ class TerminateInstance(tables.BatchAction):
 
     def action(self, request, obj_id):
         self.current_past_action = 0                
-        r = fogbow_models.doRequest('delete',COMPUTE_TERM + obj_id, None, request)        
+        response = fogbow_models.doRequest('delete',COMPUTE_TERM + obj_id, None, request)
+        if fogbow_models.isResponseOk(response.text) == False:
+            messages.error(request, _('Is was not possible to delete : %s') % obj_id)          
 
 def get_instance_id(request):
     if 'null' not in request.instanceId:

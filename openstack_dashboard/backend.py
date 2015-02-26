@@ -47,24 +47,26 @@ class FogbowBackend(object):
             localTokenStr = getCorrectToken(settings.FOGBOW_LOCAL_AUTH_TYPE, localCredentials, localEndpoint)             
         else:
             localTokenStr = tokenStr            
-                        
-        print localTokenStr
+            
+        LOG.info('Federation Token : %s' % tokenStr)
+        LOG.info('Local Token : %s' % localTokenStr)        
                         
         federatioToken = Token(tokenStr)
         localToken = Token(localTokenStr)             
         
         user = User('', federatioToken, '', {}, localToken=localToken)
         
-        try:
-            if checkUserAuthenticatedLocalToken(localToken, localFormType, localEndpoint) == False:
+        try:            
+            if checkUserAuthenticated(localToken, localFormType, localEndpoint) == False:
+                LOG.error('Local Token is Invalid')
                 user.errors = True
                 user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)        
             
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
+                LOG.error('Federation Token is Invalid')
                 user.errors = True
                 user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)                
         except Exception,e: 
-            print str(e) 
             user.errors = True
             user.typeError = 'Manager connection failed.'
         
@@ -104,7 +106,7 @@ def getToken(endpoint, credentials, type):
       
     return reponseStr
 
-def checkUserAuthenticatedLocalToken(token, type, endpoint):
+def checkUserAuthenticated(token, type, endpoint):
     if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE or type == fogbow_models.IdentityPluginConstants.AUTH_TOKEN :
         type = 'openstack'
     
@@ -118,18 +120,21 @@ def checkUserAuthenticatedLocalToken(token, type, endpoint):
     return True
 
 def getCorrectToken(formAuthType, credentials, endpoint):
-    if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
-        tokenStr = credentials[formAuthType]
-        auxList = {'token': tokenStr}
-        tokenStr = auxList['token'].replace('\r\n', '')
-    elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS:
-        tokenStr = credentials[formAuthType]
-        auxList = {'token': tokenStr}
-        tokenStr = auxList['token'].replace('\r\n', '')
-    elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
-        tokenStr = getToken(endpoint, credentials, formAuthType)     
-    elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
-        tokenStr = getToken(endpoint, credentials, 'openstack')
+    try:
+        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
+            tokenStr = credentials[formAuthType]
+            auxList = {'token': tokenStr}
+            tokenStr = auxList['token'].replace('\r\n', '')
+        elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS:
+            tokenStr = credentials[formAuthType]
+            auxList = {'token': tokenStr}
+            tokenStr = auxList['token'].replace('\r\n', '')
+        elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
+            tokenStr = getToken(endpoint, credentials, formAuthType)     
+        elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
+            tokenStr = getToken(endpoint, credentials, 'openstack')
+    except:
+        tokenStr = None
     
     return tokenStr 
 

@@ -107,8 +107,9 @@ def getErrorMessage(typeToken):
         errorStr = 'VOMS certificate proxy is invalid.'
     return errorStr 
 
-def checkUserAuthenticated(token):    
-    headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
+def checkUserAuthenticated(token):
+#     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
+    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token.id , 'X-Local-Auth-Token' : token.id}
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers, timeout=10)    
     
@@ -119,14 +120,18 @@ def checkUserAuthenticated(token):
     return True
 
 def doRequest(method, endpoint, additionalHeaders, request):
-    token = request.user.token.id
+    federationToken = request.user.token.id
     localToken = ''
     try:
         localToken = request.user.localToken.id
     except:
-        localToken = token
+        localToken = federationToken
     
-    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token, 'X-Local-Auth-Token' : localToken}    
+    print federationToken
+    print '-------------------------------------------------------#'
+    print localToken
+    
+    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : localToken}    
 #     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
@@ -145,8 +150,10 @@ def doRequest(method, endpoint, additionalHeaders, request):
     
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
         messages.error(request, _('Token Unauthorized.'))
+        LOG.error(responseStr)
     elif 'Bad Request' in responseStr:
         messages.error(request, _('Bad Request.'))
+        LOG.error(responseStr)
     return response
 
 def isResponseOk(responseStr):

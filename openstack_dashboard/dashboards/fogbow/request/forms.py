@@ -31,9 +31,7 @@ class CreateRequest(forms.SelfHandlingForm):
                            validators=[validators.validate_slug],
                            initial='1')
     flavor = forms.ChoiceField(label=_('Flavor'),
-                               help_text=_('Flavor Fogbow'))    
-#     image = forms.ChoiceField(label=_('Image'),
-#                                help_text=_('Image Fogbow'))
+                               help_text=_('Flavor Fogbow'))
     image = forms.CharField(label=_('Image'),
                            error_messages={
                                'required': _('This field is required.'),

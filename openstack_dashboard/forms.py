@@ -25,10 +25,12 @@ class AllForm(django_auth_forms.AuthenticationForm):
         localFields = getFieldsPerFormType(localAuthType, LOCAL_TYPE_FORM)
         
         federationAuthType = settings.FOGBOW_FEDERATION_AUTH_TYPE
-        federationFields = getFieldsPerFormType(federationAuthType, FEDERATION_TYPE_FORM)                                                                
-                     
-        self.listFields = federationFields.getFields()
-        self.listFields.update(localFields.getFields()) 
+        federationFields = getFieldsPerFormType(federationAuthType, FEDERATION_TYPE_FORM)                                               
+        
+        requiredTrue = True
+        requiredFalse = False
+        self.listFields = federationFields.getFields(requiredTrue)
+        self.listFields.update(localFields.getFields(requiredFalse)) 
         
         listOr = [];
         listOr.extend(federationFields.getOrderFields())
@@ -75,12 +77,12 @@ class KeystoneFields():
         self.password = 'password' + type
         self.tenantName = 'tenantName' + type
             
-    def getFields(self):
+    def getFields(self, required):
         listFields = {}
-        listFields[self.username] = forms.CharField(label=_("Username"), required=False)
+        listFields[self.username] = forms.CharField(label=_("Username"), required=required)
         listFields[self.password] = forms.CharField(label=_("Password"),
-                               widget=forms.PasswordInput(render_value=False), required=False)
-        listFields[self.tenantName] = forms.CharField(label=_("Tenant Name"), required=False)
+                               widget=forms.PasswordInput(render_value=False), required=required)
+        listFields[self.tenantName] = forms.CharField(label=_("Tenant Name"), required=required)
         return listFields
     
     def getOrderFields(self):
@@ -94,10 +96,10 @@ class VOMSFields():
         #self.type = type
         self.voms = 'voms' + type  
             
-    def getFields(self):
+    def getFields(self, required):
         listFields = {} 
         listFields[self.voms] = forms.CharField( label=_("Proxy Certificate"), 
-                            widget=forms.Textarea, required=False)
+                            widget=forms.Textarea, required=required)
         return listFields
 
     def getOrderFields(self):
@@ -112,10 +114,10 @@ class OpennebulaFields():
         self.username = 'username' + type
         self.password = 'password' + type
             
-    def getFields(self):
+    def getFields(self, required):
         listFields = {}
         listFields[self.username] = forms.CharField(label=_("User Name"),
-            widget=forms.TextInput(attrs={"autofocus": "autofocus"}), required=False)
+            widget=forms.TextInput(attrs={"autofocus": "autofocus"}), required=required)
         listFields[self.password] = forms.CharField(label=_("Password"),
                                    widget=forms.PasswordInput(render_value=False),
                                    required=False)
@@ -132,10 +134,10 @@ class TokenFields():
         #self.type = type
         self.token = 'token' + type  
             
-    def getFields(self):
+    def getFields(self, required):
         listFields = {} 
         listFields[self.token] = forms.CharField( label=_("Token"), 
-                            widget=forms.Textarea, required=False)
+                            widget=forms.Textarea, required=required)
         return listFields
     
     def getOrderFields(self):
