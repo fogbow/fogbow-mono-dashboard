@@ -13,6 +13,7 @@ from openstack_dashboard.dashboards.fogbow.members \
     import models as project_models
 
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
+MAX_VALUE = 2000000000
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.MembersTable
@@ -77,11 +78,24 @@ class IndexView(tables.DataTableView):
                     memIdle = float(value)
                 elif any("memInUse" in s for s in values):
                     memInUse = float(value)                                         
-                      
+            
+            normalized_flavours = []
+            for flavour in flavors:
+               if memIdle > MAX_VALUE and cpuIdle > MAX_VALUE:
+                    split_flavour = flavour.split(',')
+                    normalized_flavours.append('%s, %s=%s' % (split_flavour[0], 
+							      split_flavour[1].strip().split('=')[0], 
+                                                              'No limit'))
+               else:
+                    normalized_flavours.append(flavour)
+                 
             if id != None:                                                  
-                member = {'id': id , 'idMember' : id, 'cpuIdle': cpuIdle, 'cpuInUse': 
-                          cpuInUse , 'memIdle': memIdle, 'memInUse': memInUse, 
-                          'flavors' : '; '.join(flavors)}
+                member = {'id': id , 'idMember' : id, 
+                          'cpuIdle': 'No limit' if cpuIdle > MAX_VALUE else cpuIdle, 
+                          'cpuInUse': cpuInUse , 
+                          'memIdle': 'No limit' if memIdle > MAX_VALUE else memIdle, 
+                          'memInUse': memInUse, 
+                          'flavors' : '; '.join(normalized_flavours)}
                 members.append(Member(member));                
             
             memInUseTotal += memInUse
