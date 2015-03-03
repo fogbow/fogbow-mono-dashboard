@@ -34,6 +34,8 @@ class FogbowConstants():
     FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id' 
 
 class IdentityPluginConstants():
+    AUTH_RAW_KEYSTONE = 'raw_keystone'
+    AUTH_RAW_OPENNEBULA = 'raw_opennebula'
     AUTH_KEYSTONE = 'keystone'
     AUTH_TOKEN = 'token'
     AUTH_OPENNEBULA = 'opennebula'
@@ -92,7 +94,11 @@ def getTitle(typeToken):
     elif typeToken == IdentityPluginConstants.AUTH_OPENNEBULA:
         title = 'Opennebula'        
     elif typeToken == IdentityPluginConstants.AUTH_VOMS:
-        title = 'VOMS'                        
+        title = 'VOMS'      
+    elif typeToken == IdentityPluginConstants.AUTH_RAW_KEYSTONE:
+        title = 'Raw Keystone'      
+    elif typeToken == IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
+        title = 'Raw Opennebula'                                        
     return title
 
 def getErrorMessage(typeToken):
@@ -105,6 +111,10 @@ def getErrorMessage(typeToken):
         errorStr = 'Opennebula credentials are invalid.'        
     elif typeToken == IdentityPluginConstants.AUTH_VOMS:
         errorStr = 'VOMS certificate proxy is invalid.'
+    elif typeToken == IdentityPluginConstants.AUTH_RAW_KEYSTONE:
+        errorStr = 'Raw keystone is invalid.'   
+    elif typeToken == IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
+        errorStr = 'Raw opennebula is invalid.'                 
     return errorStr 
 
 def checkUserAuthenticated(token):

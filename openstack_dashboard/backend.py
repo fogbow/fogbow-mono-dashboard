@@ -18,11 +18,11 @@ LOG = logging.getLogger(__name__)
 
 FOGBOW_CLI_JAVA_COMMAND = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'
 
-def getUsernameLocalCloud(localToken):
+def getUsernameLocalCloud(localToken, type):
     localEndpoint = settings.FOGBOW_LOCAL_AUTH_ENDPOINT
-    command = '%s token --info -DauthUrl=%s --token %s' % (FOGBOW_CLI_JAVA_COMMAND, 
-                                                            localEndpoint, localToken.id);        
-        
+    command = '%s token --info -DauthUrl=%s --type %s --token %s' % (FOGBOW_CLI_JAVA_COMMAND, 
+                                                            localEndpoint, type, localToken.id);        
+    
     responseStr = commands.getoutput(command)    
     
     fieldSought = 'User:'
@@ -79,7 +79,7 @@ class FogbowBackend(object):
         user = User('', federatioToken, '', {}, localToken=localToken)
         
         try:            
-            if tokenStr != localTokenStr:
+            if tokenStr != localTokenStr:                
                 if checkUserAuthenticated(localToken, localFormType, localEndpoint) == False:
                     LOG.error('Local Token is Invalid')
                     user.errors = True
@@ -96,7 +96,8 @@ class FogbowBackend(object):
         request.user = user
         local_token_id = uuid.uuid4()
         federation_token_id = uuid.uuid4()
-        request.session['username'] = getUsernameLocalCloud(localToken)         
+        localFormType = getCorrectType(localFormType)        
+        request.session['username'] = getUsernameLocalCloud(localToken, localFormType)         
         request.session['token'] = federation_token_id
         request.session['localToken'] = local_token_id
         self._cached_tokens[local_token_id] = localToken
@@ -131,8 +132,11 @@ def getToken(endpoint, credentials, type):
     return reponseStr
 
 def checkUserAuthenticated(token, type, endpoint):
-    if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE :
-        type = 'openstack'
+#     if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE or type == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE:
+#         type = 'openstack'
+#     elif type == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
+#         type = 'opennebula'
+    type = getCorrectType(type)
     
     command = '%s token --check -DauthUrl=%s --type %s --token %s' % (FOGBOW_CLI_JAVA_COMMAND,
                                  endpoint, type, token.id)
@@ -143,9 +147,16 @@ def checkUserAuthenticated(token, type, endpoint):
         return False    
     return True
 
+def getCorrectType(type):
+    if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE or type == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE:
+        return 'openstack'
+    elif type == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
+        return 'opennebula'
+    return type
+
 def getCorrectToken(formAuthType, credentials, endpoint):
     try:
-        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
+        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE:
             tokenStr = credentials[formAuthType]
             auxList = {'token': tokenStr}
             tokenStr = auxList['token'].replace('\r\n', '')
@@ -155,8 +166,6 @@ def getCorrectToken(formAuthType, credentials, endpoint):
             tokenStr = auxList['token'].replace('\r\n', '')
         elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
             tokenStr = getToken(endpoint, credentials, formAuthType)
-            print 'cabrasafado'     
-            print tokenStr
         elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
             tokenStr = getToken(endpoint, credentials, 'openstack')
     except:

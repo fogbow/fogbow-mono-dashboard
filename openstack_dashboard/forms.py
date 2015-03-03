@@ -139,6 +139,38 @@ class TokenFields():
     def getOrderFields(self):
         return [self.token]
     
+class RawKeystoneFields():    
+    type = None
+    
+    def __init__(self, type):
+        self = self
+        self.raw_keystone = 'raw_keystone' + type  
+            
+    def getFields(self, required):
+        listFields = {} 
+        listFields[self.raw_keystone] = forms.CharField( label=_("Raw Keystone"), 
+                            widget=forms.Textarea, required=required)
+        return listFields
+    
+    def getOrderFields(self):
+        return [self.raw_keystone]    
+    
+class RawOpennebulaFields():    
+    type = None
+    
+    def __init__(self, type):
+        self = self
+        self.raw_opennebula = 'raw_opennebula' + type  
+            
+    def getFields(self, required):
+        listFields = {} 
+        listFields[self.raw_opennebula] = forms.CharField( label=_("Raw Opennebula"), 
+                            widget=forms.Textarea, required=required)
+        return listFields
+    
+    def getOrderFields(self):
+        return [self.raw_opennebula]        
+    
 def throwErrorMessage(self, message):
     self.error_messages.update({'invalid_login_fogbow':_(message)})
     LOG.warning('Invalid Login.')
@@ -153,6 +185,11 @@ def getFieldsPerFormType(valueAuthType, authType):
     elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN:
         fields = TokenFields(authType)
     elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
-        fields = OpennebulaFields(authType) 
+        fields = OpennebulaFields(authType)
+    elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE:
+        fields = RawKeystoneFields(authType)         
+    elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
+        fields = RawOpennebulaFields(authType)         
+
     return fields
         
