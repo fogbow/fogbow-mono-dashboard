@@ -72,7 +72,6 @@ class KeystoneFields():
     
     def __init__(self, type):
         self = self        
-        #self.type = type
         self.username = 'username' + type
         self.password = 'password' + type
         self.tenantName = 'tenantName' + type
@@ -93,7 +92,6 @@ class VOMSFields():
     
     def __init__(self, type):
         self = self
-        #self.type = type
         self.voms = 'voms' + type  
             
     def getFields(self, required):
@@ -109,8 +107,7 @@ class OpennebulaFields():
     type = None
     
     def __init__(self, type):
-        self = self
-        #self.type = type  
+        self = self  
         self.username = 'username' + type
         self.password = 'password' + type
             
@@ -131,7 +128,6 @@ class TokenFields():
     
     def __init__(self, type):
         self = self
-        #self.type = type
         self.token = 'token' + type  
             
     def getFields(self, required):
@@ -159,164 +155,4 @@ def getFieldsPerFormType(valueAuthType, authType):
     elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_OPENNEBULA:
         fields = OpennebulaFields(authType) 
     return fields
-    
-# class OpennebulaForm(django_auth_forms.AuthenticationForm):
-#     #endpoint = forms.CharField(label=_("Endpoint"),
-#     #widget=forms.TextInput(attrs={"autofocus": "autofocus"}))
-#     username = forms.CharField(label=_("User Name"),
-#         widget=forms.TextInput(attrs={"autofocus": "autofocus"}))
-#     password = forms.CharField(label=_("Password"),
-#                                widget=forms.PasswordInput(render_value=False))
-#     federation = forms.CharField( label=_("Federation"), widget=forms.Textarea, 
-#                                   required=False )        
-#      
-#     def __init__(self, *args, **kwargs):
-#         super(OpennebulaForm, self).__init__(*args, **kwargs)
-#         self.fields.keyOrder = ['federation', 'username', 'password']
-#  
-#     @sensitive_variables()
-#     def clean(self):        
-#         opennebulaEndpoint = settings.FOGBOW_LOCAL_AUTH_ENDPOINT
-#         #opennebulaEndpoint = self.cleaned_data.get('endpoint')
-#         username = self.cleaned_data.get('username')
-#         password = self.cleaned_data.get('password')
-#           
-#         opennebulaCredentials = {'username':username, 'password':password} 
-#               
-#         self.user_cache = authenticate(request=self.request, formType=FORM_TYPE_OPENNEBULA,
-#                                 credentials=opennebulaCredentials, endpoint=opennebulaEndpoint)
-#         
-#         if self.user_cache.errors == True:
-#             throwErrorMessage(self, _('Invalid Opennebula Credentials'))
-#         
-#         LOG.info('Successful login')
-#         
-#         return self.cleaned_data
-# 
-# class TokenForm(django_auth_forms.AuthenticationForm):
-#     token = forms.CharField( label=_("Token"), widget=forms.Textarea )
-#     
-#     def __init__(self, *args, **kwargs):
-#         super(TokenForm, self).__init__(*args, **kwargs)
-#         self.fields.keyOrder = ['token']
-#         
-#     @sensitive_variables()
-#     def clean(self):        
-#         token = self.cleaned_data.get('token')
-#         
-#         tokenCredentials = {'token':token}
-#         
-#         self.user_cache = authenticate(request=self.request, formType=FORM_TYPE_TOKEN,
-#                                         credentials=tokenCredentials)        
-#         
-#         if self.user_cache.errors == True:
-#             throwErrorMessage(self, _('Invalid Token'))
-#         LOG.info('Successful login')
-#         
-#         return self.cleaned_data
-# 
-# class VomsForm(django_auth_forms.AuthenticationForm):
-# 
-#     serverName = forms.CharField(label=_('Server Name'))
-#     password = forms.CharField(label=_('Password'),
-#                                widget=forms.PasswordInput(render_value=False))
-#     pathUserCred = forms.FileField(label=_('User Credentials'), required=False)
-#     pathUserKey = forms.FileField(label=_('User Key'), required=False)
-#                                
-#     
-#     def __init__(self, *args, **kwargs):
-#         super(VomsForm, self).__init__(*args, **kwargs)
-#         self.fields.keyOrder = ['serverName', 'password', 'pathUserCred', 'pathUserKey']
-#                 
-#     @sensitive_variables()
-#     def clean(self):
-#         serverName = self.cleaned_data.get('serverName')
-#         password = self.cleaned_data.get('password')
-#         pathUserCred = self.cleaned_data.get('pathUserCred')
-#         pathUserKey = self.cleaned_data.get('pathUserKey')        
-#         
-#         # Implement ...
-#         vomsCredentials = {'voms':''}
-#         
-#         self.user_cache = authenticate(request=self.request, formType=FORM_TYPE_VOMS,
-#                                         credentials=vomsCredentials)
-#         
-#         if self.user_cache.errors == True:
-#             throwErrorMessage(self, _('Invalid Voms Proxy Init'))
-#         
-#         LOG.info('Successful login')
-#         
-#         return self.cleaned_data
-#     
-# class KeystoneFogbow(django_auth_forms.AuthenticationForm):
-#     
-#     region = forms.ChoiceField(label=_("Region"), required=False)
-#     #endpoint = forms.CharField(label=_("Endpoint"))
-#     username = forms.CharField(
-#         label=_("User Name"),
-#         widget=forms.TextInput(attrs={"autofocus": "autofocus",}))
-#     password = forms.CharField(label=_("Password"),
-#                                widget=forms.PasswordInput(render_value=False))
-#     federation = forms.CharField( label=_("Federation"), widget=forms.Textarea, 
-#                                   required=False )
-#     
-#     tenantName = forms.CharField(label=_("Tenant Name"))
-# 
-#     def __init__(self, *args, **kwargs):
-#         super(KeystoneFogbow, self).__init__(*args, **kwargs)
-#         self.fields.keyOrder = ['federation', 'username', 'password', 'tenantName', 'region']
-#         #self.fields.keyOrder = ['endpoint', 'username', 'password', 'tenantName', 'federation', 'region']
-#         if getattr(settings,
-#                    'OPENSTACK_KEYSTONE_MULTIDOMAIN_SUPPORT',
-#                    False):
-#             self.fields['domain'] = forms.CharField(label=_("Domain"),
-#                                                     required=True)
-#             self.fields.keyOrder = ['domain', 'username', 'password', 'region']
-#         self.fields['region'].choices = self.get_region_choices()
-#         if len(self.fields['region'].choices) == 1:
-#             self.fields['region'].initial = self.fields['region'].choices[0][0]
-#             self.fields['region'].widget = forms.widgets.HiddenInput()
-# 
-#     @staticmethod
-#     def get_region_choices():
-#         default_region = (settings.OPENSTACK_KEYSTONE_URL, "Default Region")
-#         return getattr(settings, 'AVAILABLE_REGIONS', [default_region])
-# 
-#     @sensitive_variables()
-#     def clean(self):
-#         default_domain = getattr(settings,
-#                                  'OPENSTACK_KEYSTONE_DEFAULT_DOMAIN',
-#                                  'Default')
-#         
-#         endpoint = settings.FOGBOW_LOCAL_AUTH_ENDPOINT
-#         #endpoint = self.cleaned_data.get('endpoint')
-#         newEndpoint = '%s/v2.0' % endpoint           
-#         
-#         federation = self.cleaned_data.get('federation')
-#         username = self.cleaned_data.get('username')
-#         password = self.cleaned_data.get('password')
-#         tenantName = self.cleaned_data.get('tenantName')
-#         region = self.cleaned_data.get('region')
-#         domain = self.cleaned_data.get('domain', default_domain)
-# 
-#         if not (username and password and endpoint):
-#             return self.cleaned_data
-# 
-#         try:
-#             self.user_cache = authenticate(request=self.request,
-#                                            username=username,
-#                                            password=password,
-#                                            user_domain_name=domain,
-#                                            auth_url=newEndpoint,
-#                                            tenantName = tenantName)            
-#             
-#             msg = 'Login successful for user "%(username)s".' % {'username': username}
-#             LOG.info(msg)
-#         except exceptions.KeystoneAuthException as exc:
-#             msg = 'Login failed for user "%(username)s".' % {'username': username}
-#             LOG.warning(msg)
-#             self.request.session.flush()
-#             raise forms.ValidationError(exc)
-#         if hasattr(self, 'check_for_test_cookie'):
-#             self.check_for_test_cookie()
-#         return self.cleaned_data    
+        

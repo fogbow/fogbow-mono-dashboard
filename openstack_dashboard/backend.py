@@ -18,18 +18,40 @@ LOG = logging.getLogger(__name__)
 
 FOGBOW_CLI_JAVA_COMMAND = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'
 
+def getUsernameLocalCloud(localToken):
+    localEndpoint = settings.FOGBOW_LOCAL_AUTH_ENDPOINT
+    command = '%s token --info -DauthUrl=%s --token %s' % (FOGBOW_CLI_JAVA_COMMAND, 
+                                                            localEndpoint, localToken.id);        
+        
+    responseStr = commands.getoutput(command)    
+    
+    fieldSought = 'User:'
+    if responseStr != 'No Result':
+        try:
+            tokenInfo = responseStr.split(',')
+            for info in tokenInfo:
+                if fieldSought in info:
+                    return info.replace(fieldSought, '').strip()
+        except:
+            return 'None'
+    else:
+        return 'None'
+    
 class FogbowBackend(object):
   
     _cached_tokens = {}
+    _username = 'None'
     DEFAULT_FOGBOW_NAME = 'Fogbow User'
   
     def check_auth_expiry(self, user, margin=None):
         return True
-  
+          
     def get_user(self, user_id):     
         federationToken = self._cached_tokens[self.request.session['token']]
-        localToken = self._cached_tokens[self.request.session['localToken']]
-        return User('fogbow', federationToken, self.DEFAULT_FOGBOW_NAME, {}, localToken)
+        localToken = self._cached_tokens[self.request.session['localToken']]                    
+        
+        return User('fogbow', federationToken, self.request.session['username'],
+                     {}, localToken)
   
     def authenticate(self, request, localCredentials, federationCredentials,
                       localEndpoint=None, federationEndpoint=None):
@@ -69,15 +91,16 @@ class FogbowBackend(object):
                 user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)                
         except Exception,e: 
             user.errors = True
-            user.typeError = 'Manager connection failed.'
+            user.typeError = 'Manager connection failed.'        
         
         request.user = user
-        federation_token_id = uuid.uuid4()
         local_token_id = uuid.uuid4()
+        federation_token_id = uuid.uuid4()
+        request.session['username'] = getUsernameLocalCloud(localToken)         
         request.session['token'] = federation_token_id
         request.session['localToken'] = local_token_id
-        self._cached_tokens[federation_token_id] = federatioToken
         self._cached_tokens[local_token_id] = localToken
+        self._cached_tokens[federation_token_id] = federatioToken
         return user
       
     def get_group_permissions(self, user, obj=None):
