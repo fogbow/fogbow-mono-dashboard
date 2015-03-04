@@ -629,3 +629,46 @@ msgstr ""
 msgid "instances"
 msgstr ""
 
+#: fogbow_form_fields:45.1
+msgid "Local Identity Plugin"
+msgstr ""
+
+#: fogbow_form_fields:14.1
+msgid "Federation Identity Plugin"
+msgstr ""
+
+#: fogbow_form_fields:14.2
+msgid "Mandatory"
+msgstr ""
+
+#: fogbow_form_fields:45.2
+msgid "Optional"
+msgstr ""
+
+#: models
+msgid "Logged in the local cloud as"
+msgstr ""
+
+#: models
+msgid "Keystone credentials are invalid."
+msgstr ""
+
+#: models
+msgid "Token invalid."
+msgstr ""
+
+#: models
+msgid "Opennebula credentials are invalid."
+msgstr ""
+
+#: models
+msgid "VOMS certificate proxy is invalid."
+msgstr "" 
+
+#: models
+msgid "Raw keystone is invalid."
+msgstr ""
+
+#: models
+msgid "Raw opennebula is invalid."
+msgstr ""

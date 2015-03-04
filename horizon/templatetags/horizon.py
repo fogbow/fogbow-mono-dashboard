@@ -58,7 +58,8 @@ def horizon_main_nav(context):
     return {'components': dashboards,
             'user': context['request'].user,
             'current': current_dashboard,
-            'request': context['request']}
+            'request': context['request'],
+            'showOnlyComponent' : _("Federation")}
 
 
 @register.inclusion_tag('horizon/_subnav_list.html', takes_context=True)

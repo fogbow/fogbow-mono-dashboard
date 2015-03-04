@@ -104,21 +104,20 @@ def getTitle(typeToken):
 def getErrorMessage(typeToken):
     errorStr = '' 
     if typeToken == IdentityPluginConstants.AUTH_KEYSTONE:
-        errorStr = 'Keystone credentials are invalid.'
+        errorStr = _('Keystone credentials are invalid.')
     elif typeToken == IdentityPluginConstants.AUTH_TOKEN:
-        errorStr = 'Token invalid.'
+        errorStr = _('Token invalid.')
     elif typeToken == IdentityPluginConstants.AUTH_OPENNEBULA:
-        errorStr = 'Opennebula credentials are invalid.'        
+        errorStr = _('Opennebula credentials are invalid.')        
     elif typeToken == IdentityPluginConstants.AUTH_VOMS:
-        errorStr = 'VOMS certificate proxy is invalid.'
+        errorStr = _('VOMS certificate proxy is invalid.')
     elif typeToken == IdentityPluginConstants.AUTH_RAW_KEYSTONE:
-        errorStr = 'Raw keystone is invalid.'   
+        errorStr = _('Raw keystone is invalid.')   
     elif typeToken == IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
-        errorStr = 'Raw opennebula is invalid.'                 
+        errorStr = _('Raw opennebula is invalid.')                 
     return errorStr 
 
 def checkUserAuthenticated(token):
-#     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id }
     headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token.id , 'X-Local-Auth-Token' : token.id}
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers, timeout=10)    
@@ -138,7 +137,6 @@ def doRequest(method, endpoint, additionalHeaders, request):
         localToken = federationToken
     
     headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : localToken}    
-#     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token}
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         

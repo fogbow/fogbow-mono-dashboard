@@ -557,7 +557,7 @@ msgstr "Criar Requisições"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html
 msgid "Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares"
-msgstr "Federação, oportunimos and ''greennes''"
+msgstr "Federação, oportunismo and ''greenness''"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:10
 msgid "Fogbow Dashboard"
@@ -651,3 +651,50 @@ msgstr "Credencial do Opennebula Inválida"
 msgid "Invalid Voms Proxy Init"
 msgstr "Voms Proxy init Inválido"
 
+#: fogbow_form_fields:45.1
+msgid "Local Identity Plugin"
+msgstr "Plugin de identidade local"
+
+#: fogbow_form_fields:14.2
+msgid "Mandatory"
+msgstr "Obrigatório"
+
+#: fogbow_form_fields:45.2
+msgid "Optional"
+msgstr "Opcional"
+
+#: models
+msgid "Logged in the local cloud as"
+msgstr "Logado na cloud local como"
+
+#: models
+msgid "Keystone credentials are invalid."
+msgstr "Credencias do Keystone estão inválidas."
+
+#: models
+msgid "Token invalid."
+msgstr "Token Inválido"
+
+#: models
+msgid "Opennebula credentials are invalid."
+msgstr "Credencias do Opennebula estão inválidas."
+
+#: models
+msgid "VOMS certificate proxy is invalid."
+msgstr "Certificado do VOMS está inválida." 
+
+#: models
+msgid "Raw keystone is invalid."
+msgstr "Raw Keystone está inválido."
+
+#: models
+msgid "Raw opennebula is invalid."
+msgstr "Raw Opennebula está inválido."
+
+#: models
+msgid "None"
+msgstr "Nenhum" 
+
+#: form
+msgid "Proxy Certificate"
+msgstr "Certificado Proxy" 

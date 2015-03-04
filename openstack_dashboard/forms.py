@@ -113,7 +113,7 @@ class OpennebulaFields():
             
     def getFields(self, required):
         listFields = {}
-        listFields[self.username] = forms.CharField(label=_("User Name"),
+        listFields[self.username] = forms.CharField(label=_("Username"),
             widget=forms.TextInput(attrs={"autofocus": "autofocus"}), required=required)
         listFields[self.password] = forms.CharField(label=_("Password"),
                                    widget=forms.PasswordInput(render_value=False),

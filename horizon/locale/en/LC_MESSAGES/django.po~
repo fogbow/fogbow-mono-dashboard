@@ -469,11 +469,11 @@ msgstr ""
 msgid "Cpu Idle"
 msgstr ""
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:5-10
 msgid "CPU Quota"
 msgstr "Available CPU Quota"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:7
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members:5-10
 msgid "Mem Quota"
 msgstr "Available Mem Quota"
 

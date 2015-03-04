@@ -33,14 +33,14 @@ def getUsernameLocalCloud(localToken, type):
                 if fieldSought in info:
                     return info.replace(fieldSought, '').strip()
         except:
-            return 'None'
+            return _('None')
     else:
-        return 'None'
+        return _('None')
     
 class FogbowBackend(object):
   
     _cached_tokens = {}
-    _username = 'None'
+    _username = _('None')
     DEFAULT_FOGBOW_NAME = 'Fogbow User'
   
     def check_auth_expiry(self, user, margin=None):
