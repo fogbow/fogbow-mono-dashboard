@@ -2,6 +2,7 @@ import netaddr
 import requests
 import openstack_dashboard.models as fogbow_models
 
+from django.core.validators import RegexValidator
 from django.core.urlresolvers import reverse 
 from django.core import validators
 from django.utils.translation import ugettext_lazy as _  
@@ -31,7 +32,21 @@ class CreateRequest(forms.SelfHandlingForm):
                            validators=[validators.validate_slug],
                            initial='1')
     flavor = forms.ChoiceField(label=_('Flavor'),
-                               help_text=_('Flavor Fogbow'))
+                               help_text=_('Flavor Fogbow'),
+                               required=False)
+    
+    cpu = forms.CharField(label=_('CPU'), initial=0,
+                          widget=forms.TextInput(),
+                          required=False)
+    mem = forms.CharField(label=_('MEM'), initial=0,
+                          widget=forms.TextInput(),
+                          required=False)
+    requirements_checkbox = forms.BooleanField(label=_('Advanced Requirements'),
+                                                      required=False)
+    advanced_requirements = forms.CharField(label=_('Requirements'),
+                           error_messages={'invalid': _('The string may only contain'
+                                            ' ASCII characters and numbers.')},
+                           required=False, widget=forms.Textarea)
     image = forms.CharField(label=_('Image'),
                            error_messages={
                                'required': _('This field is required.'),
@@ -52,16 +67,13 @@ class CreateRequest(forms.SelfHandlingForm):
         
         flavorChoices,imageChoices = [],[]
         resources = response.text.split('\n')
+        flavorChoices.append(('None', 'None'))
         for resource in resources:
             if SCHEME_FLAVOR_TERM in resource and 'fogbow' in resource:
                 resource = self.normalizeNameResource(resource)
-                flavorChoices.append((resource,resource))
-#             elif SCHEME_IMAGE_TERM in resource and 'fogbow' in resource:
-#                 resource = self.normalizeNameResource(resource)
-#                 imageChoices.append((resource,resource))
+                flavorChoices.append((resource, resource))
                                         
         self.fields['flavor'].choices = flavorChoices
-#         self.fields['image'].choices = imageChoices
 
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')
@@ -72,10 +84,30 @@ class CreateRequest(forms.SelfHandlingForm):
             if data['publicKey'].strip() is not None and data['publicKey'].strip(): 
                 publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'
                 publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
-                                    
-            headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind",%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin",%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
-                        % (data['flavor'].strip(), data['image'].strip(), publicKeyCategory),
-                       'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute)}
+            
+            advancedRequirements = ''
+            if data['advanced_requirements'] != '':
+                advancedRequirements = ',org.fogbowcloud.request.requirements=%s' % (data['advanced_requirements'])
+            elif data['cpu'] != '' or data['mem'] != '':
+                cpu, mem = '0', '0'
+                if  data['cpu'] != '':
+                    cpu = data['cpu']
+                if  data['mem'] != '':
+                    mem = data['mem']
+                
+                advancedRequirements = ',org.fogbowcloud.request.requirements=Glue2vCPU>=%s&&Glue2RAM>=%s' % (cpu, mem)
+            else:
+                advancedRequirements = ''
+            
+            categoryFlavor = ''
+            if data['flavor'] != 'None':
+                categoryFlavor = ',%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin"' % (data['flavor'])
+            else:
+                categoryFlavor = ''
+                
+            headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
+                        % (categoryFlavor, data['image'].strip(), publicKeyCategory),
+                       'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements)}            
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)                                                
             
