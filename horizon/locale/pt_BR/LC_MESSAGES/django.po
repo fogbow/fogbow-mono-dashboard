@@ -698,3 +698,11 @@ msgstr "Nenhum"
 #: form
 msgid "Proxy Certificate"
 msgstr "Certificado Proxy" 
+
+#: create requests form
+msgid "Requirements"
+msgstr "Requisitos" 
+
+#: create requests form
+msgid "Advanced Requirements"
+msgstr "Requisitos avançados" 

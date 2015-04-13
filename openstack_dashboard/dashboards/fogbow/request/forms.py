@@ -38,7 +38,7 @@ class CreateRequest(forms.SelfHandlingForm):
     cpu = forms.CharField(label=_('CPU'), initial=0,
                           widget=forms.TextInput(),
                           required=False)
-    mem = forms.CharField(label=_('MEM'), initial=0,
+    mem = forms.CharField(label=_('RAM'), initial=0,
                           widget=forms.TextInput(),
                           required=False)
     requirements_checkbox = forms.BooleanField(label=_('Advanced Requirements'),
@@ -67,7 +67,7 @@ class CreateRequest(forms.SelfHandlingForm):
         
         flavorChoices,imageChoices = [],[]
         resources = response.text.split('\n')
-        flavorChoices.append(('None', 'None'))
+        flavorChoices.append(('None', _('None')))
         for resource in resources:
             if SCHEME_FLAVOR_TERM in resource and 'fogbow' in resource:
                 resource = self.normalizeNameResource(resource)
