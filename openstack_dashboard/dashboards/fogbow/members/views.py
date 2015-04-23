@@ -52,22 +52,15 @@ class IndexView(tables.DataTableView):
         membersList = strResponse.split('\n')
         memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0
         for m in membersList:
-            print m
-            id, cpuIdle, cpuInUse, memIdle, memInUse = '-','0','0','0','0'             
+            id, cpuIdle, cpuInUse, memIdle, memInUse, InstanceIdle, InstanceInUse = '-','0','0','0','0','0','0'            
             memberProperties = m.split(';')
-            flavors = []
             
-            for properties in memberProperties:
-                if properties.startswith('flavor:'):
-                    flavor = properties.split(':')[1].strip()
-                    flavors.append(flavor.replace("'", '').replace('"', ''))
-                    continue
-                
+            for properties in memberProperties:                 
                 values = properties.split('=')
                 value = None
                 if len(values) > 1: 
                     value = values[1]
-                                        
+
                 if any("id" in s for s in values):
                     id = value
                 elif any("cpuIdle" in s for s in values): 
@@ -77,32 +70,27 @@ class IndexView(tables.DataTableView):
                 elif any("memIdle" in s for s in values): 
                     memIdle = float(value)
                 elif any("memInUse" in s for s in values):
-                    memInUse = float(value)                                         
-            
-            normalized_flavours = []
-            for flavour in flavors:
-               if memIdle > MAX_VALUE and cpuIdle > MAX_VALUE:
-                    split_flavour = flavour.split(',')
-                    normalized_flavours.append('%s, %s=%s' % (split_flavour[0], 
-							      split_flavour[1].strip().split('=')[0], 
-                                                              'No limit'))
-               else:
-                    normalized_flavours.append(flavour)
-                 
+                    memInUse = float(value)
+                elif any("instanceInUse" in s for s in values):
+                    InstanceInUse = float(value)
+                elif any("instanceIdle" in s for s in values):
+                    InstanceIdle = float(value)            
+
             if id != None:                                                  
                 member = {'id': id , 'idMember' : id, 
                           'cpuIdle': 'No limit' if cpuIdle > MAX_VALUE else cpuIdle, 
                           'cpuInUse': cpuInUse , 
                           'memIdle': 'No limit' if memIdle > MAX_VALUE else memIdle, 
                           'memInUse': memInUse, 
-                          'flavors' : '; '.join(normalized_flavours)}
+                          'InstanceInUse' : InstanceInUse,
+                          'InstanceIdle' : InstanceIdle}
                 members.append(Member(member));                
             
             memInUseTotal += memInUse
             memIdleTotal += memIdle
             cpuIdleTotal += cpuIdle
             cpuInUseTotal += cpuInUse
-            
+        
         self.setValuesContext(memIdleTotal, memInUseTotal, cpuIdleTotal, cpuInUseTotal)
         
         return members
