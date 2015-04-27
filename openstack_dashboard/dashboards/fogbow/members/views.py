@@ -72,9 +72,15 @@ class IndexView(tables.DataTableView):
                 elif any("memInUse" in s for s in values):
                     memInUse = float(value)
                 elif any("instancesInUse" in s for s in values):
-                    InstanceInUse = float(value)
+                    try:
+                        InstanceInUse = float(value)
+                    except Exception:
+                        InstanceInUse = 0
                 elif any("instancesIdle" in s for s in values):
-                    InstanceIdle = float(value)            
+                    try:
+                        InstanceIdle = float(value)
+                    except Exception:
+                        InstanceIdle = 0            
 
             if id != None:                                                  
                 member = {'id': id , 'idMember' : id, 
