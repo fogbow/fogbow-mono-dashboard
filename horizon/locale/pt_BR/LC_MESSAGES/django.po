@@ -705,4 +705,12 @@ msgstr "Requisitos"
 
 #: create requests form
 msgid "Advanced Requirements"
-msgstr "Requisitos avançados" 
+msgstr "Requisitos avançados"
+
+#: Tables member
+msgid "Instances in Use"
+msgstr "Instâncias em Uso"
+
+#: Tables member
+msgid "Instances Quota"
+msgstr "Cota de instância Disponível"
