@@ -8,8 +8,8 @@ class MembersTable(tables.DataTable):
     cpuInUse = tables.Column("cpuInUse", verbose_name=_("CPU In Use"))
     memIdle = tables.Column("memIdle", verbose_name=_("Mem Quota"))
     memInUse = tables.Column("memInUse", verbose_name=_("Mem In Use"))
-    InstanceInUse = tables.Column("InstanceInUse", verbose_name=_("Instance in Use"))
-    InstanceIdle = tables.Column("InstanceIdle", verbose_name=_("Instance Quota"))
+    InstanceInUse = tables.Column("InstanceInUse", verbose_name=_("Instances in Use"))
+    InstanceIdle = tables.Column("InstanceIdle", verbose_name=_("Instances Quota"))
 
     class Meta:
         name = "members"

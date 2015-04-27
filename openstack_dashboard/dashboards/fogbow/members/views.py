@@ -71,9 +71,9 @@ class IndexView(tables.DataTableView):
                     memIdle = float(value)
                 elif any("memInUse" in s for s in values):
                     memInUse = float(value)
-                elif any("instanceInUse" in s for s in values):
+                elif any("instancesInUse" in s for s in values):
                     InstanceInUse = float(value)
-                elif any("instanceIdle" in s for s in values):
+                elif any("instancesIdle" in s for s in values):
                     InstanceIdle = float(value)            
 
             if id != None:                                                  
