@@ -78,16 +78,23 @@ class CreateRequest(forms.SelfHandlingForm):
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')
 
+    def normalizeValueHeader(self, value):
+        try:
+            return value.replace('\n','').replace('\r','')
+        except Exception:
+            return ''
+
     def handle(self, request, data):
         try:
             publicKeyCategory, publicKeyAttribute = '',''             
             if data['publicKey'].strip() is not None and data['publicKey'].strip(): 
-                publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'
+                publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'                
                 publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
             
             advancedRequirements = ''
             if data['advanced_requirements'] != '':
                 advancedRequirements = ',org.fogbowcloud.request.requirements=%s' % (data['advanced_requirements'])
+                advancedRequirements = self.normalizeValueHeader(advancedRequirements)
             elif data['cpu'] != '' or data['mem'] != '':
                 cpu, mem = '0', '0'
                 if  data['cpu'] != '':
@@ -109,7 +116,7 @@ class CreateRequest(forms.SelfHandlingForm):
                         % (categoryFlavor, data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements)}            
 
-            response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)                                                
+            response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
                 messages.success(request, _('Requests created'))
