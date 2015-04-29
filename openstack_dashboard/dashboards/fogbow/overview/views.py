@@ -8,6 +8,7 @@ OPEN_STATUS_REQUEST = 'OPEN'
 CLOSED_STATUS_REQUEST = 'CLOSED'
 DELETED_STATUS_REQUEST = 'DELETED'
 FAILED_STATUS_REQUEST = 'FAILED'
+SPAWNING_STATUS_REQUEST = 'SPAWNING'
 TOTAL = 'TOTAL'
 
 class IndexView(views.APIView):
@@ -27,12 +28,14 @@ class IndexView(views.APIView):
             context['requestsClosed'] = 0
             context['requestsDeleted'] = 0
             context['requestsFailed'] = 0
+            context['requestsSpawning'] = 0
             context['requestsTotal'] = 0
             context['requestsOpenPercent'] = 0
             context['requestsClosedPercent'] = 0
             context['requestsFailedPercent'] = 0        
             context['requestsDeletedPercent'] = 0
-            context['requestsFullfieldPercent'] = 0           
+            context['requestsSpawningPercent'] = 0
+            context['requestsFullfieldPercent'] = 0     
                         
             return context
         
@@ -44,6 +47,7 @@ class IndexView(views.APIView):
         context['requestsClosed'] = mapCountRequests[CLOSED_STATUS_REQUEST]
         context['requestsDeleted'] = mapCountRequests[DELETED_STATUS_REQUEST]
         context['requestsFailed'] = mapCountRequests[FAILED_STATUS_REQUEST]
+        context['requestsSpawning'] = mapCountRequests[SPAWNING_STATUS_REQUEST]
         context['requestsTotal'] = mapCountRequests[TOTAL]        
         context['requestsOpenPercent'] = fogbow_models.calculatePercent(mapCountRequests[OPEN_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])
@@ -55,12 +59,14 @@ class IndexView(views.APIView):
                                                            mapCountRequests[TOTAL])
         context['requestsFullfieldPercent'] = fogbow_models.calculatePercent(mapCountRequests[FULFILLED_STATUS_REQUEST],
                                                            mapCountRequests[TOTAL])
+        context['requestsSpawningPercent'] = fogbow_models.calculatePercent(mapCountRequests[SPAWNING_STATUS_REQUEST],
+                                                           mapCountRequests[TOTAL])
         
         return context
        
 def getMapCountRequests(responseStr):
     requests = responseStr.split('\n')
-    requestsFullfield, requestsOpen, requestsClosed, requestsDeleted ,requestsFailed = 0, 0, 0, 0, 0
+    requestsFullfield, requestsOpen, requestsClosed, requestsDeleted ,requestsFailed, requestsSpawning = 0, 0, 0, 0, 0, 0
     for request in requests:
         if FULFILLED_STATUS_REQUEST in request:
             requestsFullfield += 1
@@ -72,10 +78,12 @@ def getMapCountRequests(responseStr):
             requestsDeleted += 1
         elif FAILED_STATUS_REQUEST in request:
             requestsFailed += 1
+        elif SPAWNING_STATUS_REQUEST in request:
+            requestsSpawning += 1            
             
-    totalRequest = requestsFullfield + requestsOpen + requestsClosed + requestsDeleted + requestsFailed
+    totalRequest = requestsFullfield + requestsOpen + requestsClosed + requestsDeleted + requestsFailed + requestsSpawning
     
     return {FULFILLED_STATUS_REQUEST: requestsFullfield, OPEN_STATUS_REQUEST: requestsOpen,
             CLOSED_STATUS_REQUEST: requestsClosed, DELETED_STATUS_REQUEST: requestsDeleted,
-            FAILED_STATUS_REQUEST: requestsFailed, TOTAL: totalRequest}
+            FAILED_STATUS_REQUEST: requestsFailed,SPAWNING_STATUS_REQUEST: requestsSpawning, TOTAL: totalRequest}
     

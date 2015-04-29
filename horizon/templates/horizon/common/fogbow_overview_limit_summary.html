@@ -9,6 +9,12 @@
      </strong>
     </div>
     <div class="d3_quota_bar">
+    <div class="d3_pie_chart" data-used="{{ requestsSpawningPercent }}" data-color="fogbow-color-yellow"></div>
+     <strong>{% trans "Requests Spawning" %} <br />
+         {% blocktrans with used=requestsSpawning available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+     </strong>
+    </div>    
+    <div class="d3_quota_bar">
     <div class="d3_pie_chart" data-used="{{ requestsOpenPercent }}" data-color="fogbow-color-blue"></div>
     <strong>{% trans "Requests Open" %} <br />
      {% blocktrans with used=requestsOpen available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}

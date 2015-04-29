@@ -515,6 +515,10 @@ msgstr "Requisições Deletadas"
 msgid "Requests Failed"
 msgstr "Requisições Falhas"
 
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:31
+msgid "Requests Spawning"
+msgstr "Requisições Sendo Criadas"
+
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:28
 msgid "Create Request"
 msgstr "Criar Requisições"
@@ -590,7 +594,7 @@ msgstr "FECHADO"
 msgid "OPEN"
 msgstr "ABERTO"
 
-msgid "FULLFIELD"
+msgid "FULFILLED"
 msgstr "ATENDIDO"
 
 msgid "FAILED"
@@ -598,6 +602,9 @@ msgstr "FALHO"
 
 msgid "DELETED"
 msgstr "DELETADO"
+
+msgid "SPAWNING"
+msgstr "CRIANDO"
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html

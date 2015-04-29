@@ -49,7 +49,10 @@ horizon.d3_pie_chart = {
           break;
       case "fogbow-color-gray":
     	  self.color = "#696969"
-          break;          
+          break;
+      case "fogbow-color-yellow":
+    	  self.color = "#FFF181"
+          break;    	      	      	  
       default:
           self.color = "#3C96CE"
       }
