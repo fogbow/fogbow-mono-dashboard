@@ -21,6 +21,7 @@ class FogbowConstants():
     MEMBER_TERM = '/members'
     RESOURCE_TERM = '/-/'
     TOKEN_TERM = '/token'
+    QUOTA_TERM = '/quota'
         
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
@@ -128,7 +129,7 @@ def checkUserAuthenticated(token):
         return False    
     return True
 
-def doRequest(method, endpoint, additionalHeaders, request):
+def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):    
     federationToken = request.user.token.id
     localToken = ''
     try:
@@ -150,13 +151,16 @@ def doRequest(method, endpoint, additionalHeaders, request):
             response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=5)
         responseStr = response.text
     except Exception:
-        messages.error(request, _('Problem communicating with the Manager.'))
+        if hiddenMessage == None:
+            messages.error(request, _('Problem communicating with the Manager.'))
     
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
-        messages.error(request, _('Token Unauthorized.'))
+        if hiddenMessage == None:
+            messages.error(request, _('Token Unauthorized.'))
         LOG.error(responseStr)
     elif 'Bad Request' in responseStr:
-        messages.error(request, _('Bad Request.'))
+        if hiddenMessage == None:
+            messages.error(request, _('Bad Request.'))
         LOG.error(responseStr)
     return response
 

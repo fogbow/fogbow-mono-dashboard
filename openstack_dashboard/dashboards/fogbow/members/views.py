@@ -13,6 +13,7 @@ from openstack_dashboard.dashboards.fogbow.members \
     import models as project_models
 
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
+QUOTA_TERM = fogbow_models.FogbowConstants.QUOTA_TERM
 MAX_VALUE = 2000000000
 
 class IndexView(tables.DataTableView):
@@ -35,6 +36,7 @@ class IndexView(tables.DataTableView):
     
     def get_data(self):           
         response = fogbow_models.doRequest('get', MEMBER_TERM, None, self.request)
+        responseQuota = fogbow_models.doRequest('get', QUOTA_TERM, None, self.request, hiddenMessage=True)   
         
         members = []
         self._more = False
@@ -43,9 +45,22 @@ class IndexView(tables.DataTableView):
                 
         responseStr = response.text
         if fogbow_models.isResponseOk(responseStr) == True:
+            responseStr = self.addUserLocalQuota(responseStr, responseQuota)
+                    
             members = self.getMembersList(responseStr)                              
 
         return members
+    
+    def addUserLocalQuota(self, responseStr, responseQuota):
+        if responseQuota != None:
+            resposenQuotaStr = responseQuota.text
+            username = self.request.session['username']
+            newUserQuotaRow = '\n%s;%s' % ('id=%s' % (username) , resposenQuotaStr)
+            if fogbow_models.isResponseOk(resposenQuotaStr) == True:
+                responseStr = responseStr + newUserQuotaRow
+        
+        return responseStr        
+        
     
     def getMembersList(self, strResponse):
         members = []
