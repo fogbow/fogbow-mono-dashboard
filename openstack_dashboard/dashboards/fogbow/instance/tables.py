@@ -45,7 +45,7 @@ class InstancesFilterAction(tables.FilterAction):
 
 class InstancesTable(tables.DataTable):
     instanceId = tables.Column(get_instance_id, link=("horizon:fogbow:instance:detail"),
-                                verbose_name=_("Instance ID"))
+                                verbose_name=_("Instance id"))
 
     class Meta:
         name = "instances"

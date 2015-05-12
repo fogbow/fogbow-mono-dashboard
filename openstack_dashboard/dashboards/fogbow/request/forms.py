@@ -41,7 +41,7 @@ class CreateRequest(forms.SelfHandlingForm):
     mem = forms.CharField(label=_('RAM'), initial=0,
                           widget=forms.TextInput(),
                           required=False)
-    requirements_checkbox = forms.BooleanField(label=_('Advanced Requirements'),
+    requirements_checkbox = forms.BooleanField(label=_('Advanced requirements'),
                                                       required=False)
     advanced_requirements = forms.CharField(label=_('Requirements'),
                            error_messages={'invalid': _('The string may only contain'
@@ -125,8 +125,8 @@ class CreateRequest(forms.SelfHandlingForm):
         except Exception:
             redirect = reverse("horizon:fogbow:request:index")
             exceptions.handle(request,
-                              _('Unable to create Requests.'),
-                              redirect=redirect)   
+                              _('Unable to create requests.'),
+                              redirect=redirect) 
             
     def returnFormatResponse(self, responseStr):      
         responseFormated = ''

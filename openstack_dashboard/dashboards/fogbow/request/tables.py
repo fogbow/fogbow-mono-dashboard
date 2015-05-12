@@ -25,7 +25,7 @@ class TerminateRequest(tables.BatchAction):
 
 class CreateRequest(tables.LinkAction):
     name = 'create'
-    verbose_name = _('Create Request')
+    verbose_name = _('Create request')
     url = 'horizon:fogbow:request:create'
     classes = ('ajax-modal', 'btn-create')
     
@@ -43,11 +43,11 @@ class RequestsFilterAction(tables.FilterAction):
                 if q in request.name.lower()]
 
 class RequestsTable(tables.DataTable):
-    requestId = tables.Column('requestId', verbose_name=_('Request ID'))
+    requestId = tables.Column('requestId', verbose_name=_('Request id'))
     state = tables.Column('state', verbose_name=_('State'))
     type = tables.Column('type', verbose_name=_('Type'))
     instanceId = tables.Column(get_instance_id, link=('horizon:fogbow:request:detail'),
-                                verbose_name=_('Instance ID'))    
+                                verbose_name=_('Instance id'))    
 
     class Meta:
         name = 'request'

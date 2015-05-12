@@ -97,25 +97,25 @@ def getTitle(typeToken):
     elif typeToken == IdentityPluginConstants.AUTH_VOMS:
         title = 'VOMS'      
     elif typeToken == IdentityPluginConstants.AUTH_RAW_KEYSTONE:
-        title = 'Raw Keystone'      
+        title = 'Raw keystone'      
     elif typeToken == IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
-        title = 'Raw Opennebula'                                        
+        title = 'Raw opennebula'                                        
     return title
 
 def getErrorMessage(typeToken):
     errorStr = '' 
     if typeToken == IdentityPluginConstants.AUTH_KEYSTONE:
-        errorStr = _('Keystone credentials are invalid.')
+        errorStr = _('Keystone credentials are invalid')
     elif typeToken == IdentityPluginConstants.AUTH_TOKEN:
-        errorStr = _('Token invalid.')
+        errorStr = _('Token invalid')
     elif typeToken == IdentityPluginConstants.AUTH_OPENNEBULA:
-        errorStr = _('Opennebula credentials are invalid.')        
+        errorStr = _('Opennebula credentials are invalid')        
     elif typeToken == IdentityPluginConstants.AUTH_VOMS:
-        errorStr = _('VOMS certificate proxy is invalid.')
+        errorStr = _('VOMS certificate proxy is invalid')
     elif typeToken == IdentityPluginConstants.AUTH_RAW_KEYSTONE:
-        errorStr = _('Raw keystone is invalid.')   
+        errorStr = _('Raw keystone is invalid')   
     elif typeToken == IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
-        errorStr = _('Raw opennebula is invalid.')                 
+        errorStr = _('Raw opennebula is invalid')                 
     return errorStr 
 
 def checkUserAuthenticated(token):
@@ -152,15 +152,15 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
         responseStr = response.text
     except Exception:
         if hiddenMessage == None:
-            messages.error(request, _('Problem communicating with the Manager.'))
+            messages.error(request, _('Problem communicating with the Manager'))
     
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
         if hiddenMessage == None:
-            messages.error(request, _('Token Unauthorized.'))
+            messages.error(request, _('Token unauthorized'))
         LOG.error(responseStr)
     elif 'Bad Request' in responseStr:
         if hiddenMessage == None:
-            messages.error(request, _('Bad Request.'))
+            messages.error(request, _('Bad request'))
         LOG.error(responseStr)
     return response
 

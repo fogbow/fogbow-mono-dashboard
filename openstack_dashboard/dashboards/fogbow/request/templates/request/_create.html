@@ -5,7 +5,7 @@
 {% block form_id %}create_security_group_form{% endblock %}
 {% block form_action %}{% url 'horizon:fogbow:request:create' %}{% endblock %}
 
-{% block modal-header %}{% trans "Create Requests" %}{% endblock %}
+{% block modal-header %}{% trans "Create requests" %}{% endblock %}
 {% block modal_id %}create_security_group_modal{% endblock %}
 
 {% block modal-body %}
@@ -16,11 +16,11 @@
 </div>
 <div class="right">
     <h3>{% trans "Description" %}:</h3>
-    <p>{% trans "Create Request" %}</p>
+    <p>{% trans "Create request" %}</p>
 </div>
 {% endblock %}
 
 {% block modal-footer %}
-  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create Requests" %}" />
+  <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create requests" %}" />
   <a href="{% url 'horizon:fogbow:request:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}

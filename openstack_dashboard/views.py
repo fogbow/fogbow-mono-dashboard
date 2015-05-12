@@ -11,10 +11,6 @@ from django.contrib.auth.decorators import login_required  # noqa
 from django.contrib.auth import views as django_auth_views
 from openstack_dashboard import forms
 from django.utils import functional
-# from openstack_dashboard.forms import TokenForm
-# from openstack_dashboard.forms import OpennebulaForm
-# from openstack_dashboard.forms import VomsForm
-# from openstack_dashboard.forms import KeystoneFogbow
 from openstack_dashboard.forms import AllForm
 from django.contrib import auth
 from openstack_dashboard import models as auth_user

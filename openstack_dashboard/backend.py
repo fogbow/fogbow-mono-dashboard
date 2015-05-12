@@ -132,10 +132,6 @@ def getToken(endpoint, credentials, type):
     return reponseStr
 
 def checkUserAuthenticated(token, type, endpoint):
-#     if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE or type == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE:
-#         type = 'openstack'
-#     elif type == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
-#         type = 'opennebula'
     type = getCorrectType(type)
     
     command = '%s token --check -DauthUrl=%s --type %s --token %s' % (FOGBOW_CLI_JAVA_COMMAND,

@@ -96,7 +96,7 @@ class VOMSFields():
             
     def getFields(self, required):
         listFields = {} 
-        listFields[self.voms] = forms.CharField( label=_("Proxy Certificate"), 
+        listFields[self.voms] = forms.CharField( label=_("Proxy certificate"), 
                             widget=forms.Textarea, required=required)
         return listFields
 

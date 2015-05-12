@@ -8,15 +8,16 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Endpoint Manager
-FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8183' # Mandatory
+#FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182' # Mandatory
+FOGBOW_MANAGER_ENDPOINT = 'http://150.165.85.159:8182' # Mandatory
 
-FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.85.80:2633/RPC2' # Mandatory
+FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.16:5000' # Mandatory
 # types : keystone, opennebula, raw_opennebula, raw_keystone
-FOGBOW_LOCAL_AUTH_TYPE = 'opennebula' # Mandatory
+FOGBOW_LOCAL_AUTH_TYPE = 'keystone' # Mandatory
 
-FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:2633/RPC2' # Mandatory
+FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.159:8182' # Mandatory
 # types : keystone, opennebula, voms, raw_opennebula, raw_keystone
-FOGBOW_FEDERATION_AUTH_TYPE = 'raw_opennebula' # Mandatory
+FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this

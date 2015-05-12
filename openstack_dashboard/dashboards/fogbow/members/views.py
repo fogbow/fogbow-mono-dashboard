@@ -104,7 +104,7 @@ class IndexView(tables.DataTableView):
                           'memIdle': 'No limit' if memIdle > MAX_VALUE else memIdle, 
                           'memInUse': memInUse, 
                           'InstanceInUse' : InstanceInUse,
-                          'InstanceIdle' : InstanceIdle}
+                          'InstanceIdle' : 'No limit' if InstanceIdle > MAX_VALUE else InstanceInUse}
                 members.append(Member(member));                
             
             memInUseTotal += memInUse
