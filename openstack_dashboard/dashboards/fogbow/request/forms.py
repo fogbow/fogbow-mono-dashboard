@@ -35,10 +35,10 @@ class CreateRequest(forms.SelfHandlingForm):
                                help_text=_('Flavor Fogbow'),
                                required=False)
     
-    cpu = forms.CharField(label=_('CPU'), initial=0,
+    cpu = forms.CharField(label=_('Minimal number of vCPU'), initial=0,
                           widget=forms.TextInput(),
                           required=False)
-    mem = forms.CharField(label=_('RAM'), initial=0,
+    mem = forms.CharField(label=_('Minimal amount of RAM in MB'), initial=0,
                           widget=forms.TextInput(),
                           required=False)
     requirements_checkbox = forms.BooleanField(label=_('Advanced requirements'),

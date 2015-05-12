@@ -738,3 +738,12 @@ msgstr "Detalhe da instância"
 #: fogbow-dashboard/horizon/templates/horizon/common/fogbow_limit_summary.html
 msgid "Resource usage summary"
 msgstr "Resumo de uso dos recursos"
+
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
+msgid "Minimal number of vCPU"
+msgstr "Número mínimo de vCPU"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
+msgid "Minimal amount of RAM in MB"
+msgstr "Número mínimo de vCPU"
