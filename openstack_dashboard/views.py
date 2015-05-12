@@ -1,7 +1,7 @@
 import os
 import django
 import horizon
-
+ 
 from django import shortcuts
 from django.views.decorators import vary
 from openstack_dashboard.models import User

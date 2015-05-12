@@ -726,14 +726,15 @@ msgstr "Instâncias em uso"
 msgid "Instances quota"
 msgstr "Cota de instância disponível"
 
-#: /fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
-#: /fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
 msgid "Instance id"
 msgstr "Id da instância"
 
-#: /fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/detail.html
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/detail.html
 msgid "Instance detail"
 msgstr "Detalhe da instância"
 
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_limit_summary.html
 msgid "Resource usage summary"
-msgstr "Resumo de uso de recursos"
+msgstr "Resumo de uso dos recursos"
