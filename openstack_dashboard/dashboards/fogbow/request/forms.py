@@ -31,19 +31,14 @@ class CreateRequest(forms.SelfHandlingForm):
                                             ' ASCII characters and numbers.')},
                            validators=[validators.validate_slug],
                            initial='1')
-    flavor = forms.ChoiceField(label=_('Flavor'),
-                               help_text=_('Flavor Fogbow'),
-                               required=False)
     
-    cpu = forms.CharField(label=_('Minimal number of vCPU'), initial=0,
+    cpu = forms.CharField(label=_('Minimal number of vCPU'), initial=1,
                           widget=forms.TextInput(),
                           required=False)
-    mem = forms.CharField(label=_('Minimal amount of RAM in MB'), initial=0,
+    mem = forms.CharField(label=_('Minimal amount of RAM in MB'), initial=1024,
                           widget=forms.TextInput(),
                           required=False)
-    requirements_checkbox = forms.BooleanField(label=_('Advanced requirements'),
-                                                      required=False)
-    advanced_requirements = forms.CharField(label=_('Requirements'),
+    advanced_requirements = forms.CharField(label=_('Advanced requirements'),
                            error_messages={'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
@@ -55,25 +50,35 @@ class CreateRequest(forms.SelfHandlingForm):
     type = forms.ChoiceField(label=_('Type'),
                                help_text=_('Type Request'),
                                choices=TYPE_REQUEST)
+    
+    data_user = forms.FileField(label=_('Extra user data file'), required=False)
+    
+    data_user_type = forms.ChoiceField(label=_('Extra user data file type'),
+                           help_text=_('Data user type'),
+                           required=False)
+    
     publicKey = forms.CharField(label=_('Public Key'),
                            error_messages={'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')},
-                           required=False, widget=forms.Textarea)        
+                           required=False, widget=forms.Textarea)
+    
+    data_user_file = forms.CharField(label=_('hidden'), required=False)            
 
     def __init__(self, request, *args, **kwargs):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
         
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
-        
-        flavorChoices,imageChoices = [],[]
-        resources = response.text.split('\n')
-        flavorChoices.append(('None', _('None')))
-        for resource in resources:
-            if SCHEME_FLAVOR_TERM in resource and 'fogbow' in resource:
-                resource = self.normalizeNameResource(resource)
-                flavorChoices.append((resource, resource))
-                                        
-        self.fields['flavor'].choices = flavorChoices
+
+        dataUserTypeChoices = []
+        dataUserTypeChoices.append(('None', _('None')))
+        dataUserTypeChoices.append(('text/x-include-once-url', 'text/x-include-once-url'))
+        dataUserTypeChoices.append(('text/x-include-url', 'text/x-include-url'))
+        dataUserTypeChoices.append(('text/cloud-config-archive', 'text/cloud-config-archive'))
+        dataUserTypeChoices.append(('text/upstart-job', 'text/upstart-job'))
+        dataUserTypeChoices.append(('text/cloud-config', 'text/cloud-config'))
+        dataUserTypeChoices.append(('text/x-shellscript', 'text/x-shellscript'))
+        dataUserTypeChoices.append(('text/cloud-boothook', 'text/cloud-boothook'))
+        self.fields['data_user_type'].choices = dataUserTypeChoices
 
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')
@@ -81,6 +86,12 @@ class CreateRequest(forms.SelfHandlingForm):
     def normalizeValueHeader(self, value):
         try:
             return value.replace('\n','').replace('\r','')
+        except Exception:
+            return ''
+
+    def normalizeUserData(self, value):
+        try:
+            return value.replace('\n', '%\\n%')
         except Exception:
             return ''
 
@@ -95,26 +106,20 @@ class CreateRequest(forms.SelfHandlingForm):
             if data['advanced_requirements'] != '':
                 advancedRequirements = ',org.fogbowcloud.request.requirements=%s' % (data['advanced_requirements'])
                 advancedRequirements = self.normalizeValueHeader(advancedRequirements)
-            elif data['cpu'] != '' or data['mem'] != '':
-                cpu, mem = '0', '0'
-                if  data['cpu'] != '':
-                    cpu = data['cpu']
-                if  data['mem'] != '':
-                    mem = data['mem']
-                
-                advancedRequirements = ',org.fogbowcloud.request.requirements=Glue2vCPU>=%s&&Glue2RAM>=%s' % (cpu, mem)
             else:
                 advancedRequirements = ''
             
-            categoryFlavor = ''
-            if data['flavor'] != 'None':
-                categoryFlavor = ',%s; scheme="http://schemas.fogbowcloud.org/template/resource#"; class="mixin"' % (data['flavor'])
-            else:
-                categoryFlavor = ''
+            userDataAttribute = ''
+            if data['data_user_file'] != None or data['data_user_file'] != '':
+                userDataContent = ',org.fogbowcloud.request.extra-user-data="%s"' % (data['data_user_file'])
+                dataUserType = ''
+                if data['data_user_type'] != 'None':
+                    userDataAttribute = ',org.fogbowcloud.request.extra-user-data-content-type="%s"%s' % (data['data_user_type'], userDataContent)
+                    userDataAttribute = self.normalizeUserData(userDataAttribute)                      
                 
             headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
-                        % (categoryFlavor, data['image'].strip(), publicKeyCategory),
-                       'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements)}            
+                        % ('', data['image'].strip(), publicKeyCategory),
+                       'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}            
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             

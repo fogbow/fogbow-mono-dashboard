@@ -7,7 +7,13 @@
   </div>
 {% endif %}
 {% for field in form.visible_fields %}
+	
+  {% if 'hidden' in field.label_tag %}
+  <div class="control-group form-field clearfix{% if field.errors %} error{% endif %} {{ field.css_classes }}" style="visibility: hidden; display: none;">
+  {% endif %}
+  {% if 'hidden' not in field.label_tag %}
   <div class="control-group form-field clearfix{% if field.errors %} error{% endif %} {{ field.css_classes }}">
+  {% endif %}
     {{ field.label_tag }}
     {% if field.errors %}
       {% for error in field.errors %}
@@ -26,50 +32,36 @@
   </div>
 {% endfor %}
 
-<script src="static/fogbow/js/jquery-2.1.3.min.js"></script>
 <script type="text/javascript">
 
-	$('#id_requirements_checkbox').click(function() {
-		checkForm();
+	$(document).ready(function() {
+		$("#id_advanced_requirements").val("Glue2vCPU >= " + $('#id_cpu').val() + " && Glue2RAM >= " + $('#id_mem').val());
 	});
-	
-	checkForm = function() {
-		var divAdvancedRequirements = findDivForm('id_advanced_requirements');
-		var divCpu = findDivForm('id_cpu');
-		var divMem = findDivForm('id_mem');
-		if($('#id_requirements_checkbox').is(':checked')) {			
-			clearChildren(divMem, 'input');
-			clearChildren(divCpu, 'input');
-			divCpu.hide('slow');
-			divMem.hide('slow');
-			divAdvancedRequirements.show('slow');
-		} else {
-			divCpu.show('slow');
-			divMem.show('slow');
-			clearChildren(divAdvancedRequirements, 'textarea');			
-			divAdvancedRequirements.hide('slow');
-		}		
-	}
-	
-	findDivForm = function(divName) {
-		var result = null;
-		$('div .form-field').each(function(item, element) {
-			if ($(element).html().indexOf(divName) > 1) {
-				result = $(element);	
-			}		
-		});
-		return result;
+
+	function setValueOnRequiremetns() {
+		var vCpu = $('#id_cpu').val();
+		var ram = $('#id_mem').val();
+		var originalString = "Glue2vCPU >= " + vCpu +" && Glue2RAM >= " + ram;
+		
+		$("#id_advanced_requirements").val(originalString);
 	};
 	
-	function clearChildren(element, typesStr) {
-		element.children().find(typesStr).each(function(){
-			$(this).val('');
-		});
-	}
-	
-	$(function() {
-		if ($('#id_requirements_checkbox').is(':checked') == false) {
-			findDivForm('id_advanced_requirements').hide();
-		}
+	$('#id_mem, #id_cpu').keyup(function() {
+		setValueOnRequiremetns();
 	});	
+	
+	$('#id_data_user').change(function() {
+		var file = document.getElementById("id_data_user").files[0];		
+		if (file) {
+		    var reader = new FileReader();
+		    reader.readAsText(file, "UTF-8");
+		    reader.onload = function (evt) {
+		    	$('#id_data_user_file').val(evt.target.result);
+		    }
+		    reader.onerror = function (evt) {
+		    	$('#id_data_user_file').val('error');
+		    }
+		}
+	});
+	
 </script>
