@@ -51,11 +51,11 @@ class IndexView(tables.DataTableView):
 
         return members
     
-    def addUserLocalQuota(self, responseStr, responseQuota):
+    def addUserLocalQuota(self, responseStr, responseQuota): 
         if responseQuota != None:
             resposenQuotaStr = responseQuota.text
             username = self.request.session['username']
-            newUserQuotaRow = '\n%s;%s' % ('id=%s' % (username) , resposenQuotaStr)
+            newUserQuotaRow = '\n%s;%s' % ('id=%s: %s' % ("Local user", username) , resposenQuotaStr)
             if fogbow_models.isResponseOk(resposenQuotaStr) == True:
                 responseStr = responseStr + newUserQuotaRow
         

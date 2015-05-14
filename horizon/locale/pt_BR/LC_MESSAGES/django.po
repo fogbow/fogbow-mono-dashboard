@@ -743,3 +743,15 @@ msgstr "Arquivo extra de user data"
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
 msgid "Extra user data file type"
 msgstr "Tipo do Arquivo extra de user data"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/views.py
+msgid "Local user"
+msgstr "Usuário local"
+
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_limit_summary.html
+msgid "being used"
+msgstr "sendo usado"
+
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_limit_summary.html
+msgid "GB of RAM"
+msgstr "GB de RAM"

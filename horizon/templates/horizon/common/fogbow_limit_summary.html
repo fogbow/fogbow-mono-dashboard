@@ -3,8 +3,8 @@
 <div class="table_wrapper">
   <h3 class="table_title">{% trans "Summary of resources" %}</h3>
   <br>
-  <h4>{% blocktrans with used=cpuInUse %}{{ used }} vCPUs being used{% endblocktrans %}</h4>
-  <h4>{% blocktrans with used=memInUse %}{{ used }} GB of RAM being used{% endblocktrans %}</h4>
+  <h4>{% blocktrans with used=cpuInUse %}{{ used }} vCPUs {% endblocktrans %} {% trans "being used" %}</h4>
+  <h4>{% blocktrans with used=memInUse %}{{ used }} {% endblocktrans %} {% trans "GB of RAM"%} {% trans "being used" %}</h4>
   <br>
   <!--
     <div class="d3_quota_bar">
