@@ -22,6 +22,7 @@ class FogbowConstants():
     RESOURCE_TERM = '/-/'
     TOKEN_TERM = '/token'
     QUOTA_TERM = '/quota'
+    USAGE_TERM = '/usage'
         
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
