@@ -419,14 +419,14 @@ msgstr "Keystone"
 #: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
 #, python-format
 msgid "opennebula"
-msgstr "Open Nebula"
+msgstr "OpenNebula"
 
 #: fogbow-dashboard/openstack_dashboard/models.py:21
 #: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:17
 #: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
 #, python-format
 msgid "voms"
-msgstr "Voms"
+msgstr "VOMS"
 
 #: fogbow-dashboard/openstack_dashboard/models.py
 msgid "Problem communicating with the Manager."
@@ -438,10 +438,6 @@ msgstr ""
 
 #: fogbow-dashboard/openstack_dashboard/models.py
 msgid "Bad Request."
-msgstr ""
-
-#: templates/auth/fogbow_login.html:13
-msgid "Federation Identity Plugin"
 msgstr ""
 
 #: templates/horizon/common/_sidebar.html:9

@@ -24,7 +24,7 @@ class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
     success_url = reverse_lazy("horizon:fogbow:request:index")
     
-    count = forms.CharField(label=_('Count'),
+    count = forms.CharField(label=_('Number of requests'),
                            error_messages={
                                'required': _('This field is required.'),
                                'invalid': _('The string may only contain'
@@ -32,7 +32,7 @@ class CreateRequest(forms.SelfHandlingForm):
                            validators=[validators.validate_slug],
                            initial='1')
     
-    cpu = forms.CharField(label=_('Minimal number of vCPU'), initial=1,
+    cpu = forms.CharField(label=_('Minimal number of vCPUs'), initial=1,
                           widget=forms.TextInput(),
                           required=False)
     mem = forms.CharField(label=_('Minimal amount of RAM in MB'), initial=1024,
@@ -70,7 +70,7 @@ class CreateRequest(forms.SelfHandlingForm):
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
 
         dataUserTypeChoices = []
-        dataUserTypeChoices.append(('None', _('None')))
+        dataUserTypeChoices.append(('None', _('none')))
         dataUserTypeChoices.append(('text/x-include-once-url', 'text/x-include-once-url'))
         dataUserTypeChoices.append(('text/x-include-url', 'text/x-include-url'))
         dataUserTypeChoices.append(('text/cloud-config-archive', 'text/cloud-config-archive'))

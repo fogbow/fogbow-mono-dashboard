@@ -1,7 +1,7 @@
 {% load i18n horizon humanize sizeformat %}
 
 <div class="table_wrapper">
-  <h3 class="table_title">{% trans "Resource usage summary" %}</h3>
+  <h3 class="table_title">{% trans "Summary of resources" %}</h3>
   <br>
   <h4>{% blocktrans with used=cpuInUse %}{{ used }} vCPUs being used{% endblocktrans %}</h4>
   <h4>{% blocktrans with used=memInUse %}{{ used }} GB of RAM being used{% endblocktrans %}</h4>

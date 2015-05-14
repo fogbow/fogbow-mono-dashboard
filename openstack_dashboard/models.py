@@ -152,7 +152,7 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
         responseStr = response.text
     except Exception:
         if hiddenMessage == None:
-            messages.error(request, _('Problem communicating with the Manager'))
+            messages.error(request, _('Problem communicating with the Fogbow Manager'))
     
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
         if hiddenMessage == None:

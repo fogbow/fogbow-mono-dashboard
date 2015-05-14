@@ -33,9 +33,9 @@ def getUsernameLocalCloud(localToken, type):
                 if fieldSought in info:
                     return info.replace(fieldSought, '').strip()
         except:
-            return _('None')
+            return _('none')
     else:
-        return _('None')
+        return _('none')
     
 class FogbowBackend(object):
   

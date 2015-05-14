@@ -146,7 +146,7 @@ msgstr "Sair"
 
 #: templates/splash.html:7 templates/auth/login.html:4
 msgid "Login"
-msgstr "Logar"
+msgstr "Autenticar"
 
 #: templates/auth/_login.html:5
 msgid "Log In"
@@ -425,173 +425,169 @@ msgstr "Keystone"
 #: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
 #, python-format
 msgid "opennebula"
-msgstr "Opennebula"
+msgstr "OpenNebula"
 
 #: fogbow-dashboard/openstack_dashboard/models.py:21
 #: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:17
 #: fogbow-dashboard/horizon/templates/auth/fogbow_login.html:19
 #, python-format
 msgid "voms"
-msgstr "Voms"
+msgstr "VOMS"
 
-#: fogbow-dashboard/openstack_dashboard/models.py
-msgid "Problem communicating with the Manager"
-msgstr "Problemas na comunicação com o Manager"
+#: fogbow-dashboard/openstack_dashboard/models.py  Ok--
+msgid "Problem communicating with the Fogbow Manager"
+msgstr "Problemas na comunicação com o Fogbow Manager"
 
-#: fogbow-dashboard/openstack_dashboard/models.py
+#: fogbow-dashboard/openstack_dashboard/models.py  Ok--
 msgid "Token unauthorized"
 msgstr "Token sem authorização"
 
-#: fogbow-dashboard/openstack_dashboard/models.py
+#: fogbow-dashboard/openstack_dashboard/models.py  Ok--
 msgid "Bad request"
-msgstr "Conflito"
+msgstr "Requisição incorreta"
 
-#: templates/auth/fogbow_login.html:13
-msgid "Federation Identity Plugin"
-msgstr "Plugin de Identidade da Federação"
+#: templates/auth/fogbow_login.html:13  Ok--
+msgid "Federation identity plugin"
+msgstr "Plugin de Identidade da Federação"  
 
 #: templates/horizon/common/_sidebar.html:9
-#, templates/horizon/common/_sidebar.html:15
+#, templates/horizon/common/_sidebar.html:15  Ok--
 msgid "Federation"
 msgstr "Federação"
 
-#: templates/horizon/common/fogbow_limit_summary.html:4
-msgid "Resource summary"
+#: templates/horizon/common/fogbow_limit_summary.html:4  Ok--
+msgid "Summary of resources" 
 msgstr "Resumo dos recursos"
 
-#: templates/horizon/common/fogbow_overview_limit_summary.html:4
-msgid "Request information"
-msgstr "Informações das requisições"
-
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/dashboard.py:7
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/dashboard.py:7  Ok--
 msgid "User panel"
 msgstr "Panel do usuário"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:6
-msgid "Member id"
-msgstr "Id do membro"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:6  Ok--
+msgid "Member ID"
+msgstr "ID do membro"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:7
-msgid "CPU quota"
-msgstr "Cota de CPU disponível"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:7  Ok--
+msgid "Available vCPU quota"
+msgstr "Cota de vCPU disponível"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:8
-msgid "CPU in use"
-msgstr "CPU em uso"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:8  Ok--
+msgid "vCPU in use"
+msgstr "vCPU em uso"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:9
-msgid "Mem quota"
-msgstr "Cota de memória disponível"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:9  Ok--
+msgid "Available RAM(MB) quota"
+msgstr "Cota de RAM(MB) disponível"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:10
-msgid "Mem in use"
-msgstr "Memória em uso"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:10  Ok--
+msgid "RAM(MB) in use"
+msgstr "RAM(MB) em uso"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/views.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/views.py  Ok--
 msgid "No limit"
 msgstr "Sem limite"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:11
-# msgid "Flavors"
-# msgstr "Flavors (Tamanho da Imagem)"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py:11  Ok--
+msgid "Flavors"
+msgstr "Flavors"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:4
-msgid "Requests information"
-msgstr "Informação das requisições"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:4  Ok--
+msgid "Information about requests"
+msgstr "Informação sobre as requisições"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:7
-msgid "Requests fullfield"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:7  Ok--
+msgid "Fulfilled requests"
 msgstr "Requisições atendidas"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:13
-msgid "Requests open"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:13  Ok--
+msgid "Open requests"
 msgstr "Requisições abertas"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:19
-msgid "Requests closed"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:19  Ok--
+msgid "Closed requests"
 msgstr "Requisições fechadas"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:25
-msgid "Requests deleted"
-msgstr "Requisições deletadas"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:25  Ok--
+msgid "Deleted requests"
+msgstr "Requisições removidas"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:31
-msgid "Requests failed"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:31  Ok--
+msgid "Failed requests"
 msgstr "Requisições falhas"
 
-#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:31
-msgid "Requests spawning"
-msgstr "Requisições criando"
+#: fogbow-dashboard/horizon/templates/horizon/common/fogbow_overview_limit_summary.html:31  Ok--
+msgid "Spawning requests"
+msgstr "Requisições sendo criadas"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:28
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:28  Ok--
 msgid "Create request"
 msgstr "Criar requisições"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:46
-msgid "Request id"
-msgstr "Id da Requisição"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables:46  Ok--
+msgid "Request ID"
+msgstr "ID da Requisição"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:26
-msgid "Count"
-msgstr "Quantidade de Requisições"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:26  Ok--
+msgid "Number of requests"
+msgstr "Número de requisições"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:33
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:33  Ok--
 msgid "Flavor"
-msgstr "Flavor(Tamanho de Imagem)"
+msgstr "Flavor"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:35
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:35  Ok--
 msgid "Image"
 msgstr "Imagem"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:37
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:37  Ok--
 msgid "Type"
 msgstr "Tipo"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:79
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms:79  Ok--
 msgid "Requests created"
 msgstr "Requisições criadas"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request  Ok--
 msgid "Requests"
 msgstr "Requisições"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request  Ok--
 msgid "Request"
 msgstr "Requisição"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_create.html
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_create.html  Ok--
 msgid "Create requests"
 msgstr "Criar requisições"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html
 msgid "Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares"
-msgstr "Federação, oportunismo e ''greenness''"
+msgstr "Federação, oportunismo e economia de energia em nuvens privadas através da troca de recursos ociosos"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:10
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/overview/templates/overview/index.html:10  Ok--
 msgid "Fogbow dashboard"
-msgstr "Painel de instruções do fogbow"
+msgstr "Painel de controle do fogbow"
 
-#: fogbow-dashboard/openstack_dashboard/forms:0
+#: fogbow-dashboard/openstack_dashboard/forms:0 Ok--
 msgid "Endpoint"
 msgstr "Endereço"
 
-#: fogbow-dashboard/openstack_dashboard/forms:0
+#: fogbow-dashboard/openstack_dashboard/forms:0 Ok--
 msgid "Server name"
 msgstr "Nome do servidor"
 
-#: fogbow-dashboard/openstack_dashboard/forms:0
+#: fogbow-dashboard/openstack_dashboard/forms:0  Ok--
 msgid "Tenant name"
 msgstr "Nome do projeto"
 
-#: fogbow-dashboard/openstack_dashboard/forms:0
+#: fogbow-dashboard/openstack_dashboard/forms:0  Ok--
 msgid "User key"
 msgstr "Chave do usuário"
 
-#: fogbow-dashboard/openstack_dashboard/forms:0
+#: fogbow-dashboard/openstack_dashboard/forms:0 Ok--
 msgid "User credentials"
 msgstr "Credenciais do usuário"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/views.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/views.py Ok--
 msgid "CLOSED"
 msgstr "FECHADO"
 
@@ -611,125 +607,117 @@ msgid "SPAWNING"
 msgstr "CRIANDO"
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
-# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html Ok--
 msgid "Public ssh address"
-msgstr "Endereço do ssh público"
+msgstr "Endereço público do ssh"
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
-# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html Ok--
 msgid "Memory"
 msgstr "Memória"
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
-# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html Ok--
 msgid "Cores"
 msgstr "Núcleos"
 
 # :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/_detail_instance.html
-# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html
-msgid "Info"
+# :fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/instance/_detail_instance.html  Ok--
+msgid "Information"
 msgstr "Informações"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py  Ok--
 msgid "Terminate"
 msgstr "Terminar"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py  Ok--
 msgid "Terminated"
 msgstr "Terminado"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py  Ok--
 msgid "instance"
 msgstr "Instância"
 
-#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py  Ok--
 msgid "instances"
 msgstr "Instâncias"
 
-#: fogbow-dashboard/openstack_dashboard/forms
+#: fogbow-dashboard/openstack_dashboard/forms  Ok--
 msgid "Invalid tenant."
 msgstr "Projeto inválido"
 
-#: fogbow-dashboard/openstack_dashboard/forms
+#: fogbow-dashboard/openstack_dashboard/forms  Ok--
 msgid "Invalid token"
 msgstr "Token inválido"
 
-#: fogbow-dashboard/openstack_dashboard/forms
-msgid "Invalid opennebula credentials"
-msgstr "Credencial do Opennebula inválida"
-
-#: fogbow-dashboard/openstack_dashboard/forms
-msgid "Invalid voms proxy init"
-msgstr "Voms vroxy init inválido"
-
-#: fogbow_form_fields:45.1
+#: fogbow_form_fields:45.1  OK--
 msgid "Local identity plugin"
 msgstr "Plugin de identidade local"
 
-#: fogbow_form_fields:14.2
+#: fogbow_form_fields:14.2  OK--
 msgid "Mandatory"
 msgstr "Obrigatório"
 
-#: fogbow_form_fields:45.2
+#: fogbow_form_fields:45.2   OK--
 msgid "Optional"
 msgstr "Opcional"
 
-#: models
+#: models OK--
 msgid "Logged in the local cloud as"
-msgstr "Logado na cloud local como"
+msgstr "Autenticado na cloud local como"
 
-#: models
+#: models  Ok--
 msgid "Keystone credentials are invalid"
-msgstr "Credencias do Keystone estão inválidas."
+msgstr "Credencias do Keystone não são inválidas."
 
-#: models
+#: models Ok--
 msgid "Token invalid."
 msgstr "Token inválido"
 
-#: models
+#: models Ok--
 msgid "Opennebula credentials are invalid"
-msgstr "Credencias do opennebula estão inválidas"
+msgstr "Credencias do opennebula não são inválidas"
 
-#: models
+#: models  Ok--
 msgid "VOMS certificate proxy is invalid"
-msgstr "Certificado do VOMS está inválida" 
+msgstr "Certificado do VOMS não é inválida" 
 
-#: models
+#: models  Ok--
 msgid "Raw keystone is invalid"
-msgstr "Raw keystone está inválido"
+msgstr "Raw keystone não é inválido"
 
-#: models
+#: models  Ok--
 msgid "Raw opennebula is invalid"
-msgstr "Raw opennebula está inválido"
+msgstr "Raw opennebula não é inválido"
 
-#: models
-msgid "None"
-msgstr "Nenhum" 
+#: models  Ok--
+msgid "none"
+msgstr "nenhum" 
 
-#: form
+#: form  Ok--
 msgid "Proxy certificate"
 msgstr "Certificado proxy" 
 
-#: create requests form
+#: create requests form  Ok--
 msgid "Requirements"
 msgstr "Requisitos" 
 
-#: create requests form
+#: create requests form   Ok--
 msgid "Advanced requirements"
 msgstr "Requisitos avançados"
 
-#: Tables member
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py Ok--
 msgid "Instances in use"
 msgstr "Instâncias em uso"
 
-#: Tables member
-msgid "Instances quota"
-msgstr "Cota de instância disponível"
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/members/tables.py Ok--
+msgid "Available instances quota"
+msgstr "Cota de instâncias disponível"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/tables.py
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/tables.py
-msgid "Instance id"
-msgstr "Id da instância"
+msgid "Instance ID"
+msgstr "ID da instância"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/templates/request/detail.html
 msgid "Instance detail"
@@ -741,9 +729,17 @@ msgstr "Resumo de uso dos recursos"
 
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
-msgid "Minimal number of vCPU"
-msgstr "Número mínimo de vCPU"
+msgid "Minimal number of vCPUs"
+msgstr "Número mínimo de vCPUs"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
 msgid "Minimal amount of RAM in MB"
-msgstr "Número mínimo de vCPU"
+msgstr "Quantidade mínima de memória RAM em MB"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
+msgid "Extra user data file"
+msgstr "Arquivo extra de user data"
+
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/request/forms.py
+msgid "Extra user data file type"
+msgstr "Tipo do Arquivo extra de user data"
