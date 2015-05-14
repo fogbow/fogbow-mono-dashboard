@@ -184,7 +184,7 @@ LANGUAGES = (
 #     ('ko', gettext_noop('Korean (Korea)')),
 #     ('nl', gettext_noop('Dutch (Netherlands)')),
 #     ('pl', gettext_noop('Polish')),
-    ('pt-br', gettext_noop('Portuguese (Brazil)')),
+#     ('pt-br', gettext_noop('Portuguese (Brazil)')),
 #     ('ru', gettext_noop('Russian')),
 #     ('zh-cn', gettext_noop('Simplified Chinese')),
 #     ('zh-tw', gettext_noop('Traditional Chinese')),

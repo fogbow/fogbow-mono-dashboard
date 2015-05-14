@@ -773,3 +773,8 @@ msgstr "Consumido (FCU*min)"
 msgid "Debit"
 msgstr "Débito"
 
+#: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/templates/instance/_detail_instance.html
+msgid "Extra Ports"
+msgstr "Portas extras"
+
+

@@ -9,6 +9,7 @@ CONSOLE_VNC_TERM = fogbow_models.FogbowConstants.CONSOLE_VNC_TERM
 MEMORY_TERM = fogbow_models.FogbowConstants.MEMORY_TERM
 CORES_TERM = fogbow_models.FogbowConstants.CORES_TERM
 IMAGE_SCHEME = fogbow_models.FogbowConstants.IMAGE_SCHEME     
+EXTRA_PORT_SCHEME = fogbow_models.FogbowConstants.EXTRA_PORT_SCHEME
 
 class InstanceDetailTabInstancePanel(tabs.Tab):
     name = _("Instance Details")
@@ -20,7 +21,15 @@ class InstanceDetailTabInstancePanel(tabs.Tab):
         response = fogbow_models.doRequest('get', COMPUTE_TERM  + instanceId,
                                              None, request)
 
-        return {'instance' : getInstancePerResponse(instanceId, response)}
+        instance = None
+        try:
+            instance = getInstancePerResponse(instanceId, response)
+        except Exception:
+            instance = {'instanceId': '-' , 'state': '-', 'sshPublic': '-',
+             'extra' : '-', 'memory' : '-', 'cores' : '-',
+            'image' : '-', 'extraPorts': '-'}
+
+        return {'instance' : instance}
     
 def getInstancePerResponse(instanceId, response):
     if instanceId == 'null':
@@ -28,7 +37,7 @@ def getInstancePerResponse(instanceId, response):
     
     instanceDetails = response.text.split('\n')
     
-    state,sshPublic,console_vnc,memory,cores,image  = '-', '-', '-', '-', '-', '-'
+    state,sshPublic,console_vnc,memory,cores,image,extraPort  = '-', '-', '-', '-', '-', '-', '-'
     for detail in instanceDetails:
         if STATE_TERM in detail:
             state = normalizeAttributes(detail, STATE_TERM)
@@ -40,9 +49,12 @@ def getInstancePerResponse(instanceId, response):
             cores = normalizeAttributes(detail, CORES_TERM)
         elif IMAGE_SCHEME in detail:
             image = getFeatureInCategoryPerScheme('title', detail)
-        
+        elif EXTRA_PORT_SCHEME in detail:
+            extraPort = normalizeAttributes(detail, EXTRA_PORT_SCHEME)
+            
     return {'instanceId': instanceId , 'state': state, 'sshPublic':sshPublic,
-             'extra' : instanceDetails, 'memory' : memory, 'cores' : cores, 'image' : image}
+             'extra' : instanceDetails, 'memory' : memory, 'cores' : cores,
+            'image' : image, 'extraPorts': extraPort}
     
 def normalizeAttributes(propertie, term):
     try:

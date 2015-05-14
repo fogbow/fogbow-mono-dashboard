@@ -11,8 +11,6 @@ from openstack_dashboard.dashboards.fogbow.instance \
     import models as project_models    
 import openstack_dashboard.models as fogbow_models
 
-# LOG = logging.getLogger(__name__)
-
 THERE_ARE_NOT_INSTANCE = 'There are not instances'
 X_OCCI_LOCATION = 'X-OCCI-Location: '
 COMPUTE_TERM = fogbow_models.FogbowConstants.COMPUTE_TERM

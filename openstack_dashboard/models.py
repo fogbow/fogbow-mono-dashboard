@@ -29,7 +29,8 @@ class FogbowConstants():
     CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
     MEMORY_TERM = 'occi.compute.memory'
     CORES_TERM = 'occi.compute.cores'
-    IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'      
+    IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'     
+    EXTRA_PORT_SCHEME = 'org.fogbowcloud.request.extra-ports'      
     
     FOGBOW_STATE_TERM = 'org.fogbowcloud.request.state'
     FOGBOW_TYPE_TERM = 'org.fogbowcloud.request.type'
