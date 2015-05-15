@@ -62,7 +62,7 @@ class CreateRequest(forms.SelfHandlingForm):
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
     
-    data_user_file = forms.CharField(label=_('hidden'), required=False)            
+    data_user_file = forms.CharField(label=_('hidden'), required=False, widget=forms.Textarea)            
 
     def __init__(self, request, *args, **kwargs):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
@@ -110,6 +110,7 @@ class CreateRequest(forms.SelfHandlingForm):
             
             userDataAttribute = ''
             if data['data_user_file'] != None or data['data_user_file'] != '':
+                print data['data_user_file']
                 userDataContent = ',org.fogbowcloud.request.extra-user-data="%s"' % (data['data_user_file'])
                 dataUserType = ''
                 if data['data_user_type'] != 'None':
@@ -120,7 +121,7 @@ class CreateRequest(forms.SelfHandlingForm):
                         % ('', data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}            
 
-            response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
+         #   response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
                 messages.success(request, _('Requests created'))
