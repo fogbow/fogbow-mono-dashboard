@@ -25,9 +25,9 @@ class TerminateInstance(tables.BatchAction):
         return True
 
     def action(self, request, obj_id):
-        self.current_past_action = 0                
+        self.current_past_action = 0        
         response = fogbow_models.doRequest('delete',COMPUTE_TERM + obj_id, None, request)
-        if fogbow_models.isResponseOk(response.text) == False:
+        if response == None or fogbow_models.isResponseOk(response.text) == False:
             messages.error(request, _('Is was not possible to delete : %s') % obj_id)          
 
 def get_instance_id(request):
