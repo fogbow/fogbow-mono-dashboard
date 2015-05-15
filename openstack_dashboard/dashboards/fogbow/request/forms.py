@@ -90,7 +90,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
     def normalizeUserData(self, value):
         try:
-            return value.replace('\n', '[[\\n]]')
+            return value.replace('\n', '[[\\n]]').replace('\r', '')
         except Exception:
             return ''
 
@@ -110,12 +110,9 @@ class CreateRequest(forms.SelfHandlingForm):
             
             userDataAttribute = ''
             if data['data_user_file'] != None or data['data_user_file'] != '':
-                print data['data_user_file']
-                userDataContent = ',org.fogbowcloud.request.extra-user-data="%s"' % (data['data_user_file'])
-                dataUserType = ''
-                if data['data_user_type'] != 'None':
-                    userDataAttribute = ',org.fogbowcloud.request.extra-user-data-content-type="%s"%s' % (data['data_user_type'], userDataContent)
-                    userDataAttribute = self.normalizeUserData(userDataAttribute)                      
+                normalizedUserDataFile = self.normalizeUserData(data['data_user_file'])
+                userDataAttribute = ',%s=%s,%s=%s' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
+                                                      'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
                 
             headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
                         % ('', data['image'].strip(), publicKeyCategory),
