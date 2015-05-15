@@ -70,13 +70,12 @@ class CreateRequest(forms.SelfHandlingForm):
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
 
         dataUserTypeChoices = []
-        dataUserTypeChoices.append(('None', _('none')))
+        dataUserTypeChoices.append(('text/x-shellscript', 'text/x-shellscript'))
         dataUserTypeChoices.append(('text/x-include-once-url', 'text/x-include-once-url'))
         dataUserTypeChoices.append(('text/x-include-url', 'text/x-include-url'))
         dataUserTypeChoices.append(('text/cloud-config-archive', 'text/cloud-config-archive'))
         dataUserTypeChoices.append(('text/upstart-job', 'text/upstart-job'))
-        dataUserTypeChoices.append(('text/cloud-config', 'text/cloud-config'))
-        dataUserTypeChoices.append(('text/x-shellscript', 'text/x-shellscript'))
+        dataUserTypeChoices.append(('text/cloud-config', 'text/cloud-config'))        
         dataUserTypeChoices.append(('text/cloud-boothook', 'text/cloud-boothook'))
         self.fields['data_user_type'].choices = dataUserTypeChoices
 

@@ -762,15 +762,15 @@ msgid "Accounting"
 msgstr "Contabilidade"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/accounting/tables.py
-msgid "Donated (FCU*min)"
-msgstr "Doado (FCU*min)"
+msgid "Donated to (FCU*min)"
+msgstr "Doado para (FCU*min)"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/accounting/tables.py
-msgid "Cosumed (FCU*min)"
-msgstr "Consumido (FCU*min)"
+msgid "Cosumed from (FCU*min)"
+msgstr "Consumido de (FCU*min)"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/accounting/tables.py
-msgid "Debit"
+msgid "Debt"
 msgstr "Débito"
 
 #: fogbow-dashboard/openstack_dashboard/dashboards/fogbow/instance/templates/instance/_detail_instance.html

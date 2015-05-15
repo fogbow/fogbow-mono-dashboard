@@ -36,7 +36,7 @@ class IndexView(tables.DataTableView):
     
     def get_data(self):           
         response = fogbow_models.doRequest('get', MEMBER_TERM, None, self.request)
-        responseQuota = fogbow_models.doRequest('get', QUOTA_TERM, None, self.request, hiddenMessage=True)   
+        responseQuota = fogbow_models.doRequest('get', QUOTA_TERM, None, self.request, hiddenMessage=None)   
         
         members = []
         self._more = False
@@ -51,7 +51,7 @@ class IndexView(tables.DataTableView):
 
         return members
     
-    def addUserLocalQuota(self, responseStr, responseQuota): 
+    def addUserLocalQuota(self, responseStr, responseQuota):
         if responseQuota != None:
             resposenQuotaStr = responseQuota.text
             username = self.request.session['username']

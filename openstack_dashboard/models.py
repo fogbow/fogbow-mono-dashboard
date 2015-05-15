@@ -146,13 +146,14 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
     responseStr, response = '', None
     try:
         if method == 'get':
-            response = requests.get(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=5)
+            response = requests.get(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=60)
         elif method == 'delete':
-            response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=5)
+            response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=10)
         elif method == 'post':   
-            response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=5)
+            response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=10)
         responseStr = response.text
-    except Exception:
+    except Exception as e:
+        print e
         if hiddenMessage == None:
             messages.error(request, _('Problem communicating with the Fogbow Manager'))
     
