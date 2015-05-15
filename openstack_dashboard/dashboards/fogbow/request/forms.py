@@ -109,8 +109,9 @@ class CreateRequest(forms.SelfHandlingForm):
                 advancedRequirements = ''
             
             userDataAttribute = ''
-            if data['data_user_file'] != None or data['data_user_file'] != '':
-                normalizedUserDataFile = self.normalizeUserData(data['data_user_file'])
+            dataUserFile = data['data_user_file']
+            if dataUserFile != None and dataUserFile != '':
+                normalizedUserDataFile = self.normalizeUserData(dataUserFile)
                 userDataAttribute = ',%s=%s,%s=%s' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
                                                       'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
                 
