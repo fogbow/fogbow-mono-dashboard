@@ -91,7 +91,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
     def normalizeUserData(self, value):
         try:
-            return value.replace('\n', '%\\n%')
+            return value.replace('\n', '[[\\n]]')
         except Exception:
             return ''
 
