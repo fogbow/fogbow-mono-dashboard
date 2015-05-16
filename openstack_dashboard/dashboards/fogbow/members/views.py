@@ -67,7 +67,7 @@ class IndexView(tables.DataTableView):
         membersList = strResponse.split('\n')
         memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0
         for m in membersList:
-            id, cpuIdle, cpuInUse, memIdle, memInUse, InstanceIdle, InstanceInUse = '-','0','0','0','0','0','0'            
+            id, cpuIdle, cpuInUse, memIdle, memInUse, instanceIdle, instanceInUse = '-','0','0','0','0','0','0'            
             memberProperties = m.split(';')
             
             for properties in memberProperties:                 
@@ -88,14 +88,14 @@ class IndexView(tables.DataTableView):
                     memInUse = float(value)
                 elif any("instancesInUse" in s for s in values):
                     try:
-                        InstanceInUse = float(value)
+                        instanceInUse = float(value)
                     except Exception:
-                        InstanceInUse = 0
+                        instanceInUse = 0
                 elif any("instancesIdle" in s for s in values):
                     try:
-                        InstanceIdle = float(value)
+                        instanceIdle = float(value)
                     except Exception:
-                        InstanceIdle = 0            
+                        instanceIdle = 0            
 
             if id != None:                                                  
                 member = {'id': id , 'idMember' : id, 
@@ -103,8 +103,8 @@ class IndexView(tables.DataTableView):
                           'cpuInUse': cpuInUse , 
                           'memIdle': 'No limit' if memIdle > MAX_VALUE else memIdle, 
                           'memInUse': memInUse, 
-                          'InstanceInUse' : InstanceInUse,
-                          'InstanceIdle' : 'No limit' if InstanceIdle > MAX_VALUE else InstanceInUse}
+                          'instanceInUse' : instanceInUse,
+                          'instanceIdle' : 'No limit' if instanceIdle > MAX_VALUE else instanceIdle}
                 members.append(Member(member));                
             
             memInUseTotal += memInUse
