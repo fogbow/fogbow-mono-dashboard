@@ -1,6 +1,7 @@
 import netaddr
 import requests
 import openstack_dashboard.models as fogbow_models
+import base64
 
 from django.core.validators import RegexValidator
 from django.core.urlresolvers import reverse 
@@ -90,7 +91,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
     def normalizeUserData(self, value):
         try:
-            return value.replace('\n', '[[\\n]]').replace('\r', '')
+            return base64.b64encode(value.replace('\n', '[[\\n]]').replace('\r', ''))
         except Exception:
             return ''
 

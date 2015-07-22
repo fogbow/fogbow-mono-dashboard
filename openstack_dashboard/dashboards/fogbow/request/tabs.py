@@ -44,6 +44,14 @@ class RequestDetailTab(tabs.Tab):
         
         return {'request' : self.getRequestPerResponse(requestId, response)}
     
+    def normalizeUserdate(self, extraUserdata):
+        try:
+            extraUserdata = extraUserdata + '=' * (4 - len(extraUserdata) % 4)
+            extraUserdata = base64.b64decode(extraUserdata + '==')
+            return  extraUserdata.replace('[[\\n]]', '\n').strip()
+        except Exception, e:            
+            print str(e)   
+    
     def getRequestPerResponse(self, requestId, response):
         if requestId == 'null':
             requestId = '-'
@@ -58,8 +66,8 @@ class RequestDetailTab(tabs.Tab):
             elif FOGBOW_SHH_PUBLIC_KEY_TERM in detail:
                 ssh = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_SHH_PUBLIC_KEY_TERM)
             elif FOGBOW_USERDATA_TERM + '=' in detail:
-                extraUserdata = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_USERDATA_TERM)
-                extraUserdata = extraUserdata.replace('[[\\n]]', '\n').strip()
+                extraUserdata = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_USERDATA_TERM)                                
+                extraUserdata = self.normalizeUserdate(extraUserdata)
             elif FOGBOW_USERDATA_CONTENT_TYPE_TERM in detail:
                 extraUserdataContentType = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_USERDATA_CONTENT_TYPE_TERM)                                
             elif FOGBOW_TYPE_TERM in detail:
