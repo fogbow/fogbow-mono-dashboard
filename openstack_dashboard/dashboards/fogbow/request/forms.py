@@ -112,7 +112,7 @@ class CreateRequest(forms.SelfHandlingForm):
             dataUserFile = data['data_user_file']
             if dataUserFile != None and dataUserFile != '':
                 normalizedUserDataFile = self.normalizeUserData(dataUserFile)
-                userDataAttribute = ',%s=%s,%s=%s' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
+                userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
                                                       'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
                 
             headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 

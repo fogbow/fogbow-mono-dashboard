@@ -1,0 +1,54 @@
+{% load i18n sizeformat parse_date %}
+{% load url from future %}
+
+<div class="info row-fluid detail">
+  <h3>{% trans "Information" %}</h3>
+  <hr class="header_rule">
+  <dl>
+    <dt>{% trans "Request id" %}</dt>
+    {{ request.requestId }}
+  </dl>
+  <dl>
+    <dt>{% trans "Requirements" %}</dt>
+    {{ request.requirements }}
+  </dl>
+  <dl>
+    <dt>{% trans "Type" %}</dt>
+    {{ request.type }}
+  </dl>
+  <dl>
+    <dt>{% trans "State" %}</dt>
+    {{ request.state }}
+  </dl>
+  <dl>
+    <dt>{% trans "Valid From" %}</dt>
+    {{ request.validFrom }}
+  </dl>
+  <dl>
+    <dt>{% trans "Valid Until" %}</dt>
+    {{ request.validUntil }}
+  </dl>
+  <dl>
+    <dt>{% trans "Image" %}</dt>
+    {{ request.image }}
+  </dl>   
+  <dl>
+    <dt>{% trans "Instance id" %}</dt>
+    {{ request.instanceId }}
+  </dl>     
+  <dl>
+    <dt>{% trans "SSH public key" %}</dt>
+    {{ request.ssh }}
+  </dl>   
+  <dl>
+    <dt>{% trans "Userdata content type" %}</dt>
+    {{ request.extraUserdataContentType }}
+  </dl>
+  
+  <dl>
+    <dt>{% trans "Userdata" %}</dt>
+    <pre>{{ request.extraUserdata }}</pre>   
+  </dl>                                    
+</div>
+
+</div>

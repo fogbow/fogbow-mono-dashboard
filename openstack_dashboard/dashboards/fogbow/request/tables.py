@@ -43,10 +43,11 @@ class RequestsFilterAction(tables.FilterAction):
                 if q in request.name.lower()]
 
 class RequestsTable(tables.DataTable):
-    requestId = tables.Column('requestId', verbose_name=_('Request ID'))
+    requestId = tables.Column('requestId', link=('horizon:fogbow:request:request-detail'), 
+                              verbose_name=_('Request ID'))
     state = tables.Column('state', verbose_name=_('State'))
     type = tables.Column('type', verbose_name=_('Type'))
-    instanceId = tables.Column(get_instance_id, link=('horizon:fogbow:request:detail'),
+    instanceId = tables.Column(get_instance_id, link=('horizon:fogbow:request:instance-detail'),
                                 verbose_name=_('Instance ID'))    
 
     class Meta:

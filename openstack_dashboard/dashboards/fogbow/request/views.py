@@ -75,6 +75,10 @@ class CreateView(forms.ModalFormView):
     template_name = 'fogbow/request/create.html'
     success_url = reverse_lazy('horizon:fogbow:index')
     
-class DetailView(tabs.TabView):
-    tab_group_class = project_tabs.RequestDetailTabs
+class DetailInstanceView(tabs.TabView):
+    tab_group_class = project_tabs.InstanceDetailTabs
     template_name = 'fogbow/request/detail.html'
+    
+class DetailRequestView(tabs.TabView):
+    tab_group_class = project_tabs.RequestDetailTabs
+    template_name = 'fogbow/request/detail.html'    
