@@ -45,8 +45,9 @@ class RequestDetailTab(tabs.Tab):
         return {'request' : self.getRequestPerResponse(requestId, response)}
     
     def normalizeUserdate(self, extraUserdata):
+        if 'Not defined' in extraUserdata:
+            return extraUserdata
         try:
-            extraUserdata = extraUserdata + '=' * (4 - len(extraUserdata) % 4)
             extraUserdata = base64.b64decode(extraUserdata + '==')
             return  extraUserdata.replace('[[\\n]]', '\n').strip()
         except Exception, e:            

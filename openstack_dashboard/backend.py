@@ -67,8 +67,8 @@ class FogbowBackend(object):
         localFormType = settings.FOGBOW_LOCAL_AUTH_TYPE
         if emptyValuesLocalCredentials == False:  
             localTokenStr = getCorrectToken(settings.FOGBOW_LOCAL_AUTH_TYPE, localCredentials, localEndpoint)             
-        else:
-            localTokenStr = tokenStr            
+        else:        
+            localTokenStr = ''    
             
         LOG.info('Federation Token : %s' % tokenStr)
         LOG.info('Local Token : %s' % localTokenStr)        
@@ -79,7 +79,7 @@ class FogbowBackend(object):
         user = User('', federatioToken, '', {}, localToken=localToken)
         
         try:            
-            if tokenStr != localTokenStr:                
+            if '' != localTokenStr:                
                 if checkUserAuthenticated(localToken, localFormType, localEndpoint) == False:
                     LOG.error('Local Token is Invalid')
                     user.errors = True

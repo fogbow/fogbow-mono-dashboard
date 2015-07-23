@@ -146,7 +146,7 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
     try:
         localToken = request.user.localToken.id
     except:
-        localToken = federationToken
+        localToken = ''
     
     headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : localToken}    
     if additionalHeaders is not None:
