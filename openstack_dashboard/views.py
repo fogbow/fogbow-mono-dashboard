@@ -18,7 +18,10 @@ from openstack_auth import views
 from openstack_auth import forms
 from django.contrib.auth import authenticate, login
 from django.conf import settings
+from urlparse import urlparse, parse_qs
 import openstack_dashboard.models as fogbow_models
+import requests
+from django.http import HttpResponseRedirect, HttpResponse
 
 def get_user_home(user):
     return horizon.get_dashboard('fogbow').get_absolute_url()
@@ -37,10 +40,33 @@ def splash(request):
 def splash_fogbow(request):             
     if request.user.is_authenticated():
         return shortcuts.redirect(get_user_home(request.user))     
-                 
+    
+    shibsessionExists = False
+    for x in request.COOKIES:
+	if x.startswith('_shibsession_'):
+	    shibsessionExists = True
+            break
+
+    if shibsessionExists:
+	assertion_url = urlparse(request.META['HTTP_SHIB_ASSERTION'])
+	_key = parse_qs(assertion_url.query)['key'][0]
+	_id = parse_qs(assertion_url.query)['ID'][0]
+
+        
+
+        credentials = {'assertionKey': _key, 'assertionId': _id}
+        user = authenticate(request=request,localCredentials={},
+                                        federationCredentials=credentials,
+                                        localEndpoint=None,
+                                        federationEndpoint=None)          
+ 
+	login(request, user) 
+
+	return shortcuts.redirect(get_user_home(request.user))
+
     request.session.clear()
     request.session.set_test_cookie()
-    
+
     formOption = settings.FOGBOW_LOCAL_AUTH_TYPE
 
     return shortcuts.render(request, 'fogbow_splash.html',

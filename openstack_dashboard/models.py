@@ -52,6 +52,7 @@ class IdentityPluginConstants():
     AUTH_TOKEN = 'token'
     AUTH_OPENNEBULA = 'opennebula'
     AUTH_VOMS = 'voms'    
+    AUTH_SHIBBOLETH = 'shibboleth'
 
 class Token():
     def __init__(self, id=None):
