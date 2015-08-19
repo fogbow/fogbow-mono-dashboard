@@ -38,6 +38,8 @@ class IndexView(tables.DataTableView):
         response = fogbow_models.doRequest('get', MEMBER_TERM, None, self.request)
         responseQuota = fogbow_models.doRequest('get', QUOTA_TERM, None, self.request, hiddenMessage=False)   
         
+	print responseQuota.text
+
         members = []
         self._more = False
         if response == None:
@@ -56,7 +58,8 @@ class IndexView(tables.DataTableView):
             resposenQuotaStr = responseQuota.text
             username = self.request.session['username']
             newUserQuotaRow = '\n%s;%s' % ('id=%s: %s' % ("Local user", username) , resposenQuotaStr)
-            if fogbow_models.isResponseOk(resposenQuotaStr) == True:
+	    username = '%s' % (username) # ToString
+            if fogbow_models.isResponseOk(resposenQuotaStr) == True and username != 'None':
                 responseStr = responseStr + newUserQuotaRow
         
         return responseStr        

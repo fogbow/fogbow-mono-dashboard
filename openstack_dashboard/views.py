@@ -47,7 +47,7 @@ def splash_fogbow(request):
 	    shibsessionExists = True
             break
 
-    if shibsessionExists:
+    if shibsessionExists and settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_SHIBBOLETH:
 	assertion_url = urlparse(request.META['HTTP_SHIB_ASSERTION'])
 	_key = parse_qs(assertion_url.query)['key'][0]
 	_id = parse_qs(assertion_url.query)['ID'][0]
