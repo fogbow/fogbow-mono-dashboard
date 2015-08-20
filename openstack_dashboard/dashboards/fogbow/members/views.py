@@ -36,10 +36,7 @@ class IndexView(tables.DataTableView):
     
     def get_data(self):           
         response = fogbow_models.doRequest('get', MEMBER_TERM, None, self.request)
-        responseQuota = fogbow_models.doRequest('get', QUOTA_TERM, None, self.request, hiddenMessage=False)   
         
-	print responseQuota.text
-
         members = []
         self._more = False
         if response == None:
@@ -47,7 +44,6 @@ class IndexView(tables.DataTableView):
                 
         responseStr = response.text
         if fogbow_models.isResponseOk(responseStr) == True:
-            responseStr = self.addUserLocalQuota(responseStr, responseQuota)
                     
             members = self.getMembersList(responseStr)                              
 

@@ -18,6 +18,7 @@ python-swiftclient>=1.5
 python-ceilometerclient>=1.0.5
 python-troveclient<1
 pytz>=2010h
+oslo.conf==1.7.0
 # Horizon Utility Requirements
 # for SECURE_KEY generation
 lockfile>=0.8
