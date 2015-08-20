@@ -17,25 +17,6 @@ import openstack_dashboard.models as fogbow_models
 LOG = logging.getLogger(__name__)
 
 FOGBOW_CLI_JAVA_COMMAND = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'
-
-def getUsernameLocalCloud(localToken, type):
-    localEndpoint = settings.FOGBOW_LOCAL_AUTH_ENDPOINT
-    command = '%s token --info -DauthUrl=%s --type %s --token %s' % (FOGBOW_CLI_JAVA_COMMAND, 
-                                                            localEndpoint, type, localToken.id);        
-    
-    responseStr = commands.getoutput(command)    
-    
-    fieldSought = 'User:'
-    if responseStr != 'No Result':
-        try:
-            tokenInfo = responseStr.split(',')
-            for info in tokenInfo:
-                if fieldSought in info:
-                    return info.replace(fieldSought, '').strip()
-        except:
-            return _('none')
-    else:
-        return _('none')
     
 class FogbowBackend(object):
   
@@ -48,43 +29,18 @@ class FogbowBackend(object):
           
     def get_user(self, user_id):     
         federationToken = self._cached_tokens[self.request.session['token']]
-        localToken = self._cached_tokens[self.request.session['localToken']]                    
         
-        return User('fogbow', federationToken, self.request.session['username'],
-                     {}, localToken)
+        return User('fogbow', federationToken, None, {}, None)
   
     def authenticate(self, request, localCredentials=None, federationCredentials=None,
                       localEndpoint=None, federationEndpoint=None):
-        tokenStr,localTokenStr = '',''
-                              
-        tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)
-        
-        emptyValuesLocalCredentials = True
-        for key in localCredentials.keys():
-            if localCredentials[key] != '':
-                emptyValuesLocalCredentials = False       
-        
-        localFormType = settings.FOGBOW_LOCAL_AUTH_TYPE
-        if emptyValuesLocalCredentials == False:  
-            localTokenStr = getCorrectToken(settings.FOGBOW_LOCAL_AUTH_TYPE, localCredentials, localEndpoint)             
-        else:        
-            localTokenStr = ''    
-            
+        tokenStr = ''                              
+        tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
-        LOG.info('Local Token : %s' % localTokenStr)        
                         
-        federatioToken = Token(tokenStr)
-        localToken = Token(localTokenStr)             
-        
-        user = User('', federatioToken, '', {}, localToken=localToken)
-        
+        federatioToken = Token(tokenStr)            
+        user = User('', federatioToken, '', {}, localToken=None)        
         try:            
-            if '' != localTokenStr:                
-                if checkUserAuthenticated(localToken, localFormType, localEndpoint) == False:
-                    LOG.error('Local Token is Invalid')
-                    user.errors = True
-                    user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_LOCAL_AUTH_TYPE)        
-            
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')
                 user.errors = True
@@ -94,13 +50,8 @@ class FogbowBackend(object):
             user.typeError = 'Manager connection failed.'        
         
         request.user = user
-        local_token_id = uuid.uuid4()
-        federation_token_id = uuid.uuid4()
-        localFormType = getCorrectType(localFormType)        
-        request.session['username'] = getUsernameLocalCloud(localToken, localFormType)         
+        federation_token_id = uuid.uuid4()         
         request.session['token'] = federation_token_id
-        request.session['localToken'] = local_token_id
-        self._cached_tokens[local_token_id] = localToken
         self._cached_tokens[federation_token_id] = federatioToken
         return user
       

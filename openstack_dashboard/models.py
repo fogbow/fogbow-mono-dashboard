@@ -143,13 +143,8 @@ def checkUserAuthenticated(token):
 
 def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):    
     federationToken = request.user.token.id
-    localToken = ''
-    try:
-        localToken = request.user.localToken.id
-    except:
-        localToken = ''
     
-    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : localToken}    
+    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : ''}    
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         

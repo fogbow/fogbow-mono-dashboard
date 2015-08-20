@@ -51,26 +51,19 @@ def splash_fogbow(request):
 	assertion_url = urlparse(request.META['HTTP_SHIB_ASSERTION'])
 	_key = parse_qs(assertion_url.query)['key'][0]
 	_id = parse_qs(assertion_url.query)['ID'][0]
-
         
-
         credentials = {'assertionKey': _key, 'assertionId': _id}
-        user = authenticate(request=request,localCredentials={},
+        user = authenticate(request=request, localCredentials=None,
                                         federationCredentials=credentials,
                                         localEndpoint=None,
-                                        federationEndpoint=None)          
- 
-	login(request, user) 
-
-	return shortcuts.redirect(get_user_home(request.user))
+                                        federationEndpoint=None)           
+    	login(request, user)     
+    	return shortcuts.redirect(get_user_home(request.user))
 
     request.session.clear()
     request.session.set_test_cookie()
 
-    formOption = settings.FOGBOW_LOCAL_AUTH_TYPE
-
-    return shortcuts.render(request, 'fogbow_splash.html',
-                             getContextForm(formOption))
+    return shortcuts.render(request, 'fogbow_splash.html', getContextForm())
 
 def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
     formChosen = ''
@@ -107,7 +100,7 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
     if extra_context is None:
         extra_context = {'redirect_field_name': auth.REDIRECT_FIELD_NAME}
         
-    extra_context.update(getContextForm(formChosen))
+    extra_context.update(getContextForm())
     del extra_context['form']               
 
     res = django_auth_views.login(request,
@@ -130,9 +123,5 @@ def fogbow_Login(request, template_name=None, extra_context=None, **kwargs):
                     
     return res
 
-def getContextForm(formOption):    
-    localForm = fogbow_models.getTitle(settings.FOGBOW_LOCAL_AUTH_TYPE)
-    federationForm = fogbow_models.getTitle(settings.FOGBOW_FEDERATION_AUTH_TYPE)
-    form = AllForm()
-    
-    return {'form': form, 'localForm': localForm, 'federationForm' : federationForm}
+def getContextForm():    
+    return {'form': AllForm(), 'federationForm' : fogbow_models.getTitle(settings.FOGBOW_FEDERATION_AUTH_TYPE)}

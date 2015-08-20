@@ -12,29 +12,21 @@ from openstack_auth import exceptions
 
 LOG = logging.getLogger(__name__)
 
-LOCAL_TYPE_FORM = '_local'
 FEDERATION_TYPE_FORM = '_federation'    
 
 class AllForm(django_auth_forms.AuthenticationForm):        
     listFields = {}
     
     def __init__(self, *args, **kwargs):
-        super(AllForm, self).__init__(*args, **kwargs)
-                
-        localAuthType = settings.FOGBOW_LOCAL_AUTH_TYPE
-        localFields = getFieldsPerFormType(localAuthType, LOCAL_TYPE_FORM)
+        super(AllForm, self).__init__(*args, **kwargs)            
         
         federationAuthType = settings.FOGBOW_FEDERATION_AUTH_TYPE
         federationFields = getFieldsPerFormType(federationAuthType, FEDERATION_TYPE_FORM)                                               
         
-        requiredTrue = True
-        requiredFalse = False
-        self.listFields = federationFields.getFields(requiredTrue)
-        self.listFields.update(localFields.getFields(requiredFalse)) 
+        self.listFields = federationFields.getFields(True) 
         
         listOr = [];
         listOr.extend(federationFields.getOrderFields())
-        listOr.extend(localFields.getOrderFields())
         
         for key in self.listFields.keys():
             self.fields[key] = self.listFields[key]
@@ -43,22 +35,18 @@ class AllForm(django_auth_forms.AuthenticationForm):
         
     @sensitive_variables()
     def clean(self):
-        localCrendentials = {}
         federationCrendentials = {}
          
         for key in self.listFields.keys():
-            if LOCAL_TYPE_FORM in key:
-                localCrendentials[key.replace(LOCAL_TYPE_FORM, '')] = self.cleaned_data.get(key)
-            elif FEDERATION_TYPE_FORM in key:
+            if FEDERATION_TYPE_FORM in key:
                 federationCrendentials[key.replace(FEDERATION_TYPE_FORM, '')] = self.cleaned_data.get(key)                                        
         
-        localEndpoint = settings.FOGBOW_LOCAL_AUTH_ENDPOINT
         federationEndpoint = settings.FOGBOW_FEDERATION_AUTH_ENDPOINT    
         
         self.user_cache = authenticate(request=self.request,
-                                        localCredentials=localCrendentials,
+                                        localCredentials={},
                                         federationCredentials=federationCrendentials,
-                                        localEndpoint=localEndpoint,
+                                        localEndpoint=None,
                                         federationEndpoint=federationEndpoint)        
         
         if self.user_cache.errors == True:

@@ -10,13 +10,12 @@
   	  <div>
     	<h4 class="title-splash">
            <div class="title-login">    		
-      	      {% trans "Federation identity plugin" %} ({% trans "Mandatory" %}) : {{ federationForm }} 
+      	      {% trans "Federation identity plugin" %} : {{ federationForm }} 
       	   </div>
     	</h4>
 	    <br>
       </div>
 {% for field in form.visible_fields %}	
-  	{% if "federation" in field.label_tag %}
 	  <div class="control-group form-field clearfix{% if field.errors %} error{% endif %} {{ field.css_classes }}">
 	    
 	    {{ field.label_tag }}
@@ -34,55 +33,8 @@
 	    <div class="input">
 	      {{ field }}
 	    </div>
-	  </div>
-  	{% endif %}
+	  </div> 
 {% endfor %}
-      <hr>
-  	  <div id="local_identity_plugin_button">
-    	<h4 class="title-splash">
-           <div class="title-login">    	           	 	
-      	      {% trans "Local identity plugin" %} ({% trans "Optional" %}) : {{ localForm }}
-      	   </div>
-    	</h4>
-  	  </div>
-  	  <br>
-<div id="local_identity_plugin_box">
-{% for field in form.visible_fields %}	
-  	{% if "local" in field.label_tag %}
-	  <div class="control-group form-field clearfix{% if field.errors %} error{% endif %} {{ field.css_classes }}">
-	    
-	    {{ field.label_tag }}
-	    {% if field.errors %}
-	      {% for error in field.errors %}
-	        <span class="help-inline">{{ error }}</span>
-	      {% endfor %}
-	    {% endif %}
-	    {% comment %}
-	    Escape help_text a second time here, to avoid an XSS issue in bootstrap.js.
-	    This can most likely be removed once we upgrade bootstrap.js past 2.0.2.
-	    Note: the spaces are necessary here.
-	    {% endcomment %}
-	    <span class="help-block">{% filter force_escape %} {{ field.help_text }} {% endfilter %} </span>
-	    <div class="input">
-	      {{ field }}
-	    </div>
-	  </div>
-  	{% endif %}
-{% endfor %}
-</div>
 
 <script src="static/fogbow/js/jquery-2.1.3.min.js"></script>
 <script src="static/fogbow/js/fogbow.js"></script>
-<script type="text/javascript">
-	$(function() {
-		$('#local_identity_plugin_box').hide();
-	});
-	
-	$('#local_identity_plugin_button').click(function() {
-		if (!$('#local_identity_plugin_box').is(':visible')) {
-			$('#local_identity_plugin_box').show('slow');
-			return;
-		}
-		$('#local_identity_plugin_box').hide('slow');
-	});
-</script>
