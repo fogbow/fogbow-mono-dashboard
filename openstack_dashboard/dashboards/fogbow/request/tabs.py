@@ -63,7 +63,10 @@ class RequestDetailTab(tabs.Tab):
         requirements, type, state, validFrom, validUntil, image, ssh, extraUserdata, extraUserdataContentType, instanceId, count  = '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
         for detail in requestDetails:
             if FOGBOW_REQUIREMENTS_TERM in detail:
-                requirements = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_REQUIREMENTS_TERM)
+                try:
+                    requirements = detail.split(FOGBOW_REQUIREMENTS_TERM)[1].replace('=', '', 1)[1:-2]              
+                except Exception:
+                    requirements = '-'
             elif FOGBOW_SHH_PUBLIC_KEY_TERM in detail:
                 ssh = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_SHH_PUBLIC_KEY_TERM)
             elif FOGBOW_USERDATA_TERM + '=' in detail:

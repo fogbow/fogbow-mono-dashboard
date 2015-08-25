@@ -68,7 +68,8 @@ def getFeatureInCategoryPerScheme(featureName, features):
         for feature in features:
             if featureName in feature:
                 return feature.replace(featureName + '=', '') \
-                              .replace('"','').replace('Image:','')
+                              .replace('"','').replace('Image:','') \
+                              .replace(' image', '')
         return ''
     except Exception:
         return '-'                
