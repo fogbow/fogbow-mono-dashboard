@@ -7,6 +7,13 @@ from openstack_dashboard import exceptions
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# Endpoint Manager
+FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182' # Mandatory
+
+FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
+# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth
+FOGBOW_FEDERATION_AUTH_TYPE = '' # Mandatory
+
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
 # with the list of host/domain names that the application can serve.
