@@ -21,6 +21,12 @@
     </strong>
     </div>
     <div class="d3_quota_bar">
+    <div class="d3_pie_chart" data-used="{{ requestsPendingPercent }}" data-color="fogbow-color-red"></div>
+    <strong>{% trans "Pending requests" %} <br />
+     {% blocktrans with used=requestsPending available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
+    </strong>
+    </div>        
+    <div class="d3_quota_bar">
     <div class="d3_pie_chart" data-used="{{ requestsClosedPercent }}" data-color="fogbow-color-gray"></div>
     <strong>{% trans "Closed requests" %} <br />
      {% blocktrans with used=requestsClosed available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
@@ -31,11 +37,5 @@
     <strong>{% trans "Deleted requests" %} <br />
      {% blocktrans with used=requestsDeleted available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
     </strong>
-    </div>
-    <div class="d3_quota_bar">
-    <div class="d3_pie_chart" data-used="{{ requestsFailedPercent }}" data-color="fogbow-color-red"></div>
-    <strong>{% trans "Failed requests" %} <br />
-     {% blocktrans with used=requestsFailed available=requestsTotal %}<span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
-    </strong>
-    </div>            
+    </div>        
 </div>

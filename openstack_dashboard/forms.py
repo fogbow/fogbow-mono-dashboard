@@ -44,9 +44,7 @@ class AllForm(django_auth_forms.AuthenticationForm):
         federationEndpoint = settings.FOGBOW_FEDERATION_AUTH_ENDPOINT    
         
         self.user_cache = authenticate(request=self.request,
-                                        localCredentials={},
                                         federationCredentials=federationCrendentials,
-                                        localEndpoint=None,
                                         federationEndpoint=federationEndpoint)        
         
         if self.user_cache.errors == True:

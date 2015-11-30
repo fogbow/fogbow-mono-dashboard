@@ -67,13 +67,11 @@ class User(models.AnonymousUser):
     type = 'fogbow_user'
     authorized_tenants = {}
     
-    def __init__(self, id=None, token=None, username=None, roles=None, localToken=None):
+    def __init__(self, id=None, token=None, username=None, roles=None):
         self.id = id
         self.token = token
-        self.localToken = localToken
         self.username = username
         self.roles = roles
-        self.localToken = localToken
 
     def __unicode__(self):
         return self.username
@@ -131,7 +129,7 @@ def getErrorMessage(typeToken):
     return errorStr 
 
 def checkUserAuthenticated(token):
-    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token.id , 'X-Local-Auth-Token' : token.id}
+    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token.id}
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers, timeout=10)    
     
@@ -144,7 +142,7 @@ def checkUserAuthenticated(token):
 def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):    
     federationToken = request.user.token.id
     
-    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken, 'X-Local-Auth-Token' : ''}    
+    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken}    
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         

@@ -30,16 +30,15 @@ class FogbowBackend(object):
     def get_user(self, user_id):     
         federationToken = self._cached_tokens[self.request.session['token']]
         
-        return User('fogbow', federationToken, None, {}, None)
+        return User('fogbow', federationToken, None, {})
   
-    def authenticate(self, request, localCredentials=None, federationCredentials=None,
-                      localEndpoint=None, federationEndpoint=None):
+    def authenticate(self, request, federationCredentials=None, federationEndpoint=None):
         tokenStr = ''                              
         tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
                         
         federatioToken = Token(tokenStr)            
-        user = User('', federatioToken, '', {}, localToken=None)        
+        user = User('', federatioToken, '', {})        
         try:            
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')

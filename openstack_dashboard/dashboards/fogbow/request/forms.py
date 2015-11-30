@@ -15,8 +15,10 @@ from openstack_dashboard import api
 from django.core.urlresolvers import reverse_lazy
 from horizon import messages
 from django import shortcuts
+from openstack_dashboard.dashboards.fogbow.members.views import IndexView as member_views
 
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
+MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
 SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
@@ -39,6 +41,9 @@ class CreateRequest(forms.SelfHandlingForm):
     mem = forms.CharField(label=_('Minimal amount of RAM in MB'), initial=1024,
                           widget=forms.TextInput(),
                           required=False)
+    
+    members = forms.ChoiceField(label=_('Members'), help_text=_('Members'), required=False)
+        
     advanced_requirements = forms.CharField(label=_('Advanced requirements'),
                            error_messages={'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')},
@@ -69,6 +74,18 @@ class CreateRequest(forms.SelfHandlingForm):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
         
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
+        
+        membersChoices = []
+        membersChoices.append(('', 'Try first local, then any'))
+        try:
+            membersResponseStr = fogbow_models.doRequest('get', MEMBER_TERM, None, request).text
+            members = member_views().getMembersList(fogbow_models.doRequest('get', MEMBER_TERM, None, request).text)
+            for m in members:
+                membersChoices.append((m.get('idMember'), m.get('idMember')))
+        except Exception as error: 
+            pass        
+
+        self.fields['members'].choices = membersChoices
 
         dataUserTypeChoices = []
         dataUserTypeChoices.append(('text/x-shellscript', 'text/x-shellscript'))
