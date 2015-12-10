@@ -128,8 +128,8 @@ def getErrorMessage(typeToken):
         errorStr = _('Raw opennebula is invalid')                 
     return errorStr 
 
-def checkUserAuthenticated(token):
-    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : token.id}
+def checkUserAuthenticated(token):    
+    headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id}
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers, timeout=10)    
     
@@ -142,7 +142,7 @@ def checkUserAuthenticated(token):
 def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):    
     federationToken = request.user.token.id
     
-    headers = {'content-type': 'text/occi', 'X-Federation-Auth-Token' : federationToken}    
+    headers = {'content-type': 'text/occi', 'X-Auth-Token' : federationToken}    
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
         

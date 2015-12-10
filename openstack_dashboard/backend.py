@@ -44,7 +44,7 @@ class FogbowBackend(object):
                 LOG.error('Federation Token is Invalid')
                 user.errors = True
                 user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)                
-        except Exception,e: 
+        except Exception, e: 
             user.errors = True
             user.typeError = 'Manager connection failed.'        
         
