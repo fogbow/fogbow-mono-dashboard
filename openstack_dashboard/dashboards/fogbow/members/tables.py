@@ -10,6 +10,7 @@ class MembersTable(tables.DataTable):
     memInUse = tables.Column("memInUse", verbose_name=_("RAM(MB) in use"))
     instanceIdle = tables.Column("instanceIdle", verbose_name=_("Available instances quota"))
     instanceInUse = tables.Column("instanceInUse", verbose_name=_("Instances in use"))
+    status = tables.Column("status", verbose_name=_("Status"))
 
     class Meta:
         name = "members"

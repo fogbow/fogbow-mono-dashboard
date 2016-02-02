@@ -3,22 +3,153 @@
 <div class="table_wrapper">
   <h3 class="table_title">{% trans "Summary of resources" %}</h3>
   <br>
+  
+  <!--
+  <br>
   <h4>{% blocktrans with used=cpuInUse %}{{ used }} vCPUs {% endblocktrans %} {% trans "being used" %}</h4>
   <h4>{% blocktrans with used=memInUse %}{{ used }} {% endblocktrans %} {% trans "GB of RAM"%} {% trans "being used" %}</h4>
   <br>
-  <!--
-    <div class="d3_quota_bar">
-    <div class="d3_pie_chart" data-used="{{ cpuUsedPercentage }}"></div>
-     <strong>{% trans "CPU" %} <br />
-         {% blocktrans with used=cpuInUse available=cpuTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
-     </strong>
-    </div>
-
-    <div class="d3_quota_bar">
-    <div class="d3_pie_chart" data-used="{{ memUsedPercentage }}"></div>
-    <strong>{% trans "Mem (GB)" %} <br />
-     {% blocktrans with used=memInUse available=memTotal %}Used <span> {{ used }} </span> of <span> {{ available }} </span>{% endblocktrans %}
-    </strong>
-    </div>
   -->
+
 </div>
+	<button class="button button-shadow " id="button_populate">Populate Table</button>
+	<!-- <button class="button button-shadow " id="button_abort">Abort</button>  -->	
+	<br>
+	
+<style>
+.button {
+    background-color: #474747; 
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+
+.button-shadow {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+}
+
+</style>
+
+<script src="../static/dashboard/js/jquery-1.12.0.min.js"></script>
+<script type="text/javascript">	
+	var xhr = [];
+	
+	$(document).find("#button_abort").click(function() {		
+	    console.log(xhr);
+	    for (i = 0; i < xhr.length; i++) {
+	    	console.log(xhr[i]);
+	        xhr[i].abort();
+	    }
+	});
+	
+	$("#button_populate").click(function() {
+		console.log('Starting...');
+		var cont = -1;
+		$('#members').find('tr').each(function(indice) {
+		    $(this).find('td').each(function(indice) {
+		        if (indice == 0) {
+		        	cont = cont + 1;
+		        	var text = $(this).text();
+		        	
+		        	$("#members__row__" + text.replace(/\./g, '\\.') + " td:eq(7)").text("Loading");
+		        	$("#members__row__" + text.replace(/\./g, '\\.') + " td:eq(7)").css('color', 'black');
+		        	
+		        	xhr[cont] = $.ajax({
+		        	    url: window.location.href + text + '/quota',
+		        	    type: "GET",
+		        	    cache: false,
+		        	    success: function(data) { 
+			    			text = text.replace(/\./g, '\\.');
+			    			columnEl = $("#members__row__" + text + " td:eq(7)");
+							if (data == 'error') {
+								columnEl.text('Error');
+								columnEl.css('color', 'red');
+							} else {
+								try {
+									var jsonData = JSON.parse(data);
+									for (var key in jsonData) {
+									  if (jsonData.hasOwnProperty(key)) {
+										 $("#members__row__" + text + " td:eq(" + key + ")").text(jsonData[key]);
+									  }
+									}
+									columnEl.text('Ok');
+									columnEl.css('color', 'blue');
+								} catch(err) {}																				
+							}
+		        	    },
+		        	    error: function() {
+			    			text = text.replace(/\./g, '\\.');
+			    			columnEl = $("#members__row__" + text + " td:eq(7)"); 
+			    			columnEl.text('Error');
+			    			columnEl.css('color', 'red');
+			    			return;
+		        	    },
+		        	});		        	
+		        }
+		    });
+		});			
+	});
+
+	/**
+	$(document).ready(function() {
+		
+		// TODO remove
+		return;
+		console.log('Starting...');
+		var cont = -1;
+		$('#members').find('tr').each(function(indice) {
+		    $(this).find('td').each(function(indice) {
+		        if (indice == 0) {
+		        	cont = cont + 1;
+		        	var text = $(this).text();
+		        			        	
+		        	xhr[cont] = $.ajax({
+		        	    url: window.location.href + text + '/quota',
+		        	    type: "GET",
+		        	    cache: false,
+		        	    success: function(data) { 
+			    			text = text.replace(/\./g, '\\.');
+			    			columnEl = $("#members__row__" + text + " td:eq(7)");
+							if (data == 'error') {
+								columnEl.text('Error');
+								columnEl.css('color', 'red');
+							} else {
+								try {
+									var jsonData = JSON.parse(data);
+									for (var key in jsonData) {
+									  if (jsonData.hasOwnProperty(key)) {
+										 $("#members__row__" + text + " td:eq(" + key + ")").text(jsonData[key]);
+									  }
+									}
+									columnEl.text('Ok');
+									columnEl.css('color', 'blue');
+								}
+								catch(err) {
+									
+								}																				
+							}
+		        	    },
+		        	    error: function() {
+			    			text = text.replace(/\./g, '\\.');
+			    			columnEl = $("#members__row__" + text + " td:eq(7)"); 
+			    			columnEl.text('Error');
+			    			columnEl.css('color', 'red');
+			    			return;
+		        	    },
+		        	});		        	
+		        }
+		    });
+		});	
+	});	
+	**/
+	
+	
+</script>

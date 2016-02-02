@@ -18,7 +18,7 @@ class FogbowConstants():
     COMPUTE_TERM = '/compute/'
     REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
     REQUEST_TERM = '/fogbow_request/'
-    MEMBER_TERM = '/members'
+    MEMBER_TERM = '/member'
     RESOURCE_TERM = '/-/'
     TOKEN_TERM = '/token'
     QUOTA_TERM = '/quota'

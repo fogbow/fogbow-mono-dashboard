@@ -11,6 +11,9 @@ from openstack_dashboard.dashboards.fogbow.members \
     import tables as project_tables
 from openstack_dashboard.dashboards.fogbow.members \
     import models as project_models
+from django.http import HttpResponse
+import base64
+import json
 
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 QUOTA_TERM = fogbow_models.FogbowConstants.QUOTA_TERM
@@ -23,12 +26,6 @@ class IndexView(tables.DataTableView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['memTotal'] = self.memTotal
-        context['memInUse'] = self.memInUse
-        context['memUsedPercentage'] = self.memUsedPercentage
-        context['cpuTotal'] = self.cpuTotal
-        context['cpuInUse'] = self.cpuInUse
-        context['cpuUsedPercentage'] = self.cpuUsedPercentage
         return context
 
     def has_more_data(self, table):
@@ -43,8 +40,7 @@ class IndexView(tables.DataTableView):
             return members 
                 
         responseStr = response.text
-        if fogbow_models.isResponseOk(responseStr) == True:
-                    
+        if fogbow_models.isResponseOk(responseStr) == True:                    
             members = self.getMembersList(responseStr)                              
 
         return members
@@ -59,72 +55,41 @@ class IndexView(tables.DataTableView):
                 responseStr = responseStr + newUserQuotaRow
         
         return responseStr        
-        
     
     def getMembersList(self, strResponse):
         members = []
-        membersList = strResponse.split('\n')
-        memInUseTotal,memIdleTotal,cpuIdleTotal,cpuInUseTotal = 0,0,0,0
-        for m in membersList:
-            id, cpuIdle, cpuInUse, memIdle, memInUse, instanceIdle, instanceInUse = '-','0','0','0','0','0','0'            
-            memberProperties = m.split(';')
-            
-            for properties in memberProperties:                 
-                values = properties.split('=')
-                value = None
-                if len(values) > 1: 
-                    value = values[1]
-
-                if any("id" in s for s in values):
-                    id = value
-                elif any("cpuIdle" in s for s in values): 
-                    cpuIdle = float(value)
-                elif any("cpuInUse" in s for s in values): 
-                    cpuInUse = float(value)
-                elif any("memIdle" in s for s in values): 
-                    memIdle = float(value)
-                elif any("memInUse" in s for s in values):
-                    memInUse = float(value)
-                elif any("instancesInUse" in s for s in values):
-                    try:
-                        instanceInUse = float(value)
-                    except Exception:
-                        instanceInUse = 0
-                elif any("instancesIdle" in s for s in values):
-                    try:
-                        instanceIdle = float(value)
-                    except Exception:
-                        instanceIdle = 0            
-
-            if id != None:                                                  
-                member = {'id': id , 'idMember' : id, 
-                          'cpuIdle': 'No limit' if cpuIdle > MAX_VALUE else cpuIdle, 
-                          'cpuInUse': cpuInUse , 
-                          'memIdle': 'No limit' if memIdle > MAX_VALUE else memIdle, 
-                          'memInUse': memInUse, 
-                          'instanceInUse' : instanceInUse,
-                          'instanceIdle' : 'No limit' if instanceIdle > MAX_VALUE else instanceIdle}
-                members.append(Member(member));                
-            
-            memInUseTotal += memInUse
-            memIdleTotal += memIdle
-            cpuIdleTotal += cpuIdle
-            cpuInUseTotal += cpuInUse
-        
-        self.setValuesContext(memIdleTotal, memInUseTotal, cpuIdleTotal, cpuInUseTotal)
+        membersList = strResponse.strip().split('\n')    
+        for mName in membersList:
+            member = {'id': mName , 'idMember' : mName, 
+            'cpuIdle': '-',
+            'cpuInUse': '-', 
+            'memIdle': '-',
+            'memInUse': '-', 
+            'instanceInUse' : '-',
+            'instanceIdle' : '-',
+            'status' : '-'}
+            members.append(Member(member));  
         
         return members
-    
-    def setValuesContext(self, memIdle, memInUse, cpuIdle, cpuInUse):    
-        self.memTotal = "{0:.2f}".format(self.convertMbToGb((memIdle + memInUse)))
-        self.memInUse = self.convertMbToGb(memInUse)
-        self.memUsedPercentage = fogbow_models.calculatePercent(memInUse, (memIdle + memInUse))
-        self.cpuTotal = "{0:.2f}".format((cpuIdle + cpuInUse))
-        self.cpuInUse = cpuInUse 
-        self.cpuUsedPercentage = fogbow_models.calculatePercent(cpuInUse, (cpuIdle + cpuInUse))
+        
+def getSpecificMemberQuota(request, member_id):
+    response = fogbow_models.doRequest('get', MEMBER_TERM + '/' + member_id + '/quota', None, request, False)
+    responseStr = response.text
+    if fogbow_models.isResponseOk(responseStr) == True:
+        data = {}
+        cont = 0
+        valuesList = responseStr.split('\n')
+        for value in valuesList:
+            
+            try:
+                if '' in value:
+                    print ''
+            except:
+                pass
                 
-    def convertMbToGb(self, value):
-        try:
-            return float(value / 1024)
-        except Exception:
-            return 0
+            cont = cont + 1;
+            if len(value.split('=')) > 1:
+                data[cont] = value.split('=')[1]                   
+                
+        return HttpResponse(json.dumps(data))
+    return HttpResponse('error')
