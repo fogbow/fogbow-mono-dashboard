@@ -13,7 +13,7 @@
 
 </div>
 	<button class="button button-shadow " id="button_populate">Populate Table</button>
-	<!-- <button class="button button-shadow " id="button_abort">Abort</button>  -->	
+	<!-- <button class="button button-shadow " id="button_abort">Abort</button>  --> 	
 	<br>
 	
 <style>
@@ -46,7 +46,11 @@
 	    console.log(xhr);
 	    for (i = 0; i < xhr.length; i++) {
 	    	console.log(xhr[i]);
+	    	console.log(xhr[i].readyState);	    	
 	        xhr[i].abort();
+	        xhr[i].readyState = 4;
+	        console.log(xhr[i].readyState);	  
+	        xhr[i] = null;
 	    }
 	});
 	

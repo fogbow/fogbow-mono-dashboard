@@ -16,13 +16,17 @@ LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
     COMPUTE_TERM = '/compute/'
-    REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
-    REQUEST_TERM = '/fogbow_request/'
+#    REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
+    REQUEST_TERM_WITH_VERBOSE = '/order?verbose=true'
+#    REQUEST_TERM = '/fogbow_request/'
+    REQUEST_TERM = '/order/'
     MEMBER_TERM = '/member'
     RESOURCE_TERM = '/-/'
     TOKEN_TERM = '/token'
     QUOTA_TERM = '/quota'
     USAGE_TERM = '/usage'
+    
+    ORDER_SCHEME = 'scheme="http://schemas.fogbowcloud.org/order#"'
         
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'

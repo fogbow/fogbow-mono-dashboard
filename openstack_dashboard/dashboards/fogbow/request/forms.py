@@ -20,6 +20,8 @@ from openstack_dashboard.dashboards.fogbow.members.views import IndexView as mem
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
+ORDER_TERM_CATEGORY = 'order'
+ORDER_SCHEME = fogbow_models.FogbowConstants.ORDER_SCHEME
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
 SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
 
@@ -132,9 +134,9 @@ class CreateRequest(forms.SelfHandlingForm):
                 normalizedUserDataFile = self.normalizeUserData(dataUserFile)
                 userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
                                                       'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
-                
-            headers = {'Category' : 'fogbow_request; scheme="http://schemas.fogbowcloud.org/request#"; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s' 
-                        % ('', data['image'].strip(), publicKeyCategory),
+            
+            headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
+                        % (ORDER_TERM_CATEGORY , ORDER_SCHEME, '', data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}            
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
