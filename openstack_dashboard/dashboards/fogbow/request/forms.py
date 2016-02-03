@@ -141,6 +141,8 @@ class CreateRequest(forms.SelfHandlingForm):
                         % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}            
 
+            print headers
+
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
