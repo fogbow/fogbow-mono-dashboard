@@ -21,6 +21,8 @@ RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 ORDER_TERM_CATEGORY = 'order'
+REQUEST_TERM_CATEGORY = 'fogbow_request'
+REQUEST_SCHEME = fogbow_models.FogbowConstants.REQUEST_SCHEME
 ORDER_SCHEME = fogbow_models.FogbowConstants.ORDER_SCHEME
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
 SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
@@ -136,7 +138,7 @@ class CreateRequest(forms.SelfHandlingForm):
                                                       'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
             
             headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
-                        % (ORDER_TERM_CATEGORY , ORDER_SCHEME, '', data['image'].strip(), publicKeyCategory),
+                        % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
                        'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}            
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)

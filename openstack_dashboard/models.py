@@ -27,6 +27,7 @@ class FogbowConstants():
     USAGE_TERM = '/usage'
     
     ORDER_SCHEME = 'scheme="http://schemas.fogbowcloud.org/order#"'
+    REQUEST_SCHEME = 'scheme="http://schemas.fogbowcloud.org/request#"'
         
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
