@@ -39,5 +39,5 @@ class APIDictWrapper(object):
         return "<%s: %s>" % (self.__class__.__name__, self._apidict)
 
 class Member(APIDictWrapper):
-    _attrs = ['id', 'idMember', 'cpuIdle', 'cpuInUse', 'memIdle', 'memInUse', 'flavors', 'status']
+    _attrs = ['id', 'idMember', 'cpuIdle', 'cpuInUse', 'memIdle', 'memInUse', 'flavors', 'timestamp']
     

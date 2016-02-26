@@ -67,7 +67,7 @@ class IndexView(tables.DataTableView):
             'memInUse': '-', 
             'instanceInUse' : '-',
             'instanceIdle' : '-',
-            'status' : '-'}
+            'timestamp' : '-'}
             members.append(Member(member));  
         
         return members

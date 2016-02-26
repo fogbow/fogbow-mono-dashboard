@@ -4,8 +4,8 @@ import horizon
 
 from openstack_dashboard.dashboards.fogbow import dashboard
 
-class Accounting(horizon.Panel):
-    name = _("Accounting")
-    slug = "accounting"
+class Usage(horizon.Panel):
+    name = _("Usage")
+    slug = "usage"
 
-dashboard.Fogbow.register(Accounting)
+dashboard.Fogbow.register(Usage)
