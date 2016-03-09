@@ -29,16 +29,27 @@ class FogbowBackend(object):
           
     def get_user(self, user_id):     
         federationToken = self._cached_tokens[self.request.session['token']]
+        username = '...'
+        try:
+            username = self.request.session['username']
+        except Exception, e:
+            pass
         
-        return User('fogbow', federationToken, None, {})
+        return User(username, federationToken, None, {})
   
     def authenticate(self, request, federationCredentials=None, federationEndpoint=None):
         tokenStr = ''                              
         tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
                         
-        federatioToken = Token(tokenStr)            
-        user = User('', federatioToken, '', {})        
+        federatioToken = Token(tokenStr)   
+        username = '...'
+        try:            
+            tokenInfo = getTokenInfoUser(federatioToken, settings.FOGBOW_FEDERATION_AUTH_TYPE, federationEndpoint)
+            username = tokenInfo
+        except Exception, e: 
+            pass
+        user = User(username, federatioToken, '', {})        
         try:            
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')
@@ -51,7 +62,9 @@ class FogbowBackend(object):
         request.user = user
         federation_token_id = uuid.uuid4()         
         request.session['token'] = federation_token_id
+        request.session['username'] = user.id
         self._cached_tokens[federation_token_id] = federatioToken
+        self._cached_tokens[user.id] = user
         return user
       
     def get_group_permissions(self, user, obj=None):
@@ -97,6 +110,18 @@ def checkUserAuthenticated(token, type, endpoint):
     if 'Unauthorized' in responseStr:
         return False    
     return True
+
+def getTokenInfoUser(token, type, endpoint):
+    type = getCorrectType(type)
+
+    command = '%s token --info -DauthUrl=%s --type %s --token "%s" --user' % (FOGBOW_CLI_JAVA_COMMAND,
+                                 endpoint, type, token.id)
+    
+    responseStr = commands.getoutput(command) 
+ 
+    if 'Unauthorized' in responseStr:
+        return None    
+    return responseStr
 
 def getCorrectType(type):
     if type == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE or type == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE:

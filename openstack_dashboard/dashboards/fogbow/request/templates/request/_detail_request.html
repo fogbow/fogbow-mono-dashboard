@@ -4,8 +4,8 @@
 <div class="info row-fluid detail">
   <h3>{% trans "Information" %}</h3>
   <hr class="header_rule">
-  <dl>
-    <dt>{% trans "Request id" %}</dt>
+  <dl >
+    <dt>{% trans "Order ID" %}</dt>
     {{ request.requestId }}
   </dl>
   <dl>
@@ -21,34 +21,67 @@
     {{ request.state }}
   </dl>
   <dl>
-    <dt>{% trans "Valid From" %}</dt>
+    <dt>{% trans "Valid from" %}</dt>
     {{ request.validFrom }}
   </dl>
   <dl>
-    <dt>{% trans "Valid Until" %}</dt>
+    <dt>{% trans "Valid until" %}</dt>
     {{ request.validUntil }}
   </dl>
   <dl>
+    <dt >{% trans "Resource kind" %}</dt>
+    {{ request.resourceKind }}
+  </dl>       
+  <dl type="compute">
     <dt>{% trans "Image" %}</dt>
     {{ request.image }}
-  </dl>   
-  <dl>
-    <dt>{% trans "Instance id" %}</dt>
-    {{ request.instanceId }}
+  </dl>
+  <dl type="storage">
+    <dt>{% trans "Volume size (in GB)" %}</dt>
+    {{ request.size }}
   </dl>     
   <dl>
+    <dt>{% trans "Instance ID" %}</dt>
+    {{ request.instanceId }}
+  </dl>     
+  <dl type="compute">
     <dt>{% trans "SSH public key" %}</dt>
     <pre>{{ request.ssh }}</pre> 
   </dl>   
-  <dl>
-    <dt>{% trans "Userdata content type" %}</dt>
+  <dl type="compute">
+    <dt >{% trans "Userdata content type" %}</dt>
     {{ request.extraUserdataContentType }}
   </dl>
-  
-  <dl>
+  <dl type="compute">
     <dt>{% trans "Userdata" %}</dt>
     <pre>{{ request.extraUserdata }}</pre>   
-  </dl>                                    
+  </dl> 
+  
+  <input id="input" value="{{ request.resourceKind }}" style="visibility: hidden;">                 
 </div>
 
-</div>
+<script src="../../../static/dashboard/js/jquery-1.12.0.min.js"></script>
+<script type="text/javascript">
+
+	$(document).ready(function() {
+		resourceKind = $('#input').val().trim();
+		hideFields(resourceKind, '');
+	});
+	
+	function hideFields(resourceKind, transition) {
+		if (resourceKind == "compute") {
+			//show
+			$("dl[type='compute']").show(transition);			
+			// hide
+			$("dl[type='storage']").hide(transition);
+		} else if (resourceKind == 'storage') {
+			console.log('storage');
+			//show
+			$("dl[type='storage']").show(transition);
+			//hide
+			$("dl[type='compute']").hide(transition);						
+		}
+	}
+	
+</script>
+

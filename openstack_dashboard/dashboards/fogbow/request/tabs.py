@@ -1,9 +1,11 @@
 from django.utils.translation import ugettext_lazy as _ 
 from horizon import tabs
 import openstack_dashboard.dashboards.fogbow.instance.tabs as tabsInstanceDashboard
+import openstack_dashboard.dashboards.fogbow.storage.tabs as tabsStorageDashboard
 import openstack_dashboard.models as fogbow_models
 import base64
 
+STORAGE_TERM = fogbow_models.FogbowConstants.STORAGE_TERM
 COMPUTE_TERM = fogbow_models.FogbowConstants.COMPUTE_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 
@@ -18,22 +20,34 @@ FOGBOW_STATE_TERM = fogbow_models.FogbowConstants.FOGBOW_STATE_TERM
 FOGBOW_TYPE_TERM = fogbow_models.FogbowConstants.FOGBOW_TYPE_TERM
 FOGBOW_INSTANCE_ID_TERM = fogbow_models.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
 FOGBOW_COUNT_TERM = fogbow_models.FogbowConstants.FOGBOW_COUNT_TERM
-
+FOGBOW_SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
+FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_TERM
 
 class InstanceDetailTab(tabs.Tab):
-    name = _("Instance Details")
+    name = _("Instance details")
     slug = "instance_details"
     template_name = ("fogbow/instance/_detail_instance.html")
 
     def get_context_data(self, request):
         instanceId = self.tab_group.kwargs['instance_id'].split(':')[1]
-                
-        response = fogbow_models.doRequest('get', COMPUTE_TERM  + instanceId, None, request)
-        
-        return {'instance' : tabsInstanceDashboard.getInstancePerResponse(instanceId, response)}
+        resourceKind = self.tab_group.kwargs['instance_id'].split(':')[2]
+        print resourceKind
+        if resourceKind == 'compute':
+            self.name = _("Instance Details")
+            self.template_name = ("fogbow/instance/_detail_instance.html")
+            response = fogbow_models.doRequest('get', COMPUTE_TERM  + instanceId, None, request)
+            
+            return {'instance' : tabsInstanceDashboard.getInstancePerResponse(instanceId, response)}
+        elif resourceKind == 'storage':
+            self.name = _("Storage Details")
+            self.template_name = ("fogbow/storage/_detail_instance.html")
+            response = fogbow_models.doRequest('get', STORAGE_TERM  + instanceId, None, request)
+            return {'instance' : tabsStorageDashboard.getInstancePerResponse(instanceId, response)}
+        else:
+            return {'instance' : {}}
     
 class RequestDetailTab(tabs.Tab):
-    name = _("Request Details")
+    name = _("Order details")
     slug = "request_details"
     template_name = ("fogbow/request/_detail_request.html")
 
@@ -57,10 +71,9 @@ class RequestDetailTab(tabs.Tab):
         if requestId == 'null':
             requestId = '-'
         
-        print response.text
         requestDetails = response.text.split('\n')
         
-        requirements, type, state, validFrom, validUntil, image, ssh, extraUserdata, extraUserdataContentType, instanceId, count  = '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+        requirements, type, state, validFrom, validUntil, image, ssh, extraUserdata, extraUserdataContentType, instanceId, count, size, resourceKind  = '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
         for detail in requestDetails:
             if FOGBOW_REQUIREMENTS_TERM in detail:
                 try:
@@ -86,6 +99,10 @@ class RequestDetailTab(tabs.Tab):
                 image = tabsInstanceDashboard.getFeatureInCategoryPerScheme('title', detail)
             elif FOGBOW_VALID_UNTIL_TERM in detail:
                 validUntil = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_VALID_UNTIL_TERM)
+            elif FOGBOW_SIZE_OCCI in detail:
+                size = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_SIZE_OCCI)
+            elif FOGBOW_RESOURCE_KIND_TERM in detail:
+                resourceKind = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_RESOURCE_KIND_TERM)                       
             elif FOGBOW_INSTANCE_ID_TERM in detail:
                 instanceId = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_INSTANCE_ID_TERM)
                 if 'null' in instanceId:
@@ -97,7 +114,7 @@ class RequestDetailTab(tabs.Tab):
                  'state' : state, 'validFrom' : validFrom, 'validUntil' : validUntil,
                 'image' : image, 'ssh': ssh, 'extraUserdata': extraUserdata, 
                 'extraUserdataContentType': extraUserdataContentType, 'instanceId': instanceId,
-                'count': count}
+                'count': count, 'size': size, 'resourceKind': resourceKind}
                         
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instances_details"

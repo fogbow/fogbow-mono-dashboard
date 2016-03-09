@@ -20,24 +20,38 @@ from openstack_dashboard.dashboards.fogbow.members.views import IndexView as mem
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
+STORAGE_TERM = fogbow_models.FogbowConstants.STORAGE_TERM
 ORDER_TERM_CATEGORY = 'order'
 REQUEST_TERM_CATEGORY = 'fogbow_request'
 REQUEST_SCHEME = fogbow_models.FogbowConstants.REQUEST_SCHEME
 ORDER_SCHEME = fogbow_models.FogbowConstants.ORDER_SCHEME
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
 SCHEME_IMAGE_TERM = 'http://schemas.fogbowcloud.org/template/os#'
+FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_TERM
+SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
+STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
+    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'))
+    
     success_url = reverse_lazy("horizon:fogbow:request:index")
     
-    count = forms.CharField(label=_('Number of requests'),
+    count = forms.CharField(label=_('Number of orders'),
                            error_messages={
                                'required': _('This field is required.'),
                                'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')},
                            validators=[validators.validate_slug],
                            initial='1')
+    
+    resourceKind = forms.ChoiceField(label=_('Resource kind'),
+                               help_text=_('Resource kind'),
+                               choices=TYPE_RESOURCE_KIND)
+
+    sizeStorage = forms.CharField(label=_('Volume size (in GB)'), initial=1,
+                          widget=forms.TextInput(),
+                          required=False)
     
     cpu = forms.CharField(label=_('Minimal number of vCPUs'), initial=1,
                           widget=forms.TextInput(),
@@ -52,9 +66,9 @@ class CreateRequest(forms.SelfHandlingForm):
                            error_messages={'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
-    image = forms.CharField(label=_('Image'),
+    
+    image = forms.CharField(label=_('Image'), required=False,
                            error_messages={
-                               'required': _('This field is required.'),
                                'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')})
     type = forms.ChoiceField(label=_('Type'),
@@ -67,7 +81,7 @@ class CreateRequest(forms.SelfHandlingForm):
                            help_text=_('Data user type'),
                            required=False)
     
-    publicKey = forms.CharField(label=_('Public Key'),
+    publicKey = forms.CharField(label=_('Public key'),
                            error_messages={'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
@@ -118,10 +132,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
     def handle(self, request, data):
         try:
-            publicKeyCategory, publicKeyAttribute = '',''             
-            if data['publicKey'].strip() is not None and data['publicKey'].strip(): 
-                publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'                
-                publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
+            resourceKind = data['resourceKind']
             
             advancedRequirements = ''
             if data['advanced_requirements'] != '':
@@ -130,17 +141,36 @@ class CreateRequest(forms.SelfHandlingForm):
             else:
                 advancedRequirements = ''
             
-            userDataAttribute = ''
-            dataUserFile = data['data_user_file']
-            if dataUserFile != None and dataUserFile != '':
-                normalizedUserDataFile = self.normalizeUserData(dataUserFile)
-                userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
-                                                      'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
-            
-            headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
-                        % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
-                       'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}            
+            headers = {}
+            if resourceKind == 'compute':
+                publicKeyCategory, publicKeyAttribute = '',''             
+                if data['publicKey'].strip() is not None and data['publicKey'].strip(): 
+                    publicKeyCategory = ',fogbow_public_key; scheme="http://schemas.fogbowcloud/credentials#"; class="mixin"'                
+                    publicKeyAttribute = ',org.fogbowcloud.credentials.publickey.data=%s' % (data['publicKey'].strip())
+                
+                
+                userDataAttribute = ''
+                dataUserFile = data['data_user_file']
+                if dataUserFile != None and dataUserFile != '':
+                    normalizedUserDataFile = self.normalizeUserData(dataUserFile)
+                    userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
+                                                          'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
+                
+                headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
+                            % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
+                           'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}
+            elif resourceKind == 'storage':
+                sizeStorage = data['sizeStorage']
+                
+                headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s=%s' % (SIZE_OCCI, sizeStorage)}
 
+            addHeader = headers.get('X-OCCI-Attribute')
+            headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
+            if advancedRequirements != '':
+                addHeader = headers.get('X-OCCI-Attribute')
+                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})
+                
+                        
             print headers
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)

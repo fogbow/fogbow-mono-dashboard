@@ -16,6 +16,9 @@ LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
     COMPUTE_TERM = '/compute/'
+    STORAGE_TERM = '/storage/'
+    LINK_TERM = 'link/'
+    LINK_TERM_WITH_VERBOSE = 'link/?verbose=true'
     REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
 #    REQUEST_TERM_WITH_VERBOSE = '/order?verbose=true'
     REQUEST_TERM = '/fogbow_request/'
@@ -28,7 +31,12 @@ class FogbowConstants():
     
     ORDER_SCHEME = 'scheme="http://schemas.fogbowcloud.org/order#"'
     REQUEST_SCHEME = 'scheme="http://schemas.fogbowcloud.org/request#"'
-        
+    STORAGE_SCHEME = 'scheme="http://schemas.ogf.org/occi/infrastructure#"'
+    
+    TARGET = "occi.core.target"
+    SOURCE = "occi.core.source"
+    DEVICE_ID = "occi.storagelink.deviceid"
+    PROVADING_MEMBER_ID = "occi.storagelink.provadingMemberId"        
     STATE_TERM = 'occi.compute.state'
     SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
     CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
@@ -45,9 +53,11 @@ class FogbowConstants():
     FOGBOW_VALID_UNTIL_TERM = 'org.fogbowcloud.request.valid-until'
     FOGBOW_SHH_PUBLIC_KEY_REQUEST_TERM = 'org.fogbowcloud.credentials.publickey.data' 
     FOGBOW_COUNT_TERM = 'org.fogbowcloud.request.instance-count'
+    SIZE_OCCI = 'org.fogbowcloud.order.storage-size'
     
     FOGBOW_STATE_TERM = 'org.fogbowcloud.request.state'
     FOGBOW_TYPE_TERM = 'org.fogbowcloud.request.type'
+    FOGBOW_RESOURCE_KIND_TERM = 'org.fogbowcloud.order.resource-kind'
     FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id' 
 
 class IdentityPluginConstants():

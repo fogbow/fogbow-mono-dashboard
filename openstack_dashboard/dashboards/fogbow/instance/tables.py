@@ -16,8 +16,8 @@ class TerminateInstance(tables.BatchAction):
     name = "terminate"
     action_present = _("Terminate")
     action_past = _("Terminated")
-    data_type_singular = _("Instance")
-    data_type_plural = _("Instances")
+    data_type_singular = _("instance")
+    data_type_plural = _("instances")
     classes = ('btn-danger', 'btn-terminate')
     success_url = reverse_lazy("horizon:fogbow:instance:index")
 

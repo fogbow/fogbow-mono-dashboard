@@ -20,7 +20,7 @@ class IndexView(views.APIView):
         return self.getContextOverview(response, context)
     
     def getContextOverview(self, response, context):
-        context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the bartering of wares')
+        context['text_description_fogbow'] = _('Federation, opportunism and greenness in private infrastructure-as-a-service clouds through the barter of wares')
         
         if response == None:
             context['requestsFullfield'] = 0

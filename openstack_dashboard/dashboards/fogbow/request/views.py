@@ -18,6 +18,7 @@ from openstack_dashboard.dashboards.fogbow.request.models import Request
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM_WITH_VERBOSE
 STATE_TERM = fogbow_models.FogbowConstants.FOGBOW_STATE_TERM
 TYPE_TERM = fogbow_models.FogbowConstants.FOGBOW_TYPE_TERM
+FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_TERM
 INSTANCE_ID_TERM = fogbow_models.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
 
 class IndexView(tables.DataTableView):
@@ -40,6 +41,7 @@ class IndexView(tables.DataTableView):
         return listRequests
 
     def getRequestsList(self, responseStr):
+        print responseStr
         listRequests = []
         propertiesRequests = responseStr.split('\n')
         for propertiesOneRequest in propertiesRequests:
@@ -48,7 +50,7 @@ class IndexView(tables.DataTableView):
                 propertiesOneRequest = propertiesOneRequest[1]                
                 properties = propertiesOneRequest.split(';')
                 
-                state, type, instanceId = '-', '-', '-'
+                state, type, instanceId, resourceKind = '-', '-', '-', '-'
                 for propertie in properties:
                     if STATE_TERM in propertie:                        
                         state = self.normalizeAttributes(propertie, STATE_TERM)
@@ -56,13 +58,15 @@ class IndexView(tables.DataTableView):
                         type = self.normalizeAttributes(propertie, TYPE_TERM)
                     elif INSTANCE_ID_TERM in propertie:
                         instanceId = self.normalizeAttributes(propertie, INSTANCE_ID_TERM)
+                    elif FOGBOW_RESOURCE_KIND_TERM in propertie:
+                        resourceKind = self.normalizeAttributes(propertie, FOGBOW_RESOURCE_KIND_TERM)
                 
                 id = properties[0]
                 if instanceId == 'null':
                     instanceId = ''
-                idRequestTable = '%s:%s' % (id, instanceId)
+                idRequestTable = '%s:%s:%s' % (id, instanceId, resourceKind)
                 request = {'id' : idRequestTable, 'requestId' : id, 'state' : _(state), 'type' : type,
-                            'instanceId': instanceId}
+                            'resourceKind': resourceKind, 'instanceId': instanceId}
                 listRequests.append(Request(request))                
         
         return listRequests

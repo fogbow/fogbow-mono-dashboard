@@ -8,15 +8,45 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Endpoint Manager
-FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8183' # Mandatory
-
-FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://localhost:5000' # Mandatory
-# types : keystone, opennebula, raw_opennebula, raw_keystone
-FOGBOW_LOCAL_AUTH_TYPE = 'keystone' # Mandatory
-
-FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
-# types : keystone, opennebula, voms, raw_opennebula, raw_keystone
+# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182' # Mandatory
+# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.85.80:8182' # Mandatory
+FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.159:8182' # Mandatory
+     
+# FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000' # Mandatory
+# # types : keystone, opennebula, raw_opennebula, raw_keystone
+# FOGBOW_LOCAL_AUTH_TYPE = 'opennebula' # Mandatory
+     
+FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://10.30.0.55:2633/RPC2' # Mandatory
+# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, cafe
 FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
+
+# FOGBOW_CAFE_URL = 'https://ds.cafe.rnp.br/WAYF'
+
+# # Endpoint Manager 
+# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.5:8182'
+#     
+# # FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.5:5000'
+# # # types : keystone, opennebula, token
+# # FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
+#     
+# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
+# # types : keystone, opennebula, voms, token
+# FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
+
+
+
+# # Endpoint Manager 
+# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182'
+# 
+# FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000'
+# # types : keystone, opennebula, token
+# FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
+# 
+# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
+# # types : keystone, opennebula, voms, token
+# FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
+
+
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this

@@ -10,8 +10,8 @@ class TerminateRequest(tables.BatchAction):
     name = 'terminate'
     action_present = _('Terminate')
     action_past = _('Terminated')
-    data_type_singular = _('Request')
-    data_type_plural = _('Requests')
+    data_type_singular = _('order')
+    data_type_plural = _('orders')
     classes = ('btn-danger', 'btn-terminate')
 
     def allowed(self, request, instance=None):
@@ -25,7 +25,7 @@ class TerminateRequest(tables.BatchAction):
 
 class CreateRequest(tables.LinkAction):
     name = 'create'
-    verbose_name = _('Create request')
+    verbose_name = _('Create order')
     url = 'horizon:fogbow:request:create'
     classes = ('ajax-modal', 'btn-create')
     
@@ -34,6 +34,12 @@ def get_instance_id(request):
         return request.instanceId 
     else:
         return '-'
+
+def get_resource_kind(request):
+    if 'null' not in request.resourceKind:
+        return request.resourceKind 
+    else:
+        return '-'    
 
 class RequestsFilterAction(tables.FilterAction): 
 
@@ -44,15 +50,17 @@ class RequestsFilterAction(tables.FilterAction):
 
 class RequestsTable(tables.DataTable):
     requestId = tables.Column('requestId', link=('horizon:fogbow:request:request-detail'), 
-                              verbose_name=_('Request ID'))
+                              verbose_name=_('Order ID'))
     state = tables.Column('state', verbose_name=_('State'))
     type = tables.Column('type', verbose_name=_('Type'))
+    resourceKind = tables.Column(get_resource_kind,
+                                verbose_name=_('Resource kind'))    
     instanceId = tables.Column(get_instance_id, link=('horizon:fogbow:request:instance-detail'),
-                                verbose_name=_('Instance ID'))    
+                                verbose_name=_('Instance ID'))
 
     class Meta:
         name = 'request'
-        verbose_name = _('Requests')        
+        verbose_name = _('Orders')        
         table_actions = (CreateRequest, TerminateRequest,  RequestsFilterAction)
         row_actions = (TerminateRequest, )
         

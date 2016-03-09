@@ -12,7 +12,7 @@ IMAGE_SCHEME = fogbow_models.FogbowConstants.IMAGE_SCHEME
 EXTRA_PORT_SCHEME = fogbow_models.FogbowConstants.EXTRA_PORT_SCHEME
 
 class InstanceDetailTabInstancePanel(tabs.Tab):
-    name = _("Instance Details")
+    name = _("Instance details")
     slug = "instance_details"
     template_name = ("fogbow/instance/_detail_instance.html")
 
