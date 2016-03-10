@@ -40,6 +40,7 @@ class IndexView(tables.DataTableView):
             return members 
                 
         responseStr = response.text
+        print responseStr
         if fogbow_models.isResponseOk(responseStr) == True:                    
             members = self.getMembersList(responseStr)                              
 
@@ -63,9 +64,12 @@ class IndexView(tables.DataTableView):
             member = {'id': mName , 'idMember' : mName, 
             'cpuIdle': '-',
             'cpuInUse': '-', 
+            'cpuInUseByUser': '-', 
             'memIdle': '-',
-            'memInUse': '-', 
+            'memInUse': '-',
+            'memInUseByUser': '-', 
             'instanceInUse' : '-',
+            'instanceInUseByUser' : '-',
             'instanceIdle' : '-',
             'timestamp' : '-'}
             members.append(Member(member));  

@@ -5,17 +5,27 @@
   	<br>
   	<div>
   		<h4 class="same-line">Using &nbsp</h4> 
-  		<b><div id="totalVCPUResponse" class="same-line red"></div></b>
+  		<b><div id="totalVCPUInUseByUserResponse" class="same-line red"></div></b>
   		<h4 class="same-line">&nbsp vCPU of &nbsp</h4>
   		<b><div id="totalVCPUAvailableResponse" class="same-line red"></div></b>
+  		<h4 class="same-line">&nbsp available</h4>
   	</div> 
   	<br>
   	<div>
   		<h4 class="same-line">Using &nbsp </h4> 
-  		<b><div class="same-line red" id="totalRamResponse"></div></b>
+  		<b><div class="same-line red" id="totalRAMInUseByUserResponse"></div></b>
   		<h4 class="same-line">&nbsp GB of RAM of &nbsp</h4>
-  		<b><div class="red" id="totalRamAvailableResponse"></div></b>
-  	</div> 
+  		<b><div class="same-line red" id="totalRamAvailableResponse"></div></b>
+  		<h4 class="same-line">&nbsp available</h4>
+  	</div>
+  	<br>
+  	<div>
+  		<h4 class="same-line">Using &nbsp </h4> 
+  		<b><div class="same-line red" id="totalInstanceInUseByUserResponse"></div></b>
+  		<h4 class="same-line">&nbsp instance(s) of &nbsp</h4>
+  		<b><div class="same-line red" id="totalInstanceAvailableResponse"></div></b>
+  		<h4>&nbsp available</h4>
+  	</div>   	 
   <br>
 
 </div>
@@ -68,6 +78,11 @@
 	var totalRam = 0;
 	var totalVCPUAvailable = 0;
 	var totalVCPU = 0;
+	var totalRAMInUseByUser = 0;
+	var totalVCPUInUseByUser = 0;
+	var totalInstanceAvailable = 0;
+	var totalInstance = 0;	
+	var totalInstanceInUseByUser = 0;
 	
 	function updateMembers(memberLocalStorage) {
 		var cont = 0;
@@ -75,7 +90,7 @@
 		    $(this).find('td').each(function(indice) {
 		        if (indice == 0) {
 		        	var text = $(this).text();
-		        	var columnAndLine = "#members__row__" + text.replace(/\./g, '\\.') + " td:eq(7)"
+		        	var columnAndLine = "#members__row__" + text.replace(/\./g, '\\.') + " td:eq(10)"
 		        	
 		        	if (memberLocalStorage == null ) {
 			        	$(columnAndLine).text("Loading");
@@ -114,11 +129,11 @@
     	return localStorageMembers;
     }
 
-    function populateMemberLine(member, jsonData) {
+    function populateMemberLine(member, jsonData) {    	
 		try {			
 			for (var key in jsonData) {
 				if (jsonData.hasOwnProperty(key)) {
-					if (jsonData[key].length < 9 || key == 7) {
+					if (jsonData[key].length < 9 || key == 10) {
 					 	$("#members__row__" + member + " td:eq(" + key + ")").text(jsonData[key]);
 					 	
 					 	if (key == 1) {
@@ -126,31 +141,70 @@
 					 			if (totalVCPUAvailable == 'No Limit') {
 					 				continue;
 					 			}
-					 			totalVCPUAvailable = totalVCPUAvailable + parseFloat(jsonData[key]);
-					 			$('#totalVCPUAvailableResponse').text(totalVCPUAvailable);
+					 			totalVCPUAvailable = totalVCPUAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 2) {
 					 		try {			 			
 					 			totalVCPU = totalVCPU + parseFloat(jsonData[key]);
-					 			$('#totalVCPUResponse').text(totalVCPU);
 					 		}
 					 		catch(err) {}
-					 	} else if (key == 3) {
+					 	} else if (key == 4) {
 					 		try {
 					 			if (totalRamAvailable == 'No Limit') {
 					 				continue;
 					 			}							 			
-					 			totalRamAvailable = totalRamAvailable + parseFloat(jsonData[key]);
-					 			$('#totalRamAvailableResponse').text((totalRamAvailable / 1024).toFixed(1));
+					 			totalRamAvailable = totalRamAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}						 		
-					 	} else if (key == 4) {					 	
+					 	} else if (key == 5) {					 	
 					 		try {			 			
 					 			totalRam = totalRam + parseFloat(jsonData[key]);
-					 			$('#totalRamResponse').text((totalRam / 2014).toFixed(1));
 					 		}
 					 		catch(err) {}					 		
+					 	} else if (key == 3) {
+					 		try {			 			
+					 			totalVCPUInUseByUser = totalVCPUInUseByUser + parseFloat(jsonData[key]);
+					 			$('#totalVCPUInUseByUserResponse').text(totalVCPUInUseByUser);
+					 			
+					 			$('#totalVCPUAvailableResponse').text(totalVCPUAvailable - totalVCPU + totalVCPUInUseByUser);
+					 		}
+					 		catch(err) {}
+					 	} else if (key == 6) {
+					 		try {			
+					 			totalRAMInUseByUser = totalRAMInUseByUser + parseFloat(jsonData[key]);
+					 			$('#totalRAMInUseByUserResponse').text(totalRAMInUseByUser / 1024);
+					 			
+					 			if (totalRamAvailable == 'No Limit') {
+					 				$('#totalRamAvailableResponse').text('No Limit');
+					 				continue;
+					 			}		
+					 			$('#totalRamAvailableResponse').text(((totalRamAvailable - totalRam + totalRAMInUseByUser) / 1024).toFixed(1));
+					 		}
+					 		catch(err) {}
+					 		
+					 	} else if (key == 7) {
+					 		try {		 			
+					 			totalInstanceAvailable = totalInstanceAvailable + parseFloat(jsonData[key]);					 			
+					 		}
+					 		catch(err) {}						 		
+					 	} else if (key == 8) {					 	
+					 		try {			 			
+					 			totalInstance = totalInstance + parseFloat(jsonData[key]);
+					 		}
+					 		catch(err) {}					 		
+					 	} else if (key == 9) {
+					 		try {			
+					 			totalInstanceInUseByUser = totalInstanceInUseByUser + parseFloat(jsonData[key]);
+					 			$('#totalInstanceInUseByUserResponse').text(totalInstanceInUseByUser);
+					 			
+					 			if (totalInstanceAvailable == 'No Limit') {
+					 				$('#totalInstanceAvailableResponse').text('No Limit');
+					 				continue;
+					 			}		
+					 			$('#totalInstanceAvailableResponse').text(((totalInstanceAvailable - totalInstance + totalInstanceInUseByUser)).toFixed(1));
+					 		}
+					 		catch(err) {}
 					 	}
 					 	
 					} else {
@@ -189,14 +243,14 @@
 
     	    	
     			text = text.replace(/\./g, '\\.');
-    			columnEl = $("#members__row__" + text + " td:eq(7)");
+    			columnEl = $("#members__row__" + text + " td:eq(10)");
 				if (data == 'error') {
 					columnEl.text('Error');
 					columnEl.css('color', 'red');
 				} else {
 	    	    	var jsonData = JSON.parse(data);
 	    	    	var date = new Date();
-	    	    	jsonData["7"] = date.toLocaleDateString("en-US") + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();					
+	    	    	jsonData["10"] = date.toLocaleDateString("en-US") + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();					
 					populateMemberLine(text, jsonData);
 					console.log(JSON.stringify(jsonData));
 					updateLocalStorage(cont, JSON.stringify(jsonData));
@@ -207,7 +261,7 @@
 				}
     	    },
     	    error: function() {
-    			columnEl = $("#members__row__" + text + " td:eq(7)"); 
+    			columnEl = $("#members__row__" + text + " td:eq(10)"); 
     			columnEl.text('Error');
     			columnEl.css('color', 'red');
     			
@@ -232,15 +286,24 @@
 	});	
 	
 	$("#button_populate").click(function() {
-		totalRamAvailable = 0;
-		totalRam = 0;
-		totalVCPUAvailable = 0;
-		totalVCPU = 0;
+    	totalRamAvailable = 0;
+    	totalRam = 0;
+    	totalVCPUAvailable = 0;
+    	totalVCPU = 0;
+    	totalRAMInUseByUser = 0;
+    	totalVCPUInUseByUser = 0;    	
+    	totalInstanceAvailable = 0;
+    	totalInstance = 0;	
+    	totalInstanceInUseByUser = 0;    	
 		
 		$('#totalVCPUResponse').text("0");
 		$('#totalRamResponse').text("0");
 		$('#totalVCPUAvailableResponse').text("0");
-		$('#totalRamAvailableResponse').text("0");		
+		$('#totalRamAvailableResponse').text("0");
+		$('#totalInstanceResponse').text("0");
+		$('#totalInstanceAvailableResponse').text("0");		
+		
+		totalRamAvailableResponse
 		
 		$("#button_populate").prop("disabled", true);
 		localStorage.clear();
