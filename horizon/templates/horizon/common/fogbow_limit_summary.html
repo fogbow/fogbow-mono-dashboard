@@ -138,22 +138,25 @@
 					 	
 					 	if (key == 1) {
 					 		try {
-					 			if (totalVCPUAvailable == 'No Limit') {
-					 				continue;
-					 			}
+					 			//if (totalVCPUAvailable == 'No Limit') {
+					 			//	continue;
+					 			//}
 					 			totalVCPUAvailable = totalVCPUAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 2) {
-					 		try {			 			
+					 		try {			 	
+					 			//if (totalVCPUAvailable == 'No Limit') {
+					 			//	continue;
+					 			//}										 			
 					 			totalVCPU = totalVCPU + parseFloat(jsonData[key]);
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 4) {
 					 		try {
-					 			if (totalRamAvailable == 'No Limit') {
-					 				continue;
-					 			}							 			
+					 			//if (totalRamAvailable == 'No Limit') {
+					 				//continue;
+					 			//}							 			
 					 			totalRamAvailable = totalRamAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}						 		
@@ -163,23 +166,29 @@
 					 		}
 					 		catch(err) {}					 		
 					 	} else if (key == 3) {
-					 		try {			 			
+					 		try {			 
+					 			
 					 			totalVCPUInUseByUser = totalVCPUInUseByUser + parseFloat(jsonData[key]);
 					 			$('#totalVCPUInUseByUserResponse').text(totalVCPUInUseByUser);
 					 			
-					 			$('#totalVCPUAvailableResponse').text(totalVCPUAvailable - totalVCPU + totalVCPUInUseByUser);
+					 			var calculation = totalVCPUAvailable - totalVCPU + totalVCPUInUseByUser;
+					 			if (isNaN(calculation)) {
+					 				calculation = 'no limit';
+					 			}
+					 			$('#totalVCPUAvailableResponse').text(calculation);
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 6) {
 					 		try {			
 					 			totalRAMInUseByUser = totalRAMInUseByUser + parseFloat(jsonData[key]);
-					 			$('#totalRAMInUseByUserResponse').text(totalRAMInUseByUser / 1024);
+					 			$('#totalRAMInUseByUserResponse').text(totalRAMInUseByUser / 1024);					 			
 					 			
-					 			if (totalRamAvailable == 'No Limit') {
-					 				$('#totalRamAvailableResponse').text('No Limit');
-					 				continue;
-					 			}		
-					 			$('#totalRamAvailableResponse').text(((totalRamAvailable - totalRam + totalRAMInUseByUser) / 1024).toFixed(1));
+					 			var calculation = ((totalRamAvailable - totalRam + totalRAMInUseByUser) / 1024)
+					 			if (isNaN(calculation)) {
+					 				calculation = 'no limit';
+					 				$('#totalRamAvailableResponse').text(calculation);
+					 			}					 			
+					 			$('#totalRamAvailableResponse').text(calculation.toFixed(1));
 					 		}
 					 		catch(err) {}
 					 		
@@ -198,11 +207,12 @@
 					 			totalInstanceInUseByUser = totalInstanceInUseByUser + parseFloat(jsonData[key]);
 					 			$('#totalInstanceInUseByUserResponse').text(totalInstanceInUseByUser);
 					 			
-					 			if (totalInstanceAvailable == 'No Limit') {
-					 				$('#totalInstanceAvailableResponse').text('No Limit');
-					 				continue;
-					 			}		
-					 			$('#totalInstanceAvailableResponse').text(((totalInstanceAvailable - totalInstance + totalInstanceInUseByUser)).toFixed(1));
+					 			var calculation = ((totalInstanceAvailable - totalInstance + totalInstanceInUseByUser))
+					 			if (isNaN(calculation)) {
+					 				calculation = 'no limit';
+					 				$('#totalInstanceAvailableResponse').text(calculation);
+					 			}					 			 			
+					 			$('#totalInstanceAvailableResponse').text(calculation.toFixed(1));
 					 		}
 					 		catch(err) {}
 					 	}
@@ -214,10 +224,13 @@
 					 	if (key == 1) {
 					 		totalVCPUAvailable = 'No Limit';
 					 		$('#totalVCPUAvailableResponse').text(totalVCPUAvailable);
-					 	} else if (key == 3) {		
+					 	} else if (key == 4) {
 					 		totalRamAvailable = 'No Limit';
 					 		$('#totalRamAvailableResponse').text(totalRamAvailable);
-					 	}		   		
+					 	} else if (key == 7) {
+					 		totalInstanceAvailable = 'No Limit';
+					 		$('#totalInstanceAvailableResponse').text(totalInstanceAvailable);
+					 	}
 				   		
 				  	}
 			  	}
@@ -225,6 +238,9 @@
 			columnEl.css('color', 'blue');
 		} catch(err) {}
     }
+    
+    var contTimes = 0;
+    var contTryTimesDefault = 3;  
     
 	function refreshLine(numberMember) {		
 		var text = members[numberMember];
@@ -236,29 +252,40 @@
     	$.ajax({
     	    url: window.location.href + text + '/quota',
     	    type: "GET",
-    	    timeout:5000,    	    
+    	    timeout: 10000,    	    
     	    success: function(data) {   
     	    	console.log('success');
-    	    	console.log(data);
-
     	    	
     			text = text.replace(/\./g, '\\.');
     			columnEl = $("#members__row__" + text + " td:eq(10)");
 				if (data == 'error') {
 					columnEl.text('Error');
 					columnEl.css('color', 'red');
+					
+					if (continueRefresh) {
+						if (contTimes < contTryTimesDefault) {						
+							contTimes ++;
+							console.log('try ' + contTimes + ' times in ' + text + '.');							
+							refreshLine(cont);
+						} else {
+							console.log('next after ' + text + '.');
+							contTimes = 0;
+							refreshLine(++cont);						
+						}					
+					} 										
 				} else {
 	    	    	var jsonData = JSON.parse(data);
 	    	    	var date = new Date();
+	    	    	jsonData["name"] = text;		
 	    	    	jsonData["10"] = date.toLocaleDateString("en-US") + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();					
 					populateMemberLine(text, jsonData);
-					console.log(JSON.stringify(jsonData));
 					updateLocalStorage(cont, JSON.stringify(jsonData));
+					
+					if (continueRefresh) {
+						refreshLine(++cont);
+					}					
 				}
 				
-				if (continueRefresh) {
-					refreshLine(++cont);
-				}
     	    },
     	    error: function() {
     			columnEl = $("#members__row__" + text + " td:eq(10)"); 
@@ -266,7 +293,15 @@
     			columnEl.css('color', 'red');
     			
 				if (continueRefresh) {
-					refreshLine(++cont);
+					if (contTimes < contTryTimesDefault) {						
+						contTimes ++;
+						console.log('try ' + contTimes + ' times in ' + text + '.');
+						refreshLine(cont);
+					} else {
+						console.log('next after ' + text + '.');
+						contTimes = 0;
+						refreshLine(++cont);						
+					}					
 				}    			
     	    },
     	});				
@@ -278,9 +313,33 @@
 		if (localStorageMembers == null) {
 			setTimeout(function(){ refreshLine(0); }, 0);			
 		} else {			
-			for (i = 0; i < members.length; i++) { 			    
-				console.log(JSON.parse(String(localStorageMembers).split(tokenToReplace)[i]));
-			    populateMemberLine(members[i].replace(/\./g, '\\.'), JSON.parse(String(localStorageMembers).split(tokenToReplace)[i])) 
+			localStorageSplit = String(localStorageMembers).split(tokenToReplace);
+						
+			for (i = 0; i < members.length; i++) { 		
+				var populate = false;
+				var nameMember = members[i].replace(/\./g, '\\.');
+				
+				memberData = null;
+				indexReference = 0;
+				for (j = 0; j < localStorageSplit.length; j++) {
+					try {
+						memberData = localStorageSplit[j];
+						var name = JSON.parse(memberData)["name"];
+						if (name == nameMember) {
+							indexReference = j;
+							populate = true;
+							break;
+						}
+					} catch (err) {
+						
+					}		
+				}
+				
+				if (populate == false || memberData == null) {
+					continue;
+				}			
+				
+				populateMemberLine(nameMember, JSON.parse(localStorageSplit[indexReference]));
 			}
 		}
 	});	
