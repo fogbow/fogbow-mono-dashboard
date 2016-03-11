@@ -56,7 +56,7 @@ STATIC_URL = '/static/'
 ROOT_URLCONF = 'openstack_dashboard.urls'
 
 HORIZON_CONFIG = {
-    'dashboards': ('project', 'admin', 'settings', 'router', 'fogbow'),
+    'dashboards': ('settings', 'fogbow'),
     'default_dashboard': 'project',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,
@@ -155,12 +155,9 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'compressor',
     'horizon',
-    'openstack_dashboard.dashboards.project',
-    'openstack_dashboard.dashboards.admin',
     'openstack_dashboard.dashboards.settings',
     'openstack_dashboard.dashboards.fogbow',
     'openstack_auth',
-    'openstack_dashboard.dashboards.router',
 )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
@@ -177,18 +174,6 @@ SESSION_TIMEOUT = 1800
 gettext_noop = lambda s: s
 LANGUAGES = (
     ('en', gettext_noop('English')),
-#     ('en-au', gettext_noop('Australian English')),
-#     ('en-gb', gettext_noop('British English')),
-#     ('es', gettext_noop('Spanish')),
-#     ('fr', gettext_noop('French')),
-#     ('ja', gettext_noop('Japanese')),
-#     ('ko', gettext_noop('Korean (Korea)')),
-#     ('nl', gettext_noop('Dutch (Netherlands)')),
-#     ('pl', gettext_noop('Polish')),
-#     ('pt-br', gettext_noop('Portuguese (Brazil)')),
-#     ('ru', gettext_noop('Russian')),
-#     ('zh-cn', gettext_noop('Simplified Chinese')),
-#     ('zh-tw', gettext_noop('Traditional Chinese')),
 )
 LANGUAGE_CODE = 'en'
 LANGUAGE_COOKIE_NAME = 'horizon_language'
