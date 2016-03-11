@@ -265,10 +265,11 @@
 					if (continueRefresh) {
 						if (contTimes < contTryTimesDefault) {						
 							contTimes ++;
-							console.log('try ' + contTimes + ' times in ' + text + '.');
+							console.log('try ' + contTimes + ' times in ' + text + '.');							
 							refreshLine(cont);
 						} else {
 							console.log('next after ' + text + '.');
+							contTimes = 0;
 							refreshLine(++cont);						
 						}					
 					} 										
@@ -298,6 +299,7 @@
 						refreshLine(cont);
 					} else {
 						console.log('next after ' + text + '.');
+						contTimes = 0;
 						refreshLine(++cont);						
 					}					
 				}    			
