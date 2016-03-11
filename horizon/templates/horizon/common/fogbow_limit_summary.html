@@ -138,25 +138,25 @@
 					 	
 					 	if (key == 1) {
 					 		try {
-					 			if (totalVCPUAvailable == 'No Limit') {
-					 				//continue;
-					 			}
+					 			//if (totalVCPUAvailable == 'No Limit') {
+					 			//	continue;
+					 			//}
 					 			totalVCPUAvailable = totalVCPUAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 2) {
 					 		try {			 	
-					 			if (totalVCPUAvailable == 'No Limit') {
-					 				//continue;
-					 			}										 			
+					 			//if (totalVCPUAvailable == 'No Limit') {
+					 			//	continue;
+					 			//}										 			
 					 			totalVCPU = totalVCPU + parseFloat(jsonData[key]);
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 4) {
 					 		try {
-					 			if (totalRamAvailable == 'No Limit') {
-					 				continue;
-					 			}							 			
+					 			//if (totalRamAvailable == 'No Limit') {
+					 				//continue;
+					 			//}							 			
 					 			totalRamAvailable = totalRamAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}						 		
@@ -166,7 +166,8 @@
 					 		}
 					 		catch(err) {}					 		
 					 	} else if (key == 3) {
-					 		try {			 			
+					 		try {			 
+					 			
 					 			totalVCPUInUseByUser = totalVCPUInUseByUser + parseFloat(jsonData[key]);
 					 			$('#totalVCPUInUseByUserResponse').text(totalVCPUInUseByUser);
 					 			
@@ -223,10 +224,13 @@
 					 	if (key == 1) {
 					 		totalVCPUAvailable = 'No Limit';
 					 		$('#totalVCPUAvailableResponse').text(totalVCPUAvailable);
-					 	} else if (key == 3) {
+					 	} else if (key == 4) {
 					 		totalRamAvailable = 'No Limit';
 					 		$('#totalRamAvailableResponse').text(totalRamAvailable);
-					 	}		   		
+					 	} else if (key == 7) {
+					 		totalInstanceAvailable = 'No Limit';
+					 		$('#totalInstanceAvailableResponse').text(totalInstanceAvailable);
+					 	}
 				   		
 				  	}
 			  	}
@@ -234,6 +238,9 @@
 			columnEl.css('color', 'blue');
 		} catch(err) {}
     }
+    
+    var contTimes = 0;
+    var contTryTimesDefault = 3;  
     
 	function refreshLine(numberMember) {		
 		var text = members[numberMember];
@@ -245,7 +252,7 @@
     	$.ajax({
     	    url: window.location.href + text + '/quota',
     	    type: "GET",
-    	    timeout:5000,    	    
+    	    timeout: 10000,    	    
     	    success: function(data) {   
     	    	console.log('success');
     	    	
@@ -254,6 +261,17 @@
 				if (data == 'error') {
 					columnEl.text('Error');
 					columnEl.css('color', 'red');
+					
+					if (continueRefresh) {
+						if (contTimes < contTryTimesDefault) {						
+							contTimes ++;
+							console.log('try ' + contTimes + ' times in ' + text + '.');
+							refreshLine(cont);
+						} else {
+							console.log('next after ' + text + '.');
+							refreshLine(++cont);						
+						}					
+					} 										
 				} else {
 	    	    	var jsonData = JSON.parse(data);
 	    	    	var date = new Date();
@@ -261,11 +279,12 @@
 	    	    	jsonData["10"] = date.toLocaleDateString("en-US") + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();					
 					populateMemberLine(text, jsonData);
 					updateLocalStorage(cont, JSON.stringify(jsonData));
+					
+					if (continueRefresh) {
+						refreshLine(++cont);
+					}					
 				}
 				
-				if (continueRefresh) {
-					refreshLine(++cont);
-				}
     	    },
     	    error: function() {
     			columnEl = $("#members__row__" + text + " td:eq(10)"); 
@@ -273,7 +292,14 @@
     			columnEl.css('color', 'red');
     			
 				if (continueRefresh) {
-					refreshLine(++cont);
+					if (contTimes < contTryTimesDefault) {						
+						contTimes ++;
+						console.log('try ' + contTimes + ' times in ' + text + '.');
+						refreshLine(cont);
+					} else {
+						console.log('next after ' + text + '.');
+						refreshLine(++cont);						
+					}					
 				}    			
     	    },
     	});				
