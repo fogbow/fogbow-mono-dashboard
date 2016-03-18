@@ -41,7 +41,6 @@ class FogbowBackend(object):
         tokenStr = ''                              
         tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
-                        
         federatioToken = Token(tokenStr)   
         username = '...'
         try:            
@@ -58,7 +57,7 @@ class FogbowBackend(object):
         except Exception, e: 
             user.errors = True
             user.typeError = 'Manager connection failed.'        
-        
+    
         request.user = user
         federation_token_id = uuid.uuid4()         
         request.session['token'] = federation_token_id
