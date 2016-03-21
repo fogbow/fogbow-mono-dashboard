@@ -11,7 +11,6 @@ from horizon import exceptions
 from horizon import forms
 from horizon import messages
 from horizon.utils import fields
-from openstack_dashboard import api
 from django.core.urlresolvers import reverse_lazy
 from horizon import messages
 from django import shortcuts

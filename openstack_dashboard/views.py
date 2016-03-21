@@ -53,9 +53,7 @@ def splash_fogbow(request):
 	_id = parse_qs(assertion_url.query)['ID'][0]
         
         credentials = {'assertionKey': _key, 'assertionId': _id}
-        user = authenticate(request=request, localCredentials=None,
-                                        federationCredentials=credentials,
-                                        localEndpoint=None,
+        user = authenticate(request=request,federationCredentials=credentials,
                                         federationEndpoint=None)           
     	login(request, user)     
     	return shortcuts.redirect(get_user_home(request.user))
