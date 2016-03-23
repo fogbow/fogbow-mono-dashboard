@@ -27,8 +27,22 @@ class TerminateInstance(tables.BatchAction):
     def action(self, request, obj_id):
         self.current_past_action = 0        
         response = fogbow_models.doRequest('delete',COMPUTE_TERM + obj_id, None, request)
+
         if response == None or fogbow_models.isResponseOk(response.text) == False:
-            messages.error(request, _('Is was not possible to delete : %s') % obj_id)          
+            messages.error(request, _('Is was not possible to delete : %s') % obj_id) 
+            checkAttachmentAssociateError(request, response.text)
+            return None
+
+def checkAttachmentAssociateError(request, responseStr):
+    if 'Attachment ID :' in responseStr:
+        attachmentId = ''
+        try:
+            attachmentId = responseStr.split('Attachment ID :')[1].split('</p>')[0]
+        except Exception, err:
+            pass
+        messages.error(request, _('There is a attachment(%s) associate.' ) % (attachmentId)) 
+    else:
+        pass
 
 def get_instance_id(request):
     if 'null' not in request.instanceId:

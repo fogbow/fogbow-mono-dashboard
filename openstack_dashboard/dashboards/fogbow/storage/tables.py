@@ -9,6 +9,7 @@ from horizon import tables
 from horizon import messages
 
 import openstack_dashboard.models as fogbow_models
+import openstack_dashboard.dashboards.fogbow.instance.tables as tableInstanceDashboard
 
 STORAGE_TERM = fogbow_models.FogbowConstants.STORAGE_TERM
 COMPUTE_TERM = '/compute/'
@@ -30,6 +31,7 @@ class TerminateInstance(tables.BatchAction):
         response = fogbow_models.doRequest('delete', STORAGE_TERM + obj_id, None, request)
         if response == None or fogbow_models.isResponseOk(response.text) == False:
             messages.error(request, _('Is was not possible to delete : %s') % obj_id)          
+            tableInstanceDashboard.checkAttachmentAssociateError(request, response.text)
 
 def get_instance_id(request):
     if 'null' not in request.instanceId:
