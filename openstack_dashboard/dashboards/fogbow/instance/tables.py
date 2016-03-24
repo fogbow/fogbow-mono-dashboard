@@ -7,6 +7,9 @@ from django.conf import settings
 import requests
 from horizon import tables
 from horizon import messages
+from horizon import exceptions
+from django import shortcuts
+import sys
 
 import openstack_dashboard.models as fogbow_models
 
@@ -29,18 +32,20 @@ class TerminateInstance(tables.BatchAction):
         response = fogbow_models.doRequest('delete',COMPUTE_TERM + obj_id, None, request)
 
         if response == None or fogbow_models.isResponseOk(response.text) == False:
-            messages.error(request, _('Is was not possible to delete : %s') % obj_id) 
+            messages.error(request, _('Is was not possible to delete : %s') % obj_id)
             checkAttachmentAssociateError(request, response.text)
-            return None
+            return shortcuts.redirect(reverse("horizon:fogbow:instance:index"))
+            
+                      
 
 def checkAttachmentAssociateError(request, responseStr):
-    if 'Attachment ID :' in responseStr:
+    if 'Attachment IDs :' in responseStr:
         attachmentId = ''
         try:
-            attachmentId = responseStr.split('Attachment ID :')[1].split('</p>')[0]
+            attachmentId = responseStr.split('Attachment IDs :')[1].split('</p>')[0]
         except Exception, err:
             pass
-        messages.error(request, _('There is a attachment(%s) associate.' ) % (attachmentId)) 
+        messages.error(request, _('There are attachments(%s) associated.' ) % (attachmentId)) 
     else:
         pass
 
