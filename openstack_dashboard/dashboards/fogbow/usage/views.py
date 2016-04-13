@@ -52,6 +52,7 @@ class IndexView(tables.DataTableView):
         for mName in membersList:
             member = {'id': mName , 'idMember' : mName, 
             'usage': '-',
+            'usageStorage': '-',
             'timestamp' : '-'}
             members.append(Member(member));  
         
@@ -65,17 +66,14 @@ def getSpecificMemberUsage(request, member_id):
         cont = 0
         valuesList = responseStr.split('\n')
         for value in valuesList:
-#             try:
-#                 if '' in value:
-#                     print ''
-#             except:
-#                 pass
             if 'memberId' in value:
-                continue
-                
-            cont = cont + 1;
-            if len(value.split('=')) > 1:
-                data[cont] = value.split('=')[1]                   
+                continue                                
+            if len(value.split('=')) > 1 and 'compute' in value:
+                cont = cont + 1;
+                data[cont] = value.split('=')[1]
+            if len(value.split('=')) > 1 and 'storage' in value:
+                cont = cont + 1;
+                data[cont] = value.split('=')[1]                                        
                 
         return HttpResponse(json.dumps(data))
     return HttpResponse('error')

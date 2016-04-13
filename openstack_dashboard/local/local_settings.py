@@ -15,10 +15,11 @@ FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.159:8182' # Mandatory
 # FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000' # Mandatory
 # # types : keystone, opennebula, raw_opennebula, raw_keystone
 # FOGBOW_LOCAL_AUTH_TYPE = 'opennebula' # Mandatory
-     
-FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://10.30.0.55:2633/RPC2' # Mandatory
+
+FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.92:5000' # Mandatory
 # types : keystone, opennebula, voms, raw_opennebula, raw_keystone, cafe
 FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
+# FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
 
 # FOGBOW_CAFE_URL = 'https://ds.cafe.rnp.br/WAYF'
 

@@ -131,6 +131,9 @@ class CreateRequest(forms.SelfHandlingForm):
 
     def handle(self, request, data):
         try:
+            if self.checkAllAttributes(data, request) == False:
+                return None
+            
             resourceKind = data['resourceKind']
             
             advancedRequirements = ''
@@ -167,10 +170,7 @@ class CreateRequest(forms.SelfHandlingForm):
             headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
             if advancedRequirements != '':
                 addHeader = headers.get('X-OCCI-Attribute')
-                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})
-                
-                        
-            print headers
+                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})                                
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
@@ -193,3 +193,25 @@ class CreateRequest(forms.SelfHandlingForm):
                 if requests[-1] != request:
                     responseFormated += ' , '
         return responseFormated
+    
+    def checkAllAttributes(self, data, request):
+        value = None;
+        if self.existsBreakline(str(data['resourceKind']).strip()) == True:
+            value = 'resource kind'
+        if self.existsBreakline(str(data['publicKey']).strip())== True:
+            value = 'public key'
+        if self.existsBreakline(str(data['count']).strip())== True:
+            value = 'count'
+        if self.existsBreakline(str(data['sizeStorage']).strip())== True:
+            value = 'size storage'
+        
+        if value is not None:
+            messages.error(request, _('Wrong sintax. There is a breakline in the %s field.' % (value)))
+            return False
+        return True   
+                
+    def existsBreakline(self, attribute):
+        auxList = {'att': attribute}
+        if '\n' in auxList['att'] or '\r\n' in auxList['att']:
+            return True
+        return False
