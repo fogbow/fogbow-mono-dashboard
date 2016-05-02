@@ -61,13 +61,13 @@ dt {
 
 .topbar {
   background: #474747;
-  border-bottom: 1px solid #e5e5e5;
-  padding: 10px 25px;
+  padding: 16px 25px;
   margin-top: 0;
-  margin-left: -25px;
+  margin-left: -28px;
   margin-bottom: 20px;
   margin-right: -25px;
   min-width: 700px;
+  height: 20px;
 }
 
 .topbar .switcher_bar {
@@ -107,13 +107,21 @@ dt {
 #user_info > a {
     margin-left: 25px;
     font-size: 11px !important;
+    color: #fff;
+    text-decoration: none;
+}
+#user_info > a:hover {
+    color: #90abf4;
 }
 
 .page-header {
   margin: 0;
   padding: 0;
   border: 0;
-  font-family: anivers;
+}
+
+.page-header > h2 {
+  display: none;
 }
 
 h2 {
@@ -151,7 +159,7 @@ body {
 }
 
 #splash .login {
-  background: #474747 url(/static/dashboard/img/logo_fogbow_test_final_versao2.png) no-repeat center 10px;
+  background: #474747 url(/static/dashboard/img/naf.png) no-repeat center 10px;
   position: absolute;
   top: 80px;
   left: 50%;
@@ -207,18 +215,15 @@ body {
 
 .sidebar {
     background: #474747;
-    border-right: 5px solid #C0C0C0;
-    border-bottom: 5px solid #C0C0C0;
     float: left;
 }
 
 .sidebar h4 {
-    margin-left: 14px;
-    color: #999;
+    display: none;
 }
 
 .sidebar .nav-tabs {
-    margin-top: -34px;
+    display: none;
 }
 
 .sidebar .nav-tabs li.active a {
@@ -233,15 +238,16 @@ h1.brand {
 }
 
 h1.brand a {
-    background: url(/static/dashboard/img/logo_fogbow_test_final_versao2.png) top left no-repeat;
+    background: url(/static/dashboard/img/naf.png) top left no-repeat;
     display: block;
     float: left;
-    width: 140px;
-    height: 180px;
+    width: 90px;
+    height: 85px;
     text-indent: -9999px;
-    margin-left: 30px;
-    margin-top: 30px;
+    margin-left: 66px;
+    margin-top: 70px;
     margin-bottom: 25px;
+    background-size: contain;
 }
 
 /* Tenant Dropdown */
@@ -431,6 +437,7 @@ a.current_item:hover h3, a.current_item:hover h4 {
     font-size: 24px;
     margin-bottom: 5px;
     float: left;
+    display: none;
 }
 .table th.header {
   cursor: pointer;
@@ -489,18 +496,22 @@ small {
 
 .main_nav a {
   color: #999;
-  width: 185px;
-  padding: 10px;
+  width: 202px;
+  padding: 20px 10px;
   display: block;
-  margin-left: 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+  text-decoration: none;
 }
 
+.main_nav a:hover {
+  color: #fff;
+}
 .main_nav a.active {
-  background: #C0C0C0;
-  border: 2px solid #fff;
-  border-right: 0;
-  border-bottom-color: #fff;
-  color: #000;
+  background: #90ABF4;
+  color: #fff;
 }
 
 table form {
@@ -2242,9 +2253,9 @@ label.log-length {
 }
 
 #local_identity_plugin_button {
-	background: gray; 
-	border: 1px solid white; 
-	height: 20px; 
+	background: gray;
+	border: 1px solid white;
+	height: 20px;
 	padding: 5px;
 }
 
