@@ -8,42 +8,43 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Endpoint Manager
-# FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182' # Mandatory
+FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182' # Mandatory
 # FOGBOW_MANAGER_ENDPOINT = 'http://150.165.85.80:8182' # Mandatory
-FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.159:8182' # Mandatory
-     
+# FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.159:8182' # Mandatory
+CUSTOM_THEME = ''
+
 # FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000' # Mandatory
 # # types : keystone, opennebula, raw_opennebula, raw_keystone
 # FOGBOW_LOCAL_AUTH_TYPE = 'opennebula' # Mandatory
 
-FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.92:5000' # Mandatory
+FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
 # types : keystone, opennebula, voms, raw_opennebula, raw_keystone, cafe
 FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
 # FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
 
 # FOGBOW_CAFE_URL = 'https://ds.cafe.rnp.br/WAYF'
 
-# # Endpoint Manager 
+# # Endpoint Manager
 # FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.5:8182'
-#     
+#
 # # FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.5:5000'
 # # # types : keystone, opennebula, token
 # # FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
-#     
-# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
+#
+# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000'
 # # types : keystone, opennebula, voms, token
 # FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
 
 
 
-# # Endpoint Manager 
+# # Endpoint Manager
 # FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182'
-# 
+#
 # FOGBOW_LOCAL_AUTH_ENDPOINT = 'http://150.165.15.12:5000'
 # # types : keystone, opennebula, token
 # FOGBOW_LOCAL_AUTH_TYPE = 'keystone'
-# 
-# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000' 
+#
+# FOGBOW_FEDERATION_AUTH_ENDPOINT = 'http://150.165.85.80:5000'
 # # types : keystone, opennebula, voms, token
 # FOGBOW_FEDERATION_AUTH_TYPE = 'voms'
 

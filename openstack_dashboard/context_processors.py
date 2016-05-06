@@ -54,5 +54,6 @@ def openstack(request):
                'available': [{'endpoint': region[0], 'name':region[1]} for
                              region in available_regions]}
     context['regions'] = regions
+    context['custom_theme'] = settings.CUSTOM_THEME
 
     return context
