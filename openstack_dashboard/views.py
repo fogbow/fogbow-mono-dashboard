@@ -40,12 +40,28 @@ def splash(request):
 def splash_fogbow(request):             
     if request.user.is_authenticated():
         return shortcuts.redirect(get_user_home(request.user))     
-    
+  
+    try:
+        httpHost = request.META['HTTP_REFERER']
+    except:
+	httpHost = None
+    if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_SIMPLE_TOKEN and (httpHost != None and settings.FOGBOW_FEDERATION_SIMPLETOKEN_HOST in httpHost):
+	try:
+	    token = request.META['QUERY_STRING'].split('token=')[1]
+	    credentials = {fogbow_models.IdentityPluginConstants.AUTH_SIMPLE_TOKEN: token}
+            user = authenticate(request=request,federationCredentials=credentials,
+                                        federationEndpoint=None)
+            login(request, user)
+            return shortcuts.redirect(get_user_home(request.user))
+	except:
+	    print("Error")
+ 
     shibsessionExists = False
     for x in request.COOKIES:
 	if x.startswith('_shibsession_'):
 	    shibsessionExists = True
             break
+
 
     if shibsessionExists and settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_SHIBBOLETH:
 	assertion_url = urlparse(request.META['HTTP_SHIB_ASSERTION'])

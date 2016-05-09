@@ -38,6 +38,7 @@ class FogbowBackend(object):
         return User(username, federationToken, None, {})
   
     def authenticate(self, request, federationCredentials=None, federationEndpoint=None):
+	print 'Authenticating...'
         tokenStr = ''                              
         tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
@@ -47,6 +48,7 @@ class FogbowBackend(object):
             tokenInfo = getTokenInfoUser(federatioToken, settings.FOGBOW_FEDERATION_AUTH_TYPE, federationEndpoint)
             username = tokenInfo
         except Exception, e: 
+	    print e;
             pass
         user = User(username, federatioToken, '', {})        
         try:            
@@ -131,7 +133,7 @@ def getCorrectType(type):
 
 def getCorrectToken(formAuthType, credentials, endpoint):
     try:
-        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS:
+        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_SIMPLE_TOKEN:
             tokenStr = credentials[formAuthType]
             auxList = {'token': tokenStr}
             tokenStr = auxList['token'].replace('\r\n', '')
