@@ -11,9 +11,12 @@ TEMPLATE_DEBUG = DEBUG
 FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182' # Mandatory
 
 FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
-# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth, simple_token
+# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth, simpletoken
 FOGBOW_FEDERATION_AUTH_TYPE = '' # Mandatory
-FOGBOW_FEDERATION_SIMPLETOKEN_HOST='host'
+FOGBOW_FEDERATION_SIMPLETOKEN_HOST='0.0.0.0' # if FOGBOW_FEDERATION_AUTH_TYPE='simpletoken'
+
+# custom_theme 
+CUSTOM_THEME = 'naf-theme'
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
