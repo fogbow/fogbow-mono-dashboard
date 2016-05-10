@@ -15,6 +15,7 @@ from horizon import messages
 LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
+    NETWORK_TERM = '/network/'    
     COMPUTE_TERM = '/compute/'
     STORAGE_TERM = '/storage/'
     LINK_TERM = 'link/'
@@ -59,6 +60,13 @@ class FogbowConstants():
     FOGBOW_TYPE_TERM = 'org.fogbowcloud.request.type'
     FOGBOW_RESOURCE_KIND_TERM = 'org.fogbowcloud.order.resource-kind'
     FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id' 
+    
+    NETWORK_VLAN = "occi.network.vlan=";
+    NETWORK_LABEL = "occi.network.label=";
+    NETWORK_STATE = "occi.network.state=";
+    NETWORK_ADDRESS = "occi.network.address=";
+    NETWORK_GATEWAY = "occi.network.gateway=";
+    NETWORK_ALLOCATION = "occi.network.allocation=";      
 
 class IdentityPluginConstants():
     AUTH_RAW_KEYSTONE = 'raw_keystone'

@@ -55,7 +55,23 @@
   <dl type="compute">
     <dt>{% trans "Userdata" %}</dt>
     <pre>{{ request.extraUserdata }}</pre>   
+  </dl>
+
+<!--    
+  <dl type="network">
+    <dt>{% trans "CIDR" %}</dt>
+    {{ request.address }} 
   </dl> 
+  <dl type="network">
+    <dt>{% trans "Gateway" %}</dt>
+    {{ request.gateway }}   
+  </dl> 
+  <dl type="network">
+    <dt>{% trans "Allocation" %}</dt>
+    {{ request.allocation }} 
+  </dl>     
+ -->    
+  
   
   <input id="input" value="{{ request.resourceKind }}" style="visibility: hidden;">                 
 </div>
@@ -74,13 +90,23 @@
 			$("dl[type='compute']").show(transition);			
 			// hide
 			$("dl[type='storage']").hide(transition);
+			$("dl[type='network']").hide(transition);
 		} else if (resourceKind == 'storage') {
 			console.log('storage');
 			//show
 			$("dl[type='storage']").show(transition);
 			//hide
 			$("dl[type='compute']").hide(transition);						
+			$("dl[type='network']").hide(transition);
+		} else if (resourceKind == 'network') {
+			console.log('storage');
+			//show
+			$("dl[type='network']").show(transition);
+			//hide
+			$("dl[type='compute']").hide(transition);
+			$("dl[type='storage']").hide(transition);
 		}
+		
 	}
 	
 </script>

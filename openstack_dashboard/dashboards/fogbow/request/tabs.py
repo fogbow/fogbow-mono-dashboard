@@ -2,9 +2,11 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tabs
 import openstack_dashboard.dashboards.fogbow.instance.tabs as tabsInstanceDashboard
 import openstack_dashboard.dashboards.fogbow.storage.tabs as tabsStorageDashboard
+import openstack_dashboard.dashboards.fogbow.network.tabs as tabsNetworkDashboard
 import openstack_dashboard.models as fogbow_models
 import base64
 
+NETWORK_TERM = fogbow_models.FogbowConstants.NETWORK_TERM
 STORAGE_TERM = fogbow_models.FogbowConstants.STORAGE_TERM
 COMPUTE_TERM = fogbow_models.FogbowConstants.COMPUTE_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
@@ -22,6 +24,13 @@ FOGBOW_INSTANCE_ID_TERM = fogbow_models.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
 FOGBOW_COUNT_TERM = fogbow_models.FogbowConstants.FOGBOW_COUNT_TERM
 FOGBOW_SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_TERM
+
+FOGBOW_NETWORK_VLAN = fogbow_models.FogbowConstants.NETWORK_VLAN
+FOGBOW_NETWORK_LABEL = fogbow_models.FogbowConstants.NETWORK_LABEL
+FOGBOW_NETWORK_STATE = fogbow_models.FogbowConstants.NETWORK_STATE
+FOGBOW_NETWORK_ADDRESS = fogbow_models.FogbowConstants.NETWORK_ADDRESS
+FOGBOW_NETWORK_GATEWAY = fogbow_models.FogbowConstants.NETWORK_GATEWAY
+FOGBOW_NETWORK_ALLOCATION = fogbow_models.FogbowConstants.NETWORK_ALLOCATION
 
 class InstanceDetailTab(tabs.Tab):
     name = _("Instance details")
@@ -43,6 +52,11 @@ class InstanceDetailTab(tabs.Tab):
             self.template_name = ("fogbow/storage/_detail_instance.html")
             response = fogbow_models.doRequest('get', STORAGE_TERM  + instanceId, None, request)
             return {'instance' : tabsStorageDashboard.getInstancePerResponse(instanceId, response)}
+        elif resourceKind == 'network':
+            self.name = _("Network Details")
+            self.template_name = ("fogbow/network/_detail_instance.html")
+            response = fogbow_models.doRequest('get', NETWORK_TERM  + instanceId, None, request)
+            return {'instance' : tabsNetworkDashboard.getInstancePerResponse(instanceId, response)}        
         else:
             return {'instance' : {}}
     
@@ -72,8 +86,10 @@ class RequestDetailTab(tabs.Tab):
             requestId = '-'
         
         requestDetails = response.text.split('\n')
+        print requestDetails
         
         requirements, type, state, validFrom, validUntil, image, ssh, extraUserdata, extraUserdataContentType, instanceId, count, size, resourceKind  = '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
+        address, gateway, allocation = '-', '-', '-'
         for detail in requestDetails:
             if FOGBOW_REQUIREMENTS_TERM in detail:
                 try:
@@ -102,7 +118,15 @@ class RequestDetailTab(tabs.Tab):
             elif FOGBOW_SIZE_OCCI in detail:
                 size = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_SIZE_OCCI)
             elif FOGBOW_RESOURCE_KIND_TERM in detail:
-                resourceKind = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_RESOURCE_KIND_TERM)                       
+                resourceKind = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_RESOURCE_KIND_TERM)
+                
+            elif FOGBOW_NETWORK_ADDRESS in detail:
+                address = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ADDRESS)
+            elif FOGBOW_NETWORK_GATEWAY in detail:
+                gateway = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_GATEWAY)
+            elif FOGBOW_NETWORK_ALLOCATION in detail:
+                allocation = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ALLOCATION)                    
+                                       
             elif FOGBOW_INSTANCE_ID_TERM in detail:
                 instanceId = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_INSTANCE_ID_TERM)
                 if 'null' in instanceId:
@@ -114,7 +138,8 @@ class RequestDetailTab(tabs.Tab):
                  'state' : state, 'validFrom' : validFrom, 'validUntil' : validUntil,
                 'image' : image, 'ssh': ssh, 'extraUserdata': extraUserdata, 
                 'extraUserdataContentType': extraUserdataContentType, 'instanceId': instanceId,
-                'count': count, 'size': size, 'resourceKind': resourceKind}
+                'count': count, 'size': size, 'resourceKind': resourceKind, 'address': address,
+                'gateway': gateway, 'allocation': allocation}
                         
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instances_details"

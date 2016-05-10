@@ -15,11 +15,13 @@ from django.core.urlresolvers import reverse_lazy
 from horizon import messages
 from django import shortcuts
 from openstack_dashboard.dashboards.fogbow.members.views import IndexView as member_views
+from openstack_dashboard.dashboards.fogbow.network.views import IndexView as network_views
 
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 STORAGE_TERM = fogbow_models.FogbowConstants.STORAGE_TERM
+NETWORK_TERM = fogbow_models.FogbowConstants.NETWORK_TERM
 ORDER_TERM_CATEGORY = 'order'
 REQUEST_TERM_CATEGORY = 'fogbow_request'
 REQUEST_SCHEME = fogbow_models.FogbowConstants.REQUEST_SCHEME
@@ -32,7 +34,7 @@ STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
-    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'))
+    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'), ('network', 'network'))
     
     success_url = reverse_lazy("horizon:fogbow:request:index")
     
@@ -47,6 +49,16 @@ class CreateRequest(forms.SelfHandlingForm):
     resourceKind = forms.ChoiceField(label=_('Resource kind'),
                                help_text=_('Resource kind'),
                                choices=TYPE_RESOURCE_KIND)
+
+    cird = forms.CharField(label=_('CIDR'), initial='192.168.0.0/24',
+                          widget=forms.TextInput(),
+                          required=False)
+
+    gateway = forms.CharField(label=_('Gateway'), initial='',
+                          widget=forms.TextInput(),
+                          required=False)    
+    
+    allocation = forms.ChoiceField(label=_('Allocation'), help_text=_('Allocation'), required=False)  
 
     sizeStorage = forms.CharField(label=_('Volume size (in GB)'), initial=1,
                           widget=forms.TextInput(),
@@ -70,6 +82,9 @@ class CreateRequest(forms.SelfHandlingForm):
                            error_messages={
                                'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')})
+    
+    network_id = forms.ChoiceField(label=_('Network id'), help_text=_('Network id'), required=False)    
+    
     type = forms.ChoiceField(label=_('Type'),
                                help_text=_('Type Request'),
                                choices=TYPE_REQUEST)
@@ -113,6 +128,27 @@ class CreateRequest(forms.SelfHandlingForm):
         dataUserTypeChoices.append(('text/cloud-config', 'text/cloud-config'))        
         dataUserTypeChoices.append(('text/cloud-boothook', 'text/cloud-boothook'))
         self.fields['data_user_type'].choices = dataUserTypeChoices
+        
+        networksChoices = []
+        networksChoices.append(('', 'Network default'))
+        print 'Aqui'
+        try:
+            print 'Aqui 2'
+            networks = network_views().getInstances(fogbow_models.doRequest('get', NETWORK_TERM, None, request).text)
+            print networks
+            for network in networks:
+                networksChoices.append((network.get('id'), network.get('id')))
+        except Exception as error: 
+            print error
+            pass    
+        
+        self.fields['network_id'].choices = networksChoices
+        
+        dataAllocation = []
+        dataAllocation.append(('dynamic', 'Dynamic'))
+        dataAllocation.append(('static', 'Static'))
+        self.fields['allocation'].choices = dataAllocation
+        
 
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')
@@ -158,19 +194,41 @@ class CreateRequest(forms.SelfHandlingForm):
                     userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
                                                           'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
                 
+                networkId = data['network_id']
+                headerLink = ''
+                if networkId is not None and networkId is not '':
+                    headerLink = '</network/%s> ;%s;%s;' % (networkId,'rel="http://schemas.ogf.org/occi/infrastructure#network"','category="http://schemas.ogf.org/occi/infrastructure#networkinterface"')
+                
                 headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
                             % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
-                           'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute)}
+                           'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute),
+                           'Link' : '%s;' % (headerLink)}
             elif resourceKind == 'storage':
                 sizeStorage = data['sizeStorage']
                 
                 headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s=%s' % (SIZE_OCCI, sizeStorage)}
+            elif resourceKind == 'network':
+                attrCIRD, attrGateway, attrAllocation = '', '', ''
+                cird = data['cird']
+                gateway = data['gateway']
+                allocation = data['allocation']
+                if cird is not None and cird is not '':
+                    attrGateway = '%s=%s,' % ('occi.network.address', cird)
+                if gateway is not None and gateway is not '':
+                    attrCIRD = '%s=%s,' % ('occi.network.gateway', gateway)
+                if allocation is not None and allocation is not '':
+                    attrAllocation = '%s=%s' % ('occi.network.allocation', allocation)                            
+                
+                headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrGateway, attrAllocation)}
 
             addHeader = headers.get('X-OCCI-Attribute')
             headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
             if advancedRequirements != '':
                 addHeader = headers.get('X-OCCI-Attribute')
                 headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})                                
+
+            print '<@@>'
+            print headers
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
