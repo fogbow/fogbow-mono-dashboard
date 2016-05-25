@@ -56,8 +56,7 @@
     <dt>{% trans "Userdata" %}</dt>
     <pre>{{ request.extraUserdata }}</pre>   
   </dl>
-
-<!--    
+    
   <dl type="network">
     <dt>{% trans "CIDR" %}</dt>
     {{ request.address }} 
@@ -70,7 +69,7 @@
     <dt>{% trans "Allocation" %}</dt>
     {{ request.allocation }} 
   </dl>     
- -->    
+    
   
   
   <input id="input" value="{{ request.resourceKind }}" style="visibility: hidden;">                 
@@ -99,7 +98,7 @@
 			$("dl[type='compute']").hide(transition);						
 			$("dl[type='network']").hide(transition);
 		} else if (resourceKind == 'network') {
-			console.log('storage');
+			console.log('network');
 			//show
 			$("dl[type='network']").show(transition);
 			//hide
