@@ -31,6 +31,7 @@ FOGBOW_NETWORK_STATE = fogbow_models.FogbowConstants.NETWORK_STATE
 FOGBOW_NETWORK_ADDRESS = fogbow_models.FogbowConstants.NETWORK_ADDRESS
 FOGBOW_NETWORK_GATEWAY = fogbow_models.FogbowConstants.NETWORK_GATEWAY
 FOGBOW_NETWORK_ALLOCATION = fogbow_models.FogbowConstants.NETWORK_ALLOCATION
+FOGBOW_NETWORK_ID = fogbow_models.FogbowConstants.NETWORK_ID
 
 class InstanceDetailTab(tabs.Tab):
     name = _("Instance details")
@@ -89,7 +90,7 @@ class RequestDetailTab(tabs.Tab):
         print requestDetails
         
         requirements, type, state, validFrom, validUntil, image, ssh, extraUserdata, extraUserdataContentType, instanceId, count, size, resourceKind  = '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
-        address, gateway, allocation = '-', '-', '-'
+        networkid, address, gateway, allocation = '-','-', '-', '-'
         for detail in requestDetails:
             if FOGBOW_REQUIREMENTS_TERM in detail:
                 try:
@@ -119,6 +120,9 @@ class RequestDetailTab(tabs.Tab):
                 size = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_SIZE_OCCI)
             elif FOGBOW_RESOURCE_KIND_TERM in detail:
                 resourceKind = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_RESOURCE_KIND_TERM)
+            
+            elif FOGBOW_NETWORK_ID in detail:
+                networkid = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ID)
                 
             elif FOGBOW_NETWORK_ADDRESS in detail:
                 address = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ADDRESS)
@@ -139,7 +143,7 @@ class RequestDetailTab(tabs.Tab):
                 'image' : image, 'ssh': ssh, 'extraUserdata': extraUserdata, 
                 'extraUserdataContentType': extraUserdataContentType, 'instanceId': instanceId,
                 'count': count, 'size': size, 'resourceKind': resourceKind, 'address': address,
-                'gateway': gateway, 'allocation': allocation}
+                'gateway': gateway, 'allocation': allocation, 'networkid': networkid}
                         
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instances_details"

@@ -66,7 +66,8 @@ class FogbowConstants():
     NETWORK_STATE = "occi.network.state=";
     NETWORK_ADDRESS = "occi.network.address=";
     NETWORK_GATEWAY = "occi.network.gateway=";
-    NETWORK_ALLOCATION = "occi.network.allocation=";      
+    NETWORK_ALLOCATION = "occi.network.allocation=";
+    NETWORK_ID = "org.fogbowcloud.order.network-id";  
 
 class IdentityPluginConstants():
     AUTH_RAW_KEYSTONE = 'raw_keystone'

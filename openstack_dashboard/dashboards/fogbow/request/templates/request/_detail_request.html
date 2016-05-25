@@ -43,7 +43,11 @@
   <dl>
     <dt>{% trans "Instance ID" %}</dt>
     {{ request.instanceId }}
-  </dl>     
+  </dl>
+  <dl type="compute">
+    <dt>{% trans "Network ID" %}</dt>
+    {{ request.networkid }}
+  </dl>        
   <dl type="compute">
     <dt>{% trans "SSH public key" %}</dt>
     <pre>{{ request.ssh }}</pre> 
