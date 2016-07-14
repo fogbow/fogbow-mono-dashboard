@@ -12,9 +12,17 @@ from keystoneclient import exceptions as keystone_exceptions
 from openstack_auth import utils
 from horizon import messages
 
+from Crypto.Hash import SHA
+from Crypto.PublicKey import RSA 
+from Crypto.Signature import PKCS1_v1_5 as PKCS1_v1_5
+from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
+from Crypto.Signature import PKCS1_PSS 
+from base64 import b64encode, b64decode 
+
 LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
+    
     NETWORK_TERM = '/network/'    
     COMPUTE_TERM = '/compute/'
     STORAGE_TERM = '/storage/'
@@ -78,6 +86,7 @@ class IdentityPluginConstants():
     AUTH_VOMS = 'voms'    
     AUTH_SHIBBOLETH = 'shibboleth'
     AUTH_SIMPLE_TOKEN = 'simpletoken'
+    AUTH_NAF = 'naf'
 
 class Token():
     def __init__(self, id=None):
@@ -207,9 +216,54 @@ def calculatePercent(value, valueTotal):
     except Exception:
         return defaultValue
 
-#
-# OpenStack_auth / Fogbow
-#
+class NafUtil(object):
+    def __init__(self):
+        pass
+    
+    def createCredentials(self, tokenStr):
+        try:
+            privateKeyPath = settings.FOGBOW_NAF_DASHBOARD_PRIVATE_KEY_PATH
+            key = open(privateKeyPath, "r").read()
+            rsakey = RSA.importKey(key) 
+            signer = PKCS1_PSS.new(rsakey)             
+            digest = SHA.new() 
+            digest.update(tokenStr)
+            sign = signer.sign(digest)
+            return b64encode(sign)            
+        except Exception as e:
+            print str(e)
+            return None
+        
+    def verify(self, token, signature):
+        try:            
+            portalPublicKey = settings.FOGBOW_NAF_PORTAL_PUBLIC_KEY_PATH
+            pub_key = open(portalPublicKey, "r").read() 
+            rsakey = RSA.importKey(pub_key) 
+            signer = PKCS1_v1_5.new(rsakey)
+            digest = SHA.new() 
+            digest.update(token) 
+            if signer.verify(digest, b64decode(signature)):
+                print "The signature is authentic."
+                return True
+            else:
+                print "The signature is not authentic."
+                return False
+        except Exception as e:
+            print str(e)
+            return False
+
+    def decrypt(self, token):
+        try:            
+            portalPrivateKey = settings.FOGBOW_NAF_DASHBOARD_PRIVATE_KEY_PATH
+            key = open(portalPrivateKey).read()
+            rsakey = RSA.importKey(key)                   
+            cipher = Cipher_PKCS1_v1_5.new(rsakey)
+            return cipher.decrypt(b64decode(token), "decrypt_error")                    
+        except Exception as e:
+            print str(e)
+            return None
+
+# ------------- OpenStack_auth / Fogbow ---------------
 
 def set_session_from_user(request, user):
     request.session['token'] = user.token
@@ -218,7 +272,6 @@ def set_session_from_user(request, user):
     request.session['services_region'] = user.services_region
     request._cached_user = user
     request.user = user
-
 
 def create_user_from_token(request, token, endpoint, services_region=None):
     return User(id=token.user['id'],
@@ -237,7 +290,6 @@ def create_user_from_token(request, token, endpoint, services_region=None):
                 roles=token.roles,
                 endpoint=endpoint,
                 services_region=services_region)
-
 
 class TokenOriginal(object):
     def __init__(self, auth_ref):

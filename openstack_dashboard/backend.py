@@ -5,6 +5,7 @@ import uuid
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
 from keystoneclient import exceptions as keystone_exceptions
+from django.http import HttpResponseRedirect, HttpResponse
 from openstack_auth import exceptions
 from openstack_auth import user as auth_user
 from openstack_auth import utils
@@ -38,7 +39,7 @@ class FogbowBackend(object):
         return User(username, federationToken, None, {})
   
     def authenticate(self, request, federationCredentials=None, federationEndpoint=None):
-	print 'Authenticating...'
+        print 'Authenticating...'
         tokenStr = ''                              
         tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
@@ -48,14 +49,15 @@ class FogbowBackend(object):
             tokenInfo = getTokenInfoUser(federatioToken, settings.FOGBOW_FEDERATION_AUTH_TYPE, federationEndpoint)
             username = tokenInfo
         except Exception, e: 
-	    print e;
-            pass
+	        print e;
         user = User(username, federatioToken, '', {})        
         try:            
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')
                 user.errors = True
-                user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)                
+                user.typeError = fogbow_models.getErrorMessage(settings.FOGBOW_FEDERATION_AUTH_TYPE)   
+                if fogbow_models.IdentityPluginConstants.AUTH_NAF == settings.FOGBOW_FEDERATION_AUTH_TYPE:
+                    return HttpResponse('Unauthorized', status=401)
         except Exception, e: 
             user.errors = True
             user.typeError = 'Manager connection failed.'        
@@ -115,8 +117,12 @@ def checkUserAuthenticated(token, type, endpoint):
 def getTokenInfoUser(token, type, endpoint):
     type = getCorrectType(type)
 
-    command = '%s token --info -DauthUrl=%s --type %s --token "%s" --user' % (FOGBOW_CLI_JAVA_COMMAND,
-                                 endpoint, type, token.id)
+    credentials = ""
+    if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_NAF :
+        credentials = '%s%s' % ('-Dnaf_identity_plublic_key=' , settings.FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH)
+      
+    command = '%s token --info -DauthUrl=%s --type %s --token "%s" %s --user ' % (FOGBOW_CLI_JAVA_COMMAND,
+                                 endpoint, type, token.id, credentials)
     
     responseStr = commands.getoutput(command) 
  
@@ -133,7 +139,7 @@ def getCorrectType(type):
 
 def getCorrectToken(formAuthType, credentials, endpoint):
     try:
-        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_SIMPLE_TOKEN:
+        if formAuthType == fogbow_models.IdentityPluginConstants.AUTH_TOKEN or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_KEYSTONE or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_VOMS or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_SIMPLE_TOKEN or formAuthType == fogbow_models.IdentityPluginConstants.AUTH_NAF:
             tokenStr = credentials[formAuthType]
             auxList = {'token': tokenStr}
             tokenStr = auxList['token'].replace('\r\n', '')

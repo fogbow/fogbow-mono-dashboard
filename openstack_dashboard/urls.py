@@ -28,16 +28,20 @@ from django.conf.urls.defaults import patterns  # noqa
 from django.conf.urls.defaults import url  # noqa
 from django.conf.urls.static import static  # noqa
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns  # noqa
+from openstack_dashboard import views
 
 import horizon
 
+# from openstack_dashboard import views
 
 urlpatterns = patterns('',
     url(r'^$', 'openstack_dashboard.views.splash_fogbow', name='splash_fogbow'),
     url(r'^auth/', include('openstack_auth.urls')),
     url(r'', include(horizon.urls)),
     url(r'^fogbow/auth/', 'openstack_dashboard.views.fogbow_Login' , name='fogbow_Login'),
+    url(r'^nonce', views.getNonce, name='nonce'),
 )
+
 
 # Development static app and project media serving using the staticfiles app.
 urlpatterns += staticfiles_urlpatterns()

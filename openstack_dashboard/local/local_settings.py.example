@@ -11,12 +11,35 @@ TEMPLATE_DEBUG = DEBUG
 FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182' # Mandatory
 
 FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
-# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth, simpletoken
+# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth, simpletoken, naf
 FOGBOW_FEDERATION_AUTH_TYPE = '' # Mandatory
-FOGBOW_FEDERATION_SIMPLETOKEN_HOST='0.0.0.0' # if FOGBOW_FEDERATION_AUTH_TYPE='simpletoken'
+
+# for simpletoken federation auth
+FOGBOW_FEDERATION_SIMPLETOKEN_HOST='0.0.0.0'
+
+# for naf federation auth
+## dashboard private key path
+FOGBOW_NAF_DASHBOARD_PRIVATE_KEY_PATH=
+## dashboard private key path
+FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH=
+## portal public key path
+FOGBOW_NAF_PORTAL_PUBLIC_KEY_PATH=
 
 # custom_theme 
+# customization of style
 CUSTOM_THEME = 'naf-theme'
+
+# for https
+# Set SSL proxy settings:
+# For Django 1.4+ pass this header from the proxy after terminating the SSL,
+# and don't forget to strip it from the client's request.
+# For more information see:
+# https://docs.djangoproject.com/en/1.4/ref/settings/#secure-proxy-ssl-header
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
+
+#
+# ----------- fogbow ------------- 
+#
 
 # Required for Django 1.5.
 # If horizon is running in production (DEBUG is False), set this
@@ -24,13 +47,6 @@ CUSTOM_THEME = 'naf-theme'
 # For more information see:
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 #ALLOWED_HOSTS = ['horizon.example.com', ]
-
-# Set SSL proxy settings:
-# For Django 1.4+ pass this header from the proxy after terminating the SSL,
-# and don't forget to strip it from the client's request.
-# For more information see:
-# https://docs.djangoproject.com/en/1.4/ref/settings/#secure-proxy-ssl-header
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 
 # If Horizon is being served through SSL, then uncomment the following two
 # settings to better secure the cookies from security exploits

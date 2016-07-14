@@ -22,3 +22,4 @@ oslo.config==1.7.0
 # Horizon Utility Requirements
 # for SECURE_KEY generation
 lockfile>=0.8
+pycrypto==2.6.1
