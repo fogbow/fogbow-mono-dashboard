@@ -17,7 +17,11 @@ from Crypto.PublicKey import RSA
 from Crypto.Signature import PKCS1_v1_5 as PKCS1_v1_5
 from Crypto.Cipher import PKCS1_v1_5 as Cipher_PKCS1_v1_5
 from Crypto.Signature import PKCS1_PSS 
+from Crypto.Cipher import AES
+from Crypto import Random
 from base64 import b64encode, b64decode 
+import hashlib
+import base64
 
 LOG = logging.getLogger(__name__)
 
@@ -262,6 +266,19 @@ class NafUtil(object):
         except Exception as e:
             print str(e)
             return None
+        
+    def _unpad(s):
+        return s[:-ord(s[len(s)-1:])]
+                
+    def decryptAES(self, enc, key):
+        enc = base64.b64decode(enc)
+        iv = enc[:AES.block_size]
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        return _unpad(cipher.decrypt(enc[AES.block_size:])).decode('utf-8')
+    
+def _unpad(s):
+    return s[:-ord(s[len(s)-1:])]
+
 
 # ------------- OpenStack_auth / Fogbow ---------------
 

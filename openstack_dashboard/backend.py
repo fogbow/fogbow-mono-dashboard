@@ -14,7 +14,6 @@ from openstack_dashboard.models import Token
 import openstack_dashboard.forms as form_fogbow
 import openstack_dashboard.models as fogbow_models
 
-
 LOG = logging.getLogger(__name__)
 
 FOGBOW_CLI_JAVA_COMMAND = 'java -cp fogbow-cli-0.0.1-SNAPSHOT-jar-with-dependencies.jar org.fogbowcloud.cli.Main $@'
@@ -47,6 +46,7 @@ class FogbowBackend(object):
         username = '...'
         try:            
             tokenInfo = getTokenInfoUser(federatioToken, settings.FOGBOW_FEDERATION_AUTH_TYPE, federationEndpoint)
+            print tokenInfo
             username = tokenInfo
         except Exception, e: 
 	        print e;
@@ -119,10 +119,14 @@ def getTokenInfoUser(token, type, endpoint):
 
     credentials = ""
     if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_NAF :
-        credentials = '%s%s' % ('-Dnaf_identity_plublic_key=' , settings.FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH)
+        credentials = '%s"%s"' % ('-Dnaf_identity_plublic_key=' , settings.FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH)
+        token.id = token.id.replace(' ', '').replace('"', '\"')
       
     command = '%s token --info -DauthUrl=%s --type %s --token "%s" %s --user ' % (FOGBOW_CLI_JAVA_COMMAND,
                                  endpoint, type, token.id, credentials)
+    
+    LOG.info('Get Token info :')
+    LOG.info(command)
     
     responseStr = commands.getoutput(command) 
  

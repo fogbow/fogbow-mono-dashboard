@@ -1,6 +1,7 @@
 import os
 import django
 import horizon
+import logging
  
 from horizon import forms
 from django import shortcuts
@@ -30,6 +31,8 @@ import urllib
 import time
 import random
 
+LOG = logging.getLogger(__name__)
+
 def get_user_home(user):
     return horizon.get_dashboard('fogbow').get_absolute_url()
 
@@ -43,7 +46,7 @@ def splash(request):
     
     return shortcuts.render(request, 'splash.html', {'form': form})
 
-# TODO refact all method
+# TODO review this code
 @vary.vary_on_cookie
 def splash_fogbow(request):             
     if request.user.is_authenticated():
@@ -51,40 +54,51 @@ def splash_fogbow(request):
   
     if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_NAF:
         try: 
-            token = urllib.unquote(getQueryAttr(request, 'token=')).strip()
-            signature = urllib.unquote(getQueryAttr(request, 'signature=')).strip()
+            token = urllib.unquote(getQueryAttr(request, 'tokenEncrypted=')).strip()
+            secretKeyEncrypted = urllib.unquote(getQueryAttr(request, 'secretKeyEncrypted=')).strip()
+            secretKeySignature = urllib.unquote(getQueryAttr(request, 'secretKeySignature=')).strip()
+            nonce = urllib.unquote(getQueryAttr(request, 'nonce=')).strip()
+            nonceSignature = urllib.unquote(getQueryAttr(request, 'nonceSignature=')).strip()
             nafUtil = fogbow_models.NafUtil();
                         
-            # Verify            
-            if nafUtil.verify(token, signature) == False:
-                return HttpResponse('Unauthorized. Invalid signature.', status=401)
+            # Decrypt secret key
+            secretKey = nafUtil.decrypt(secretKeyEncrypted)
+            if secretKey == None:
+                return HttpResponse('Unauthorized. Invalid secret key decrypt.', status=401)         
+                        
+            # Verify secretKeyEncrypted signature
+            if nafUtil.verify(secretKeyEncrypted, secretKeySignature) == False:
+                return HttpResponse('Unauthorized. Invalid secretKeyEncrypted signature.', status=401)
+            
+            # Verify nonce signature
+            if nafUtil.verify(nonce, nonceSignature) == False:
+                return HttpResponse('Unauthorized. Invalid nonce signature.', status=401)            
  
-            # Decrypt
-            token = nafUtil.decrypt(token)
+            # Decrypt 
+            token = nafUtil.decryptAES(token, secretKey)
             if token == None:
-                return HttpResponse('Unauthorized. Invalid decrypt.', status=401)
-            print 'token -->'       
-            print token
-            tokenSlices = token.split('-f-')
-            token = tokenSlices[0]
-            nonce = tokenSlices[1]
+                return HttpResponse('Unauthorized. Invalid token decrypt.', status=401)
+
             
             # Check nonce
             if checkNonce(nonce) == False:
                 return HttpResponse('Unauthorized. Invalid nonce.', status=401)
-                        
-            # Send for manager.
-            token = urllib.unquote(token)
-            finalToken = '%s-f-%s' % (token, nafUtil.createCredentials(token))
+            LOG.info('Nonce Ok')
+           
+            token = str(token)            
+            LOG.info('Token decrypted : s%') % (token)
+            finalToken = '%s!#!%s' % (token, nafUtil.createCredentials(token))
+            finalToken = b64encode(finalToken)
+            LOG.info(finalToken)   
             credentials = {fogbow_models.IdentityPluginConstants.AUTH_NAF: finalToken}
             user = authenticate(request=request, federationCredentials=credentials, federationEndpoint=settings.FOGBOW_FEDERATION_AUTH_ENDPOINT)  
             login(request, user)
             return shortcuts.redirect(get_user_home(request.user))
         except Exception as e:
-            print e
+            LOG.error(e)
             return HttpResponse('Unauthorized. Invalid token.', status=401)
   
-#   TODO review 
+#   TODO review - Simple Token
     try:
         httpHost = request.META['HTTP_REFERER']
     except:
@@ -99,7 +113,7 @@ def splash_fogbow(request):
         except:
             print("Error")
 
-#   TODO review
+#   TODO review - Shiboleth ...
     shibsessionExists = False
     for x in request.COOKIES:
         if x.startswith('_shibsession_'):
@@ -194,6 +208,7 @@ def getQueryAttr(request, attribute):
 
 # Nonce Utils
 values = {}
+
 def getNonce(request):
     value = str(random.random())
     values[value] = int(round(time.time() * 1000))
