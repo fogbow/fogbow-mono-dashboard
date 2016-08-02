@@ -8,7 +8,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Endpoint Manager
-FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.55:8182' # Mandatory
+
+FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182' # Mandatory
 # FOGBOW_MANAGER_ENDPOINT = 'http://150.165.85.80:8182' # Mandatory
 # FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.159:8182' # Mandatory
 CUSTOM_THEME = ''
@@ -21,6 +22,9 @@ CUSTOM_THEME = ''
 # types : keystone, opennebula, voms, raw_opennebula, raw_keystone, cafe
 #FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
 FOGBOW_FEDERATION_AUTH_TYPE = 'ldap' # Mandatory
+PRIVATE_KEY_PATH='$path_to/private_key.pem'
+PUBLIC_KEY_PATH='$path_to/public_key.pem'
+
 
 # FOGBOW_CAFE_URL = 'https://ds.cafe.rnp.br/WAYF'
 

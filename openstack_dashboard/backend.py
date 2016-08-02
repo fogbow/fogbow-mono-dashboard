@@ -45,6 +45,7 @@ class FogbowBackend(object):
         federatioToken = Token(tokenStr)   
         username = '...'
         try:            
+            print 'Getting user info...'
             tokenInfo = getTokenInfoUser(federatioToken, settings.FOGBOW_FEDERATION_AUTH_TYPE, federationEndpoint)
             print tokenInfo
             username = tokenInfo
@@ -52,6 +53,7 @@ class FogbowBackend(object):
 	        print e;
         user = User(username, federatioToken, '', {})        
         try:            
+            print 'Checking user authenticated...'
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')
                 user.errors = True
@@ -104,7 +106,7 @@ def getToken(endpoint, credentials, type):
 
 def checkUserAuthenticated(token, type, endpoint):
     type = getCorrectType(type)
-
+    
     command = '%s token --check -DauthUrl=%s --type %s --token %s' % (FOGBOW_CLI_JAVA_COMMAND,
                                  endpoint, type, token.id)
     
@@ -121,6 +123,9 @@ def getTokenInfoUser(token, type, endpoint):
     if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_NAF :
         credentials = '%s"%s"' % ('-Dnaf_identity_public_key=' , settings.FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH)
         token.id = token.id.replace(' ', '').replace('"', '\"')
+        
+    if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_LDAP :
+        credentials = '-Dprivate_key_path="%s" -Dpublic_key_path="%s"' % (settings.PRIVATE_KEY_PATH, settings.PUBLIC_KEY_PATH)
       
     command = '%s token --info -DauthUrl=%s --type %s --token "%s" %s --user ' % (FOGBOW_CLI_JAVA_COMMAND,
                                  endpoint, type, token.id, credentials)
@@ -129,6 +134,8 @@ def getTokenInfoUser(token, type, endpoint):
     LOG.info(command)
     
     responseStr = commands.getoutput(command) 
+    
+    LOG.info('Get Token info Response:'+responseStr)
  
     if 'Unauthorized' in responseStr:
         return None    
@@ -155,6 +162,9 @@ def getCorrectToken(formAuthType, credentials, endpoint):
         elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_LDAP:
             credentials[fogbow_models.IdentityPluginConstants.AUTH_LDAP_BASE] = settings.FOGBOW_LDAP_BASE
             credentials[fogbow_models.IdentityPluginConstants.AUTH_LDAP_ENCRYPT] = settings.FOGBOW_LDAP_ENCRYPT 
+            credentials[fogbow_models.IdentityPluginConstants.AUTH_PRIVATE_KEY] = settings.PRIVATE_KEY_PATH
+            credentials[fogbow_models.IdentityPluginConstants.AUTH_PUBLIC_KEY] = settings.PUBLIC_KEY_PATH 
+
             tokenStr = getToken(endpoint, credentials, 'ldap')
     except:
         tokenStr = None

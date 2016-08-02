@@ -94,6 +94,8 @@ class IdentityPluginConstants():
     AUTH_LDAP = 'ldap'
     AUTH_LDAP_BASE = 'base'
     AUTH_LDAP_ENCRYPT = 'encrypt'
+    AUTH_PRIVATE_KEY = 'privateKey'
+    AUTH_PUBLIC_KEY = 'publicKey'
 
 class Token():
     def __init__(self, id=None):
@@ -170,11 +172,16 @@ def getErrorMessage(typeToken):
     return errorStr 
 
 def checkUserAuthenticated(token):    
+    
+    print 'Validatin token on: '+settings.FOGBOW_MANAGER_ENDPOINT+FogbowConstants.RESOURCE_TERM
+    
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id}
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
                                    headers=headers, timeout=10)    
     
     responseStr = response.text
+
+    print 'Response: '+responseStr
 
     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
         return False    
