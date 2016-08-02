@@ -91,6 +91,9 @@ class IdentityPluginConstants():
     AUTH_SHIBBOLETH = 'shibboleth'
     AUTH_SIMPLE_TOKEN = 'simpletoken'
     AUTH_NAF = 'naf'
+    AUTH_LDAP = 'ldap'
+    AUTH_LDAP_BASE = 'base'
+    AUTH_LDAP_ENCRYPT = 'encrypt'
 
 class Token():
     def __init__(self, id=None):

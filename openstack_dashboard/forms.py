@@ -107,7 +107,27 @@ class OpennebulaFields():
         return listFields
     
     def getOrderFields(self):
-        return [self.username, self.password]    
+        return [self.username, self.password]
+    
+class LdapFields():
+    type = None
+    
+    def __init__(self, type):
+        self = self  
+        self.username = 'username' + type
+        self.password = 'password' + type
+            
+    def getFields(self, required):
+        listFields = {}
+        listFields[self.username] = forms.CharField(label=_("Username"),
+            widget=forms.TextInput(attrs={"autofocus": "autofocus"}), required=required)
+        listFields[self.password] = forms.CharField(label=_("Password"),
+                                   widget=forms.PasswordInput(render_value=False),
+                                   required=False)
+        return listFields
+    
+    def getOrderFields(self):
+        return [self.username, self.password]        
     
 class TokenFields():    
     type = None
@@ -176,6 +196,8 @@ def getFieldsPerFormType(valueAuthType, authType):
         fields = RawKeystoneFields(authType)         
     elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
         fields = RawOpennebulaFields(authType)         
+    elif valueAuthType == fogbow_models.IdentityPluginConstants.AUTH_LDAP:
+        fields = LdapFields(authType)
 
     return fields
         

@@ -152,6 +152,10 @@ def getCorrectToken(formAuthType, credentials, endpoint):
             tokenStr = getToken(endpoint, credentials, formAuthType)
         elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_KEYSTONE:
             tokenStr = getToken(endpoint, credentials, 'openstack')
+        elif formAuthType == fogbow_models.IdentityPluginConstants.AUTH_LDAP:
+            credentials[fogbow_models.IdentityPluginConstants.AUTH_LDAP_BASE] = settings.FOGBOW_LDAP_BASE
+            credentials[fogbow_models.IdentityPluginConstants.AUTH_LDAP_ENCRYPT] = settings.FOGBOW_LDAP_ENCRYPT 
+            tokenStr = getToken(endpoint, credentials, 'ldap')
     except:
         tokenStr = None
     

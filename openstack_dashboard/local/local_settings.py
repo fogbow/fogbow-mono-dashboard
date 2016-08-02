@@ -8,7 +8,7 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 # Endpoint Manager
-FOGBOW_MANAGER_ENDPOINT = 'http://150.165.15.81:8182' # Mandatory
+FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.55:8182' # Mandatory
 # FOGBOW_MANAGER_ENDPOINT = 'http://150.165.85.80:8182' # Mandatory
 # FOGBOW_MANAGER_ENDPOINT = 'http://10.30.0.159:8182' # Mandatory
 CUSTOM_THEME = ''
@@ -17,10 +17,10 @@ CUSTOM_THEME = ''
 # # types : keystone, opennebula, raw_opennebula, raw_keystone
 # FOGBOW_LOCAL_AUTH_TYPE = 'opennebula' # Mandatory
 
-FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
+#FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
 # types : keystone, opennebula, voms, raw_opennebula, raw_keystone, cafe
-FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
-# FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
+#FOGBOW_FEDERATION_AUTH_TYPE = 'voms' # Mandatory
+FOGBOW_FEDERATION_AUTH_TYPE = 'ldap' # Mandatory
 
 # FOGBOW_CAFE_URL = 'https://ds.cafe.rnp.br/WAYF'
 
@@ -166,6 +166,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #     ('http://cluster1.example.com:5000/v2.0', 'cluster1'),
 #     ('http://cluster2.example.com:5000/v2.0', 'cluster2'),
 # ]
+
+#LDAP VALUES
+FOGBOW_FEDERATION_AUTH_ENDPOINT = "ldap://ldap.lsd.ufcg.edu.br:389"
+FOGBOW_LDAP_BASE = "dc=lsd,dc=ufcg,dc=edu,dc=br"
+FOGBOW_LDAP_ENCRYPT = ""
 
 OPENSTACK_HOST = "150.165.15.81"
 # OPENSTACK_HOST = "150.165.15.12"
