@@ -119,7 +119,7 @@ def getTokenInfoUser(token, type, endpoint):
 
     credentials = ""
     if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_NAF :
-        credentials = '%s"%s"' % ('-Dnaf_identity_plublic_key=' , settings.FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH)
+        credentials = '%s"%s"' % ('-Dnaf_identity_public_key=' , settings.FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH)
         token.id = token.id.replace(' ', '').replace('"', '\"')
       
     command = '%s token --info -DauthUrl=%s --type %s --token "%s" %s --user ' % (FOGBOW_CLI_JAVA_COMMAND,
