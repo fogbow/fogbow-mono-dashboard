@@ -168,7 +168,9 @@ def getErrorMessage(typeToken):
     elif typeToken == IdentityPluginConstants.AUTH_RAW_KEYSTONE:
         errorStr = _('Raw keystone is invalid')   
     elif typeToken == IdentityPluginConstants.AUTH_RAW_OPENNEBULA:
-        errorStr = _('Raw opennebula is invalid')                 
+        errorStr = _('Raw opennebula is invalid')
+    elif typeToken == IdentityPluginConstants.AUTH_LDAP:
+        errorStr = _('User credentials are invalid')     
     return errorStr 
 
 def checkUserAuthenticated(token):    
