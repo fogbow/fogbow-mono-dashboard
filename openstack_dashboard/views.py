@@ -86,7 +86,6 @@ def splash_fogbow(request):
             LOG.info('Nonce Ok')
            
             token = str(token)            
-            LOG.info('Token decrypted : s%') % (token)
             finalToken = '%s!#!%s' % (token, nafUtil.createCredentials(token))
             finalToken = b64encode(finalToken)
             LOG.info(finalToken)   
