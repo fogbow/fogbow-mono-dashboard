@@ -5,4 +5,4 @@
 .project
 .pydevproject
 .settings 
-/openstack_dashboard/local/local_settings.py
+openstack_dashboard/local/local_settings.py
