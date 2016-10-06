@@ -11,24 +11,22 @@ TEMPLATE_DEBUG = DEBUG
 FOGBOW_MANAGER_ENDPOINT = 'http://localhost:8182' # Mandatory
 
 FOGBOW_FEDERATION_AUTH_ENDPOINT = '' # Mandatory
-# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth, simpletoken, naf
+# types : keystone, opennebula, voms, raw_opennebula, raw_keystone, shibboleth, naf, ldap
 FOGBOW_FEDERATION_AUTH_TYPE = '' # Mandatory
-
-# for simpletoken federation auth
-FOGBOW_FEDERATION_SIMPLETOKEN_HOST='0.0.0.0'
 
 # for naf federation auth
 ## dashboard private key path
-FOGBOW_NAF_DASHBOARD_PRIVATE_KEY_PATH=
+# FOGBOW_NAF_DASHBOARD_PRIVATE_KEY_PATH='$path_to/dash_private_key.pem'
 ## dashboard private key path
-FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH=
+# FOGBOW_NAF_DASHBOARD_PUBLIC_KEY_PATH='$path_to/dash_public_key.pem'
 ## portal public key path
-FOGBOW_NAF_PORTAL_PUBLIC_KEY_PATH=
+# FOGBOW_NAF_PORTAL_PUBLIC_KEY_PATH='$path_to/portal_public_key.pem'
 
 # for ldap federation auth
-FOGBOW_FEDERATION_AUTH_TYPE = 'ldap' # Mandatory
-PRIVATE_KEY_PATH='$path_to/private_key.pem'
-PUBLIC_KEY_PATH='$path_to/public_key.pem'
+# PRIVATE_KEY_PATH='$path_to/private_key.pem'
+# PUBLIC_KEY_PATH='$path_to/public_key.pem'
+# FOGBOW_LDAP_BASE='dc=lsd,dc=ufcg,dc=edu,dc=br'
+# FOGBOW_LDAP_ENCRYPT=''
 
 # custom_theme 
 # customization of style
@@ -81,8 +79,8 @@ CUSTOM_THEME = 'naf-theme'
 
 # Default OpenStack Dashboard configuration.
 HORIZON_CONFIG = {
-    'dashboards': ('project', 'admin', 'settings',),
-    'default_dashboard': 'project',
+    'dashboards': ('fogbow', 'settings',),
+    'default_dashboard': 'fogbow',
     'user_home': 'openstack_dashboard.views.get_user_home',
     'ajax_queue_limit': 10,
     'auto_fade_alerts': {
