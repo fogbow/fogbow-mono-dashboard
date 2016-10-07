@@ -32,10 +32,8 @@ class FogbowConstants():
     STORAGE_TERM = '/storage/'
     LINK_TERM = 'link/'
     LINK_TERM_WITH_VERBOSE = 'link/?verbose=true'
-    REQUEST_TERM_WITH_VERBOSE = '/fogbow_request?verbose=true'
-#    REQUEST_TERM_WITH_VERBOSE = '/order?verbose=true'
-    REQUEST_TERM = '/fogbow_request/'
-#    REQUEST_TERM = '/order/'
+    REQUEST_TERM_WITH_VERBOSE = '/order?verbose=true'
+    REQUEST_TERM = '/order/'
     MEMBER_TERM = '/member'
     RESOURCE_TERM = '/-/'
     TOKEN_TERM = '/token'
@@ -43,7 +41,7 @@ class FogbowConstants():
     USAGE_TERM = '/usage'
     
     ORDER_SCHEME = 'scheme="http://schemas.fogbowcloud.org/order#"'
-    REQUEST_SCHEME = 'scheme="http://schemas.fogbowcloud.org/request#"'
+    REQUEST_SCHEME = ORDER_SCHEME
     STORAGE_SCHEME = 'scheme="http://schemas.ogf.org/occi/infrastructure#"'
     
     TARGET = "occi.core.target"
@@ -51,27 +49,27 @@ class FogbowConstants():
     DEVICE_ID = "occi.storagelink.deviceid"
     PROVADING_MEMBER_ID = "occi.storagelink.provadingMemberId"        
     STATE_TERM = 'occi.compute.state'
-    SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.request.ssh-public-address'
+    SHH_PUBLIC_KEY_TERM = 'org.fogbowcloud.order.ssh-public-address'
     CONSOLE_VNC_TERM = 'org.openstack.compute.console.vnc'
     MEMORY_TERM = 'occi.compute.memory'
     CORES_TERM = 'occi.compute.cores'
     IMAGE_SCHEME = 'http://schemas.ogf.org/occi/infrastructure#os_tpl'     
-    EXTRA_PORT_SCHEME = 'org.fogbowcloud.request.extra-ports'      
-    FOGBOW_REQUIREMENTS_TERM = 'org.fogbowcloud.request.requirements'
-    FOGBOW_TYPE_TERM = 'org.fogbowcloud.request.type'
-    FOGBOW_STATE_TERM = 'org.fogbowcloud.request.state'
-    FOGBOW_USERDATA_TERM = 'org.fogbowcloud.request.extra-user-data'
-    FOGBOW_USERDATA_CONTENT_TYPE_TERM = 'org.fogbowcloud.request.extra-user-data-content-type'
-    FOGBOW_VALID_FROM_TERM = 'org.fogbowcloud.request.valid-from'
-    FOGBOW_VALID_UNTIL_TERM = 'org.fogbowcloud.request.valid-until'
+    EXTRA_PORT_SCHEME = 'org.fogbowcloud.order.extra-ports'      
+    FOGBOW_REQUIREMENTS_TERM = 'org.fogbowcloud.order.requirements'
+    FOGBOW_TYPE_TERM = 'org.fogbowcloud.order.type'
+    FOGBOW_STATE_TERM = 'org.fogbowcloud.order.state'
+    FOGBOW_USERDATA_TERM = 'org.fogbowcloud.order.extra-user-data'
+    FOGBOW_USERDATA_CONTENT_TYPE_TERM = 'org.fogbowcloud.order.extra-user-data-content-type'
+    FOGBOW_VALID_FROM_TERM = 'org.fogbowcloud.order.valid-from'
+    FOGBOW_VALID_UNTIL_TERM = 'org.fogbowcloud.order.valid-until'
     FOGBOW_SHH_PUBLIC_KEY_REQUEST_TERM = 'org.fogbowcloud.credentials.publickey.data' 
-    FOGBOW_COUNT_TERM = 'org.fogbowcloud.request.instance-count'
+    FOGBOW_COUNT_TERM = 'org.fogbowcloud.order.instance-count'
     SIZE_OCCI = 'org.fogbowcloud.order.storage-size'
     
-    FOGBOW_STATE_TERM = 'org.fogbowcloud.request.state'
-    FOGBOW_TYPE_TERM = 'org.fogbowcloud.request.type'
+    FOGBOW_STATE_TERM = 'org.fogbowcloud.order.state'
+    FOGBOW_TYPE_TERM = 'org.fogbowcloud.order.type'
     FOGBOW_RESOURCE_KIND_TERM = 'org.fogbowcloud.order.resource-kind'
-    FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.request.instance-id' 
+    FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.order.instance-id' 
     
     NETWORK_VLAN = "occi.network.vlan=";
     NETWORK_LABEL = "occi.network.label=";

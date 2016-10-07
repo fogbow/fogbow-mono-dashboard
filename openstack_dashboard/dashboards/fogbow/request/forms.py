@@ -23,7 +23,7 @@ REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 STORAGE_TERM = fogbow_models.FogbowConstants.STORAGE_TERM
 NETWORK_TERM = fogbow_models.FogbowConstants.NETWORK_TERM
 ORDER_TERM_CATEGORY = 'order'
-REQUEST_TERM_CATEGORY = 'fogbow_request'
+REQUEST_TERM_CATEGORY = ORDER_TERM_CATEGORY
 REQUEST_SCHEME = fogbow_models.FogbowConstants.REQUEST_SCHEME
 ORDER_SCHEME = fogbow_models.FogbowConstants.ORDER_SCHEME
 SCHEME_FLAVOR_TERM = 'http://schemas.fogbowcloud.org/template/resource#'
@@ -86,7 +86,7 @@ class CreateRequest(forms.SelfHandlingForm):
     network_id = forms.ChoiceField(label=_('Network id'), help_text=_('Network id'), required=False)    
     
     type = forms.ChoiceField(label=_('Type'),
-                               help_text=_('Type Request'),
+                               help_text=_('Type Order'),
                                choices=TYPE_REQUEST)
     
     data_user = forms.FileField(label=_('Extra user data file'), required=False)
@@ -174,7 +174,7 @@ class CreateRequest(forms.SelfHandlingForm):
             
             advancedRequirements = ''
             if data['advanced_requirements'] != '':
-                advancedRequirements = ',org.fogbowcloud.request.requirements=%s' % (data['advanced_requirements'])
+                advancedRequirements = ',org.fogbowcloud.order.requirements=%s' % (data['advanced_requirements'])
                 advancedRequirements = self.normalizeValueHeader(advancedRequirements)
             else:
                 advancedRequirements = ''
@@ -191,8 +191,8 @@ class CreateRequest(forms.SelfHandlingForm):
                 dataUserFile = data['data_user_file']
                 if dataUserFile != None and dataUserFile != '':
                     normalizedUserDataFile = self.normalizeUserData(dataUserFile)
-                    userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.request.extra-user-data', normalizedUserDataFile,
-                                                          'org.fogbowcloud.request.extra-user-data-content-type', data['data_user_type'])
+                    userDataAttribute = ',%s="%s",%s="%s"' % ('org.fogbowcloud.order.extra-user-data', normalizedUserDataFile,
+                                                          'org.fogbowcloud.order.extra-user-data-content-type', data['data_user_type'])
                 
                 networkId = data['network_id']
                 headerLink = ''
@@ -201,7 +201,7 @@ class CreateRequest(forms.SelfHandlingForm):
                 
                 headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
                             % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
-                           'X-OCCI-Attribute' : 'org.fogbowcloud.request.instance-count=%s,org.fogbowcloud.request.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute),
+                           'X-OCCI-Attribute' : 'org.fogbowcloud.order.instance-count=%s,org.fogbowcloud.order.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute),
                            'Link' : '%s;' % (headerLink)}
             elif resourceKind == 'storage':
                 sizeStorage = data['sizeStorage']
@@ -233,13 +233,13 @@ class CreateRequest(forms.SelfHandlingForm):
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
-                messages.success(request, _('Requests created'))
+                messages.success(request, _('Orders created'))
             
             return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
         except Exception:
             redirect = reverse("horizon:fogbow:request:index")
             exceptions.handle(request,
-                              _('Unable to create requests.'),
+                              _('Unable to create orders.'),
                               redirect=redirect) 
             
     def returnFormatResponse(self, responseStr):      
