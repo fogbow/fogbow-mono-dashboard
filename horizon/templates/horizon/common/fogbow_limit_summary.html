@@ -63,9 +63,11 @@
 
 </style>
 
-<script src="../static/dashboard/js/jquery-1.12.0.min.js"></script>
-<script type="text/javascript">	
-	
+<script src="../static/dashboard/js/jquery-1.12.0.min.js"></script> 
+<script type="text/javascript">
+
+// TODO needs a refactor
+(function(){	
 	var continueRefresh = true
 	
 	$(document).find("a").click(function() {
@@ -85,11 +87,17 @@
 	var totalInstanceInUseByUser = 0;
 	
 	function updateMembers(memberLocalStorage) {
+		console.log("Updating members...");
 		var cont = 0;
 		$('#members').find('tr').each(function(indice) {
 		    $(this).find('td').each(function(indice) {
 		        if (indice == 0) {
 		        	var text = $(this).text();
+		        	
+		        	if (text.indexOf("Displaying") !== -1) {
+		        		return;
+		        	}
+		        	
 		        	var columnAndLine = "#members__row__" + text.replace(/\./g, '\\.') + " td:eq(10)"
 		        	
 		        	if (memberLocalStorage == null ) {
@@ -239,11 +247,13 @@
 		} catch(err) {}
     }
     
-    var contTimes = 0;
+    var contTimes = 1;
     var contTryTimesDefault = 3;  
     
-	function refreshLine(numberMember) {		
-		var text = members[numberMember];
+    // @Deprecated
+	function refreshLine(numberMember) {				
+		var text = members[numberMember];			
+		console.log("Trying first time in " + text);
 	 	if (text == null || text == 'undefined') {
 	 		return;
 	 	}
@@ -252,10 +262,9 @@
     	$.ajax({
     	    url: window.location.href + text + '/quota',
     	    type: "GET",
-    	    timeout: 10000,    	    
-    	    success: function(data) {   
-    	    	console.log('success');
-    	    	
+    	    timeout: 20000,    	    
+    	    success: function(data) {       
+    	    	console.log('Response ok in ' + text);
     			text = text.replace(/\./g, '\\.');
     			columnEl = $("#members__row__" + text + " td:eq(10)");
 				if (data == 'error') {
@@ -267,11 +276,7 @@
 							contTimes ++;
 							console.log('try ' + contTimes + ' times in ' + text + '.');							
 							refreshLine(cont);
-						} else {
-							console.log('next after ' + text + '.');
-							contTimes = 0;
-							refreshLine(++cont);						
-						}					
+						} 
 					} 										
 				} else {
 	    	    	var jsonData = JSON.parse(data);
@@ -279,15 +284,12 @@
 	    	    	jsonData["name"] = text;		
 	    	    	jsonData["10"] = date.toLocaleDateString("en-US") + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();					
 					populateMemberLine(text, jsonData);
-					updateLocalStorage(cont, JSON.stringify(jsonData));
-					
-					if (continueRefresh) {
-						refreshLine(++cont);
-					}					
+					updateLocalStorage(cont, JSON.stringify(jsonData));						
 				}
 				
     	    },
     	    error: function() {
+    	    	console.log('Timeout in ' + text);
     			columnEl = $("#members__row__" + text + " td:eq(10)"); 
     			columnEl.text('Error');
     			columnEl.css('color', 'red');
@@ -300,18 +302,81 @@
 					} else {
 						console.log('next after ' + text + '.');
 						contTimes = 0;
-						refreshLine(++cont);						
 					}					
 				}    			
     	    },
     	});				
 	}
 	
+	
+	function fillTableFields(cont, text, data) {
+		columnEl = $("#members__row__" + text + " td:eq(10)");
+		if (data == 'error' || data.startsWith("error")) {
+			columnEl.text('Error');
+			columnEl.css('color', 'red');					
+		} else {
+	    	var jsonData = JSON.parse(data);
+	    	var date = new Date();
+	    	jsonData["name"] = text;		
+	    	jsonData["10"] = date.toLocaleDateString("en-US") + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();					
+			populateMemberLine(text, jsonData);
+			updateLocalStorage(cont, JSON.stringify(jsonData));			
+		}		
+	}
+	
+	function getInlineJS() {
+	    var js = document.querySelector('[type="javascript/worker"]').textContent;
+	    var blob = new Blob([js], {"type": "text\/plain"});
+	    return URL.createObjectURL(blob);
+	}
+	
+	function refreshTable() {
+		console.log("Refreshing table ...");	
+		if (typeof(Worker) !== "undefined") {
+			var workerJsStr = getInlineJS();
+			var workers = [];	
+			for (i = 0; i < members.length; i++) {	
+				var member = members[i];								
+				var index = i;
+				workers.push(new Worker(workerJsStr));		
+				workersSelected = workers[i];
+				
+				workersSelected.onmessage = function(e) {					
+					var response = e.data.response;
+					var member = e.data.member;					
+					console.log("Message of (" + member + ") : " + response);
+					if (response.startsWith("error")) {
+						if (continueRefresh && contTimes < contTryTimesDefault) {
+							contTimes ++;
+							console.log('Try ' + contTimes + ' with ' + member);
+							workersSelected.postMessage({url: window.location.href + member + '/quota', name : "worker" + i, member: member});		
+							return;
+						}  
+					}
+					
+					member = member.replace(/\./g, '\\.');
+					fillTableFields(index, member, response);
+				};						
+				
+				console.log("Starting member " + member);	
+				workersSelected.postMessage({url: window.location.href + member + '/quota', name : "worker" + i, member: member}); 							
+			}
+		} else {
+		    console.log("Sorry! No Web Worker support..")
+		    setTimeout(function(){
+				for (i = 0; i < members.length; i++) {			
+					var index = i;
+					refreshLine(index); 
+				}		    		    
+		    }, 0);
+		}		
+	}
+	
 	$(document).ready(function() {
 		var localStorageMembers = localStorage.getItem("members");
 		updateMembers(localStorageMembers);
 		if (localStorageMembers == null) {
-			setTimeout(function(){ refreshLine(0); }, 0);			
+			refreshTable();			
 		} else {			
 			localStorageSplit = String(localStorageMembers).split(tokenToReplace);
 						
@@ -367,8 +432,33 @@
 		$("#button_populate").prop("disabled", true);
 		localStorage.clear();
 		updateMembers();
-		setTimeout(function(){ refreshLine(0); }, 0);
+		refreshTable();
 		$("#button_populate").prop("disabled", false);
 	});
 	
+})();
 </script>
+
+<script id="worker" type="javascript/worker">
+	self.onmessage = function(e) {
+		var xhr = new XMLHttpRequest();
+		var member = e.data.member;
+		var url = e.data.url;
+		var that = self;
+
+		xhr.open('GET', e.data.url, false);
+	    xhr.timeout = 20000; // 20 seconds
+		xhr.overrideMimeType('text/plain; charset=x-user-defined');		
+		xhr.onreadystatechange = function(e) {
+			var responseStr = ""
+			if (this.readyState == 4 && this.status == 200) {
+	    		responseStr = this.responseText;
+		  	} else {				
+				responseStr = "error";
+			}
+			that.postMessage({response: responseStr, member: member});
+		};
+
+		xhr.send();	
+	};
+</script> 	
