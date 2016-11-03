@@ -32,6 +32,14 @@ FOGBOW_FEDERATION_AUTH_TYPE = '' # Mandatory
 # customization of style
 CUSTOM_THEME = 'naf-theme'
 
+# Communication between F_dashboard and F_manager
+# Default 15 | seconds 
+TIMEOUT_POST=15
+# Default 15 | seconds
+TIMEOUT_DELETE=15
+# Default 60 | seconds
+TIMEOUT_GET=60
+
 # for https
 # Set SSL proxy settings:
 # For Django 1.4+ pass this header from the proxy after terminating the SSL,

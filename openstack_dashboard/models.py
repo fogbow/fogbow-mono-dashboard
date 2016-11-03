@@ -190,6 +190,16 @@ def checkUserAuthenticated(token):
 def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):    
     federationToken = request.user.token.id
     
+    timeoutPost = settings.TIMEOUT_POST;
+    if timeoutPost is not None:
+        timeoutPost = 15
+    timeoutDelete = settings.TIMEOUT_DELETE;
+    if timeoutDelete is not None:
+        timeoutDelete = 15    
+    timeoutGet = settings.TIMEOUT_GET;
+    if timeoutGet is not None:
+        timeoutGet = 60    
+    
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : federationToken}    
     if additionalHeaders is not None:
         headers.update(additionalHeaders)    
@@ -197,11 +207,11 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
     responseStr, response = '', None
     try:
         if method == 'get':
-            response = requests.get(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=60)
+            response = requests.get(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutGet)
         elif method == 'delete':
-            response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=10)
+            response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutDelete)
         elif method == 'post':   
-            response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=10)
+            response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutPost)
         responseStr = response.text
     except Exception as e:
         print e
