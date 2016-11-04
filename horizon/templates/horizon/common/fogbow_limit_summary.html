@@ -104,7 +104,7 @@
 			        	$(columnAndLine).text("Loading");
 						$(columnAndLine).css('color', 'black');		
 		        	} else {
-			        	$(columnAndLine).text("Error");
+			        	$(columnAndLine).text("Not updated");
 						$(columnAndLine).css('color', 'purple');		        		
 		        	}
 		        	
@@ -125,7 +125,7 @@
     		return;
     	}
     	localStorageMembers = localStorageMembers + tokenToReplace + newMemberData;
-    	localStorage.setItem("members", localStorageMembers);
+    	localStorage.setItem("members", localStorageMembers);    		
     }
     
     function getMemberDataLocalStorage(numberMember) {
@@ -137,7 +137,7 @@
     	return localStorageMembers;
     }
 
-    function populateMemberLine(member, jsonData) {    	
+    function populateMemberLine(member, jsonData, color) {    	
 		try {			
 			for (var key in jsonData) {
 				if (jsonData.hasOwnProperty(key)) {
@@ -146,25 +146,16 @@
 					 	
 					 	if (key == 1) {
 					 		try {
-					 			//if (totalVCPUAvailable == 'No Limit') {
-					 			//	continue;
-					 			//}
 					 			totalVCPUAvailable = totalVCPUAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 2) {
-					 		try {			 	
-					 			//if (totalVCPUAvailable == 'No Limit') {
-					 			//	continue;
-					 			//}										 			
+					 		try {			 											 			
 					 			totalVCPU = totalVCPU + parseFloat(jsonData[key]);
 					 		}
 					 		catch(err) {}
 					 	} else if (key == 4) {
-					 		try {
-					 			//if (totalRamAvailable == 'No Limit') {
-					 				//continue;
-					 			//}							 			
+					 		try {	 			
 					 			totalRamAvailable = totalRamAvailable + parseFloat(jsonData[key]);					 			
 					 		}
 					 		catch(err) {}						 		
@@ -243,7 +234,12 @@
 				  	}
 			  	}
 			}
-			columnEl.css('color', 'blue');
+			
+			if (color == "undefined" || color == null) {
+				color = "blue";
+			}
+			columnEl.css('color', color);			
+			
 		} catch(err) {}
     }
     
@@ -309,11 +305,13 @@
 	}
 	
 	
-	function fillTableFields(cont, text, data) {
+	function fillTableFields(localStorageMembers, cont, text, data) {
 		columnEl = $("#members__row__" + text + " td:eq(10)");
 		if (data == 'error' || data.startsWith("error")) {
-			columnEl.text('Error');
-			columnEl.css('color', 'red');					
+			columnEl.text('Not updated');
+			columnEl.css('color', 'gray');
+			var member = text;
+			populateMemberLineWithBD(localStorageMembers, member);
 		} else {
 	    	var jsonData = JSON.parse(data);
 	    	var date = new Date();
@@ -330,8 +328,10 @@
 	    return URL.createObjectURL(blob);
 	}
 	
-	function refreshTable() {
-		console.log("Refreshing table ...");	
+	var localStorageMembersGlobal;
+	
+	function refreshTable() {		
+		console.log("Refreshing table ...");			
 		if (typeof(Worker) !== "undefined") {
 			var workerJsStr = getInlineJS();
 			var workers = [];	
@@ -355,7 +355,7 @@
 					}
 					
 					member = member.replace(/\./g, '\\.');
-					fillTableFields(index, member, response);
+					fillTableFields(localStorageMembersGlobal, index, member, response);
 				};						
 				
 				console.log("Starting member " + member);	
@@ -372,39 +372,45 @@
 		}		
 	}
 	
+	function populateMemberLineWithBD(localStorageMembers, nameMember) {
+		var populate = false;
+		memberData = null;
+		indexReference = 0;
+		
+		if (localStorageMembers == "undefined" || localStorageMembers == null) {
+			var localStorageMembers = localStorage.getItem("members");
+		}
+		localStorageSplit = String(localStorageMembers).split(tokenToReplace);
+		
+		for (j = 0; j < localStorageSplit.length; j++) {
+			try {
+				memberData = localStorageSplit[j];
+				var name = JSON.parse(memberData)["name"];
+				if (name == nameMember) {
+					indexReference = j;
+					populate = true;
+					break;
+				}
+			} catch (err) {}		
+		}
+		
+		if (populate == false || memberData == null) {
+			return;
+		}			
+		
+		populateMemberLine(nameMember, JSON.parse(localStorageSplit[indexReference]), "purple");		
+	} 
+	
 	$(document).ready(function() {
 		var localStorageMembers = localStorage.getItem("members");
 		updateMembers(localStorageMembers);
 		if (localStorageMembers == null) {
 			refreshTable();			
-		} else {			
-			localStorageSplit = String(localStorageMembers).split(tokenToReplace);
-						
+		} else {									
 			for (i = 0; i < members.length; i++) { 		
-				var populate = false;
 				var nameMember = members[i].replace(/\./g, '\\.');
 				
-				memberData = null;
-				indexReference = 0;
-				for (j = 0; j < localStorageSplit.length; j++) {
-					try {
-						memberData = localStorageSplit[j];
-						var name = JSON.parse(memberData)["name"];
-						if (name == nameMember) {
-							indexReference = j;
-							populate = true;
-							break;
-						}
-					} catch (err) {
-						
-					}		
-				}
-				
-				if (populate == false || memberData == null) {
-					continue;
-				}			
-				
-				populateMemberLine(nameMember, JSON.parse(localStorageSplit[indexReference]));
+				populateMemberLineWithBD(localStorageMembers, nameMember);
 			}
 		}
 	});	
@@ -430,11 +436,22 @@
 		totalRamAvailableResponse
 		
 		$("#button_populate").prop("disabled", true);
-		localStorage.clear();
+		localStorageMembersGlobal = localStorage.getItem("members");
+		checkAndClearLocalStorageFull();
 		updateMembers();
 		refreshTable();
 		$("#button_populate").prop("disabled", false);
 	});
+	
+	function checkAndClearLocalStorageFull() {
+		var localStorageMembers = localStorage.getItem("members");
+		var localStorageMembersStr = String(localStorageMembers);		
+		var max = 100; // kbs
+		var size = (localStorageMembersStr.length*16)/(8*1024);
+		if (localStorageMembersStr != null && size > max) {		
+			localStorage.clear();
+		}	
+	}
 	
 })();
 </script>
@@ -447,7 +464,7 @@
 		var that = self;
 
 		xhr.open('GET', e.data.url, false);
-	    xhr.timeout = 20000; // 20 seconds
+	    xhr.timeout = 60000; // 60 seconds
 		xhr.overrideMimeType('text/plain; charset=x-user-defined');		
 		xhr.onreadystatechange = function(e) {
 			var responseStr = ""
@@ -457,6 +474,10 @@
 				responseStr = "error";
 			}
 			that.postMessage({response: responseStr, member: member});
+		};
+
+		xhr.ontimeout = function (e) {
+  			that.postMessage({response: "error", member: member});
 		};
 
 		xhr.send();	
