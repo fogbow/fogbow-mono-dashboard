@@ -78,7 +78,7 @@ class CreateRequest(forms.SelfHandlingForm):
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
     
-    image = forms.CharField(label=_('Image'), required=False,
+    image = forms.CharField(label=_('Image'), required=True,
                            error_messages={
                                'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')})
