@@ -30,30 +30,32 @@ class FogbowBackend(object):
     def get_user(self, user_id):     
         federationToken = self._cached_tokens[self.request.session['token']]
         username = '...'
+        userId = '...'
         try:
             username = self.request.session['username']
+            userId = self.request.session['userId']
         except Exception, e:
             pass
         
-        return User(username, federationToken, None, {})
+        return User(username, federationToken, userId, username, {})
   
     def authenticate(self, request, federationCredentials=None, federationEndpoint=None):
-        print 'Authenticating...'
         tokenStr = ''                              
         tokenStr = getCorrectToken(settings.FOGBOW_FEDERATION_AUTH_TYPE, federationCredentials, federationEndpoint)              
         LOG.info('Federation Token : %s' % tokenStr)
         federatioToken = Token(tokenStr)   
         username = '...'
+        userId = '...'
         try:            
-            print 'Getting user info...'
             tokenInfo = getTokenInfoUser(federatioToken, settings.FOGBOW_FEDERATION_AUTH_TYPE, federationEndpoint)
-            print tokenInfo
-            username = tokenInfo
+            username = tokenInfo.split(',')[0]
+            userId = tokenInfo.split(',')[1]
+            LOG.info('%s : %s ' % username, userId)
         except Exception, e: 
 	        print e;
-        user = User(username, federatioToken, '', {})        
+        user = User(username, federatioToken, userId, username, {})        
         try:            
-            print 'Checking user authenticated...'
+            LOG.info('Checking user authenticated...')
             if fogbow_models.checkUserAuthenticated(federatioToken) == False:
                 LOG.error('Federation Token is Invalid')
                 user.errors = True
@@ -67,7 +69,8 @@ class FogbowBackend(object):
         request.user = user
         federation_token_id = uuid.uuid4()         
         request.session['token'] = federation_token_id
-        request.session['username'] = user.id
+        request.session['username'] = user.username
+        request.session['userId'] = user.userId
         self._cached_tokens[federation_token_id] = federatioToken
         self._cached_tokens[user.id] = user
         return user
@@ -127,15 +130,12 @@ def getTokenInfoUser(token, type, endpoint):
     if settings.FOGBOW_FEDERATION_AUTH_TYPE == fogbow_models.IdentityPluginConstants.AUTH_LDAP :
         credentials = '-Dprivate_key_path="%s" -Dpublic_key_path="%s"' % (settings.PRIVATE_KEY_PATH, settings.PUBLIC_KEY_PATH)
       
-    command = '%s token --info -DauthUrl=%s --type %s --token "%s" %s --user ' % (FOGBOW_CLI_JAVA_COMMAND,
+    command = '%s token --info -DauthUrl=%s --type %s --token "%s" %s --user --user-id ' % (FOGBOW_CLI_JAVA_COMMAND,
                                  endpoint, type, token.id, credentials)
-    
-    LOG.info('Get Token info :')
-    LOG.info(command)
     
     responseStr = commands.getoutput(command) 
     
-    LOG.info('Get Token info Response:'+responseStr)
+    LOG.info('Get Token info Response:' + responseStr)
  
     if 'Unauthorized' in responseStr:
         return None    

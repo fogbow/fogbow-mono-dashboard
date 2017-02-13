@@ -108,9 +108,10 @@ class User(models.AnonymousUser):
     type = 'fogbow_user'
     authorized_tenants = {}
     
-    def __init__(self, id=None, token=None, username=None, roles=None):
+    def __init__(self, id=None, token=None, userId=None, username=None, roles=None):
         self.id = id
         self.token = token
+        self.userId = userId
         self.username = username
         self.roles = roles
 
