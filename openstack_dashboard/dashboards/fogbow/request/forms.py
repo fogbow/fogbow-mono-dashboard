@@ -54,9 +54,9 @@ class CreateRequest(forms.SelfHandlingForm):
                           widget=forms.TextInput(),
                           required=False)
 
-    gateway = forms.CharField(label=_('Gateway'), initial='fogbow-ubuntu',
+    gateway = forms.CharField(label=_('Gateway'), initial='',
                           widget=forms.TextInput(),
-                          required=False)    
+                          required=False)
     
     allocation = forms.ChoiceField(label=_('Allocation'), help_text=_('Allocation'), required=False)  
 
