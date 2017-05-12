@@ -56,7 +56,7 @@ class CreateRequest(forms.SelfHandlingForm):
 
     gateway = forms.CharField(label=_('Gateway'), initial='',
                           widget=forms.TextInput(),
-                          required=False)    
+                          required=False)
     
     allocation = forms.ChoiceField(label=_('Allocation'), help_text=_('Allocation'), required=False)  
 
@@ -78,7 +78,7 @@ class CreateRequest(forms.SelfHandlingForm):
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
     
-    image = forms.CharField(label=_('Image'), required=True,
+    image = forms.CharField(label=_('Image'), required=False, initial='fogbow-ubuntu',
                            error_messages={
                                'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')})
