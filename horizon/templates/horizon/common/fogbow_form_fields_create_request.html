@@ -116,7 +116,10 @@
 		
 		var member = $('#id_members').val();
 		if (member != '') {
-			originalString = originalString + " && Glue2CloudComputeManagerID==\"" + member + "\""; 
+			if (originalString != null && originalString != '') {
+				originalString += ' && '
+			}
+			originalString = originalString + "Glue2CloudComputeManagerID==\"" + member + "\""; 
 		}
 		
 		$("#id_advanced_requirements").val(originalString);
