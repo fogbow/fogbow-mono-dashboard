@@ -39,5 +39,5 @@ class APIDictWrapper(object):
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self._apidict)
 
-class Instance(APIDictWrapper):
-    _attrs = ['id', 'federatedNetworkId', 'allowed', 'type']
+class FederatedNetwork(APIDictWrapper):
+    _attrs = ['id', 'federatedNetworkId', 'cidr', 'providers', 'type']

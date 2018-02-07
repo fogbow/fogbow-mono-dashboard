@@ -4,7 +4,6 @@ from horizon import tables
 import openstack_dashboard.models as fogbow_models
 from horizon import messages
 
-
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
 
 class TerminateRequest(tables.BatchAction):

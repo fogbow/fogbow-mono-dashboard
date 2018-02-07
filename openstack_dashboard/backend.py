@@ -99,6 +99,8 @@ def getToken(endpoint, credentials, type):
   
     command = '%s token --create %s %s --type %s' % (FOGBOW_CLI_JAVA_COMMAND, endpoint,
                                                                 credentialsStr, type) 
+
+    LOG.info('Token command : %s' % command)
 	
     reponseStr = commands.getoutput(command)
   

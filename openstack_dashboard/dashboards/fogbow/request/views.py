@@ -1,4 +1,5 @@
 import requests
+import logging
 import openstack_dashboard.models as fogbow_models
 
 from horizon import forms
@@ -21,6 +22,8 @@ TYPE_TERM = fogbow_models.FogbowConstants.FOGBOW_TYPE_TERM
 FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_TERM
 INSTANCE_ID_TERM = fogbow_models.FogbowConstants.FOGBOW_INSTANCE_ID_TERM
 
+LOG = logging.getLogger(__name__)
+
 class IndexView(tables.DataTableView):
     table_class = project_tables.RequestsTable
     template_name = 'fogbow/request/index.html'
@@ -36,7 +39,7 @@ class IndexView(tables.DataTableView):
         if response == None:
             return listRequests 
               
-        listRequests = self.getRequestsList(response.text)                
+        listRequests = self.getRequestsList(response.text)
         
         return listRequests
 

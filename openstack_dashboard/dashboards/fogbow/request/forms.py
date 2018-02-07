@@ -2,6 +2,7 @@ import netaddr
 import requests
 import openstack_dashboard.models as fogbow_models
 import base64
+import logging
 
 from django.core.validators import RegexValidator
 from django.core.urlresolvers import reverse 
@@ -16,6 +17,7 @@ from horizon import messages
 from django import shortcuts
 from openstack_dashboard.dashboards.fogbow.members.views import IndexView as member_views
 from openstack_dashboard.dashboards.fogbow.network.views import IndexView as network_views
+LOG = logging.getLogger(__name__)
 
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
@@ -34,7 +36,7 @@ STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
-    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'), ('network', 'network'))
+    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'), ('network', 'network'), ('federated_network', 'federated network'))
     
     success_url = reverse_lazy("horizon:fogbow:request:index")
     
@@ -50,9 +52,19 @@ class CreateRequest(forms.SelfHandlingForm):
                                help_text=_('Resource kind'),
                                choices=TYPE_RESOURCE_KIND)
 
+    label_federated_network = forms.CharField(label=_('Label'),
+                          widget=forms.TextInput(),
+                          required=False)
+
     cird = forms.CharField(label=_('CIDR'), initial='192.168.0.0/24',
                           widget=forms.TextInput(),
                           required=False)
+    
+    # federated_network    
+    providers_federated_network = forms.MultipleChoiceField(label=_('Members'),
+                           widget=forms.CheckboxSelectMultiple,
+                           help_text=_('Providers'),
+                           required=False)    
 
     gateway = forms.CharField(label=_('Gateway'), initial='',
                           widget=forms.TextInput(),
@@ -83,7 +95,9 @@ class CreateRequest(forms.SelfHandlingForm):
                                'invalid': _('The string may only contain'
                                             ' ASCII characters and numbers.')})
     
-    network_id = forms.ChoiceField(label=_('Network id'), help_text=_('Network id'), required=False)    
+    network_id = forms.ChoiceField(label=_('Network id'), help_text=_('Network id'), required=False)
+    
+    federared_network_id = forms.ChoiceField(label=_('Federated network id'), help_text=_('Federated network id'), required=False)    
     
     type = forms.ChoiceField(label=_('Type'),
                                help_text=_('Type Order'),
@@ -107,8 +121,9 @@ class CreateRequest(forms.SelfHandlingForm):
         
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
         
+        MEMBER_CHOICES_DEFAULT_KEY = 0
         membersChoices = []
-        membersChoices.append(('', 'Try first local, then any'))
+        membersChoices.append((MEMBER_CHOICES_DEFAULT_KEY, 'Try first local, then any'))
         try:
             membersResponseStr = fogbow_models.doRequest('get', MEMBER_TERM, None, request).text
             members = member_views().getMembersList(fogbow_models.doRequest('get', MEMBER_TERM, None, request).text)
@@ -118,6 +133,9 @@ class CreateRequest(forms.SelfHandlingForm):
             pass        
 
         self.fields['members'].choices = membersChoices
+        
+        del membersChoices[MEMBER_CHOICES_DEFAULT_KEY]
+        self.fields['providers_federated_network'].choices = membersChoices
 
         dataUserTypeChoices = []
         dataUserTypeChoices.append(('text/x-shellscript', 'text/x-shellscript'))
@@ -131,23 +149,24 @@ class CreateRequest(forms.SelfHandlingForm):
         
         networksChoices = []
         networksChoices.append(('', 'Network default'))
-        print 'Aqui'
         try:
-            print 'Aqui 2'
             networks = network_views().getInstances(fogbow_models.doRequest('get', NETWORK_TERM, None, request).text)
-            print networks
             for network in networks:
                 networksChoices.append((network.get('id'), network.get('id')))
         except Exception as error: 
-            print error
             pass    
         
         self.fields['network_id'].choices = networksChoices
         
+        federated_network_choices = []
+        federated_network_choices.append(('fake one', 'federated network one'))
+        federated_network_choices.append(('fake two', 'federated network two'))
+        self.fields['federared_network_id'].choices = federated_network_choices        
+        
         dataAllocation = []
         dataAllocation.append(('dynamic', 'Dynamic'))
         dataAllocation.append(('static', 'Static'))
-        self.fields['allocation'].choices = dataAllocation
+        self.fields['allocation'].choices = dataAllocation        
         
 
     def normalizeNameResource(self, resource):
@@ -220,15 +239,16 @@ class CreateRequest(forms.SelfHandlingForm):
                     attrAllocation = '%s=%s' % ('occi.network.allocation', allocation)                            
                 
                 headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrGateway, attrAllocation)}
+            elif resourceKind == 'federated_network':
+                messages.success(request, _('Orders created'))
+                LOG.debug(data['providers_federated_network'])
+                return shortcuts.redirect(reverse("horizon:fogbow:request:index")) 
 
             addHeader = headers.get('X-OCCI-Attribute')
             headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
             if advancedRequirements != '':
                 addHeader = headers.get('X-OCCI-Attribute')
-                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})                                
-
-            print '<@@>'
-            print headers
+                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             

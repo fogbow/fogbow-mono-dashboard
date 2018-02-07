@@ -42,28 +42,67 @@
 	function hideFields(resourceKind, transition) {
 		if (resourceKind == 'compute') {
 			$("#id_advanced_requirements").val("Glue2vCPU >= " + $('#id_cpu').val() + " && Glue2RAM >= " + $('#id_mem').val());
-
-			showComputeFields(transition);
 			
+			hideFederatedNetworkFields(transition);
 			hideStorageFields(transition);
 			hideNetworkFields(transition);
+			
+			showComputeFields(transition);
+			showRequirementsFields(transition);
 		} else if (resourceKind == 'storage') {
 			$("#id_advanced_requirements").val("");
 			
-			showStorageFields(transition);
-				
+			hideFederatedNetworkFields(transition);
 			hideComputeFields(transition);
 			hideNetworkFields(transition);
+			
+			showStorageFields(transition);
+			showRequirementsFields(transition);
+				
 		} else if (resourceKind == 'network') {
 			$("#id_advanced_requirements").val("");
-			showNetworkFields(transition);
 			
+			hideFederatedNetworkFields(transition);
 			hideStorageFields(transition);
 			hideComputeFields(transition);
+			
+			showNetworkFields(transition);
+			showRequirementsFields(transition);
+		} else if (resourceKind == 'federated_network') {
+			$("#id_advanced_requirements").val("");
+			
+			hideRequirementsFields(transition);
+			hideStorageFields(transition);
+			hideComputeFields(transition);
+			hideNetworkFields(transition);
+			
+			showFederatedNetworkFields(transition);		
 		}
 	}
 	
 	// TODO refact this methods
+	function hideRequirementsFields(transition) {
+		$(".control-group:has([for='id_advanced_requirements'])").hide(transition);
+		$(".control-group:has([for='id_members'])").hide(transition);
+	}
+
+	function showRequirementsFields(transition) {
+		$(".control-group:has([for='id_advanced_requirements'])").show(transition);
+		$(".control-group:has([for='id_members'])").show(transition);
+	}
+	
+	function showFederatedNetworkFields(transition) {
+		$(".control-group:has([for='id_cird'])").show(transition);
+		$(".control-group:has([for='id_label_federated_network'])").show(transition);
+		$(".control-group:has([for='id_providers_federated_network_0'])").show(transition);		
+	}
+	
+	function hideFederatedNetworkFields(transition) {		
+		$(".control-group:has([for='id_cird'])").hide(transition);
+		$(".control-group:has([for='id_label_federated_network'])").hide(transition);
+		$(".control-group:has([for='id_providers_federated_network_0'])").hide(transition);
+	}
+	
 	function hideNetworkFields(transition) {
 		$(".control-group:has([for='id_cird'])").hide(transition);
 		$(".control-group:has([for='id_gateway'])").hide(transition);
@@ -84,6 +123,7 @@
 		$(".control-group:has([for='id_data_user_type'])").hide(transition);			
 		$(".control-group:has([for='id_publicKey'])").hide(transition);
 		$(".control-group:has([for='id_network_id'])").hide(transition);
+		$(".control-group:has([for='id_federared_network_id'])").hide(transition);	
 	}
 	
 	function showStorageFields(transition) {
@@ -103,6 +143,7 @@
 		$(".control-group:has([for='id_data_user_type'])").show(transition);			
 		$(".control-group:has([for='id_publicKey'])").show(transition);		
 		$(".control-group:has([for='id_network_id'])").show(transition);
+		$(".control-group:has([for='id_federared_network_id'])").show(transition);
 	}
 	
 	function setValueOnRequiremetns() {

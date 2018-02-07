@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Join member" %}{% endblock %}
+
+{% block page_header %}
+  {% include "horizon/common/_page_header.html" with title=_("Join Member") %}
+{% endblock page_header %}
+
+{% block main %}
+  {% include 'fogbow/federated_network/_create.html' %}
+{% endblock %}
