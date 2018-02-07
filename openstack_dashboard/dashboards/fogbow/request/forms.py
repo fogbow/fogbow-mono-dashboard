@@ -34,6 +34,10 @@ FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_T
 SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
+FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
+FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
+FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
+
 class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
     TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'), ('network', 'network'), ('federated_network', 'federated network'))
@@ -240,9 +244,19 @@ class CreateRequest(forms.SelfHandlingForm):
                 
                 headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrGateway, attrAllocation)}
             elif resourceKind == 'federated_network':
-                messages.success(request, _('Orders created'))
-                LOG.debug(data['providers_federated_network'])
-                return shortcuts.redirect(reverse("horizon:fogbow:request:index")) 
+                attrCIRD, attrLabel, attrMembers = '', '', []
+                cird = data['cird']
+                label = data['label_federated_network']
+                providers = data['providers_federated_network']
+                if cird is not None and cird is not '':
+                    attrCIRD = '%s=%s,' % (FEDERATED_NETWORK_CIDR, cird)
+                if label is not None and label is not '':
+                    attrLabel = '%s=%s,' % (FEDERATED_NETWORK_LABEL, label)
+                if providers is not None:
+                    attrMembers = '%s=%s' % (FEDERATED_NETWORK_MEMBERS, ";".join(providers))                            
+                
+                headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrLabel, attrMembers)}
+            
 
             addHeader = headers.get('X-OCCI-Attribute')
             headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
@@ -273,7 +287,7 @@ class CreateRequest(forms.SelfHandlingForm):
         return responseFormated
     
     def checkAllAttributes(self, data, request):
-        value = None;
+        value = None
         if self.existsBreakline(str(data['resourceKind']).strip()) == True:
             value = 'resource kind'
         if self.existsBreakline(str(data['publicKey']).strip())== True:

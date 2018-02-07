@@ -45,6 +45,7 @@ class IndexView(tables.DataTableView):
             return self.getFederatedNetworkList(response.text)
 
     def getFederatedNetworkList(self, responseStr):
+        LOG.error(responseStr)
         federatedList = []
         fragments = responseStr.split("\n")
         for frag in fragments:
