@@ -27,7 +27,8 @@ LOG = logging.getLogger(__name__)
 
 class FogbowConstants():
     
-    NETWORK_TERM = '/network/'    
+    NETWORK_TERM = '/network/'  
+    NETWORK_TERM = '/federatedNetwork/'    
     COMPUTE_TERM = '/compute/'
     STORAGE_TERM = '/storage/'
     LINK_TERM = 'link/'
@@ -70,14 +71,14 @@ class FogbowConstants():
     FOGBOW_TYPE_TERM = 'org.fogbowcloud.order.type'
     FOGBOW_RESOURCE_KIND_TERM = 'org.fogbowcloud.order.resource-kind'
     FOGBOW_INSTANCE_ID_TERM = 'org.fogbowcloud.order.instance-id' 
-    
-    NETWORK_VLAN = "occi.network.vlan=";
-    NETWORK_LABEL = "occi.network.label=";
-    NETWORK_STATE = "occi.network.state=";
-    NETWORK_ADDRESS = "occi.network.address=";
-    NETWORK_GATEWAY = "occi.network.gateway=";
-    NETWORK_ALLOCATION = "occi.network.allocation=";
-    NETWORK_ID = "org.fogbowcloud.order.network-id";  
+
+    NETWORK_VLAN = "occi.network.vlan="
+    NETWORK_LABEL = "occi.network.label="
+    NETWORK_STATE = "occi.network.state="
+    NETWORK_ADDRESS = "occi.network.address="
+    NETWORK_GATEWAY = "occi.network.gateway="
+    NETWORK_ALLOCATION = "occi.network.allocation="
+    NETWORK_ID = "org.fogbowcloud.order.network-id"
 
 class IdentityPluginConstants():
     AUTH_RAW_KEYSTONE = 'raw_keystone'
@@ -174,7 +175,7 @@ def getErrorMessage(typeToken):
 
 def checkUserAuthenticated(token):    
     
-    print 'Validatin token on: '+settings.FOGBOW_MANAGER_ENDPOINT+FogbowConstants.RESOURCE_TERM
+    LOG.debug('Validatin token on: '+settings.FOGBOW_MANAGER_ENDPOINT+FogbowConstants.RESOURCE_TERM)
     
     headers = {'content-type': 'text/occi', 'X-Auth-Token' : token.id}
     response = requests.get('%s%s' % (settings.FOGBOW_MANAGER_ENDPOINT, FogbowConstants.RESOURCE_TERM) ,
@@ -182,7 +183,7 @@ def checkUserAuthenticated(token):
     
     responseStr = response.text
 
-    print 'Response: '+responseStr
+    LOG.debug('Response: '+responseStr)
 
     if 'Unauthorized' in responseStr or 'Bad Request' in responseStr or 'Authentication required.' in responseStr:
         return False    
@@ -191,13 +192,13 @@ def checkUserAuthenticated(token):
 def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):    
     federationToken = request.user.token.id
     
-    timeoutPost = settings.TIMEOUT_POST;
+    timeoutPost = settings.TIMEOUT_POST
     if timeoutPost is not None:
         timeoutPost = 15
-    timeoutDelete = settings.TIMEOUT_DELETE;
+    timeoutDelete = settings.TIMEOUT_DELETE
     if timeoutDelete is not None:
         timeoutDelete = 15    
-    timeoutGet = settings.TIMEOUT_GET;
+    timeoutGet = settings.TIMEOUT_GET
     if timeoutGet is not None:
         timeoutGet = 60    
     
@@ -215,10 +216,9 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
             response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutPost)
         responseStr = response.text
     except Exception as e:
-        print e
+        LOG.error(e)
         if hiddenMessage == None:
             messages.error(request, _('Problem communicating with the Fogbow Manager'))
-    
     if 'Unauthorized' in responseStr or 'Authentication required.' in responseStr:
         if hiddenMessage == None:
             messages.error(request, _('Token unauthorized'))
@@ -256,7 +256,7 @@ class NafUtil(object):
             sign = signer.sign(digest)
             return b64encode(sign)            
         except Exception as e:
-            print str(e)
+            LOG.error(e)
             return None
         
     def verify(self, token, signature):
@@ -268,13 +268,13 @@ class NafUtil(object):
             digest = SHA.new() 
             digest.update(token) 
             if signer.verify(digest, b64decode(signature)):
-                print "The signature is authentic."
+                LOG.debug("The signature is authentic.")
                 return True
             else:
-                print "The signature is not authentic."
+                LOG.debug("The signature is not authentic.")
                 return False
         except Exception as e:
-            print str(e)
+            LOG.error(e)
             return False
 
     def decrypt(self, token):
@@ -285,11 +285,8 @@ class NafUtil(object):
             cipher = Cipher_PKCS1_v1_5.new(rsakey)
             return cipher.decrypt(b64decode(token), "decrypt_error")                    
         except Exception as e:
-            print str(e)
+            LOG.error(e)
             return None
-        
-    def _unpad(s):
-        return s[:-ord(s[len(s)-1:])]
                 
     def decryptAES(self, enc, key):
         enc = base64.b64decode(enc)
@@ -312,6 +309,7 @@ def set_session_from_user(request, user):
     request.user = user
 
 def create_user_from_token(request, token, endpoint, services_region=None):
+    # FIXME User constructor doesn't take this arguments
     return User(id=token.user['id'],
                 token=token,
                 user=token.user['name'],

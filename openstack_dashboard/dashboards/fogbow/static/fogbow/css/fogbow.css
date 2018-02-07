@@ -52,3 +52,7 @@
 #tab-1 {
  display: block;   
 }
+
+#join-network-input li {
+    margin-bottom: 6px;
+}
