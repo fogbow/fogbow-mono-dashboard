@@ -44,7 +44,7 @@ class IndexView(tables.DataTableView):
         return listRequests
 
     def getRequestsList(self, responseStr):
-        print responseStr
+        LOG.debug(responseStr)
         listRequests = []
         propertiesRequests = responseStr.split('\n')
         for propertiesOneRequest in propertiesRequests:
@@ -53,12 +53,12 @@ class IndexView(tables.DataTableView):
                 propertiesOneRequest = propertiesOneRequest[1]                
                 properties = propertiesOneRequest.split(';')
                 
-                state, type, instanceId, resourceKind = '-', '-', '-', '-'
+                state, request_type, instanceId, resourceKind = '-', '-', '-', '-'
                 for propertie in properties:
                     if STATE_TERM in propertie:                        
                         state = self.normalizeAttributes(propertie, STATE_TERM)
                     elif TYPE_TERM in propertie:
-                        type = self.normalizeAttributes(propertie, TYPE_TERM)
+                        request_type = self.normalizeAttributes(propertie, TYPE_TERM)
                     elif INSTANCE_ID_TERM in propertie:
                         instanceId = self.normalizeAttributes(propertie, INSTANCE_ID_TERM)
                     elif FOGBOW_RESOURCE_KIND_TERM in propertie:
@@ -68,7 +68,7 @@ class IndexView(tables.DataTableView):
                 if instanceId == 'null':
                     instanceId = ''
                 idRequestTable = '%s:%s:%s' % (id, instanceId, resourceKind)
-                request = {'id' : idRequestTable, 'requestId' : id, 'state' : _(state), 'type' : type,
+                request = {'id' : idRequestTable, 'requestId' : id, 'state' : _(state), 'type' : request_type,
                             'resourceKind': resourceKind, 'instanceId': instanceId}
                 listRequests.append(Request(request))                
         

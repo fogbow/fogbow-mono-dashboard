@@ -28,7 +28,8 @@ LOG = logging.getLogger(__name__)
 class FogbowConstants():
     
     NETWORK_TERM = '/network/'  
-    NETWORK_TERM = '/federatedNetwork/'    
+    FEDERATED_NETWORK_TERM = '/federatedNetwork/'    
+    FEDERATED_NETWORK_WITH_VERBOSE = '/federatedNetwork?verbose=true'  
     COMPUTE_TERM = '/compute/'
     STORAGE_TERM = '/storage/'
     LINK_TERM = 'link/'
@@ -44,6 +45,8 @@ class FogbowConstants():
     ORDER_SCHEME = 'scheme="http://schemas.fogbowcloud.org/order#"'
     REQUEST_SCHEME = ORDER_SCHEME
     STORAGE_SCHEME = 'scheme="http://schemas.ogf.org/occi/infrastructure#"'
+
+    X_OCCI_LOCATION = 'X-OCCI-Location'
     
     TARGET = "occi.core.target"
     SOURCE = "occi.core.source"
@@ -79,6 +82,10 @@ class FogbowConstants():
     NETWORK_GATEWAY = "occi.network.gateway="
     NETWORK_ALLOCATION = "occi.network.allocation="
     NETWORK_ID = "org.fogbowcloud.order.network-id"
+	
+    FEDERATED_NETWORK_LABEL = "occi.federatednetwork.label"
+    FEDERATED_NETWORK_CIDR = "occi.federatednetwork.cidr"
+    FEDERATED_NETWORK_MEMBERS = "occi.federatednetwork.members"
 
 class IdentityPluginConstants():
     AUTH_RAW_KEYSTONE = 'raw_keystone'

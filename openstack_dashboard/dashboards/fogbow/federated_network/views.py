@@ -19,28 +19,56 @@ from openstack_dashboard.dashboards.fogbow.federated_network.models import Feder
 from openstack_dashboard.dashboards.fogbow.federated_network.forms import JoinMember
 from django.http import HttpResponse
 import json
+import re
 
 LOG = logging.getLogger(__name__)
+
+FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
+FEDERATED_NETWORK_WITH_VERBOSE = fogbow_models.FogbowConstants.FEDERATED_NETWORK_WITH_VERBOSE
+X_OCCI_LOCATION = fogbow_models.FogbowConstants.X_OCCI_LOCATION
+FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
+FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
+FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.InstancesTable
     template_name = 'fogbow/federated_network/index.html'
 
     def get_data(self):
-        fed_networks = []
+        response = fogbow_models.doRequest('get', FEDERATED_NETWORK_WITH_VERBOSE, None, self.request)
+        if response is None:
+            return []
+        elif response.status_code is None or response.status_code >= 400:
+            LOG.debug("Response from Federated Network was " + str(response.status_code))
+            return []
+        else:
+            return self.getFederatedNetworkList(response.text)
 
-        fed_network_one = {'id' : '10', 'federatedNetworkId' : 'abc', 'cidr': '10.0.0.0/24', 'providers' : 'A, B, C'}
-        fed_network_two = {'id' : '20', 'federatedNetworkId' : 'abc', 'cidr': '188.0.0.0/24', 'providers' : 'A, B, C'}
-        fed_networks.append(FederatedNetwork(fed_network_one))
-        fed_networks.append(FederatedNetwork(fed_network_two))     
-            
-        return fed_networks
+    def getFederatedNetworkList(self, responseStr):
+        federatedList = []
+        fragments = responseStr.split("\n")
+        for frag in fragments:
+            federated = {}
+            try:
+                federated["id"] = re.search("verbose=true/([0-9a-fA-F\\-])", frag).group(1)
+                federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_LABEL+"=([a-z A-Z])", frag).group(1)
+                federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR+"=([0-9\\./])", frag).group(1)
+                federated["providers"] = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.])", frag).group(1)
+                federatedList.append(federated)
+            except Exception:
+                LOG.error("Malformed response for Federated Resource")
+        return federatedList
 
 def getSpecificFederatedMembers(request, federated_network_id):
-        data = []
-        data.append('catch-all.manager.naf.lsd.ufcg.edu.br')
-        data.append('manager.naf.ufscar.br')
-        return HttpResponse(json.dumps(data))
+    response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM+federated_network_id, None, request)
+    data = []
+    try:
+        members = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.])", response.text).group(1)
+        for m in members.split(","):
+            data.append(m.trim())
+    except Exception:
+        LOG.error("Malformed response for Federated Resource with id")
+    return HttpResponse(json.dumps(data))
 
 class DetailViewInstance(tabs.TabView):
     tab_group_class = project_tabs.InstanceDetailTabGroupInstancePanel

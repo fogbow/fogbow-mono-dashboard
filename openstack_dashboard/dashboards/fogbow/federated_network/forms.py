@@ -23,9 +23,9 @@ MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 
 class JoinMember(forms.SelfHandlingForm):
     
-    federated_networks_fields = forms.ChoiceField(label=_('Federated network'), help_text=_('Federated network'), required=False)
+    federated_networks = forms.ChoiceField(label=_('Federated network'), help_text=_('Federated network'), required=False)
         
-    members_fields = forms.MultipleChoiceField(label=_('Members'),
+    members = forms.MultipleChoiceField(label=_('Members'),
                            widget=forms.CheckboxSelectMultiple, help_text=_('Members'), required=False)    
     
     def __init__(self, request, *args, **kwargs):
@@ -42,13 +42,13 @@ class JoinMember(forms.SelfHandlingForm):
             LOG.error(error)
             pass
 
-        self.fields['members_fields'].choices = membersChoices 
+        self.fields['members'].choices = membersChoices 
         LOG.info(membersChoices)   
         
         federated_networks = []
         federated_networks.append(('one', 'id one'))
         federated_networks.append(('two', 'id two'))
-        self.fields['federated_networks_fields'].choices = federated_networks
+        self.fields['federated_networks'].choices = federated_networks
         
     def handle(self, request, data):
         try:
