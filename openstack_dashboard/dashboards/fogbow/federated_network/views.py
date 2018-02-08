@@ -55,7 +55,7 @@ class IndexView(tables.DataTableView):
                 federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", frag).group(1)
                 federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", frag).group(1)
                 federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", frag).group(1)
-                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.]*)", frag).group(1)
+                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.\\-]*)", frag).group(1)
                 LOG.info(FederatedNetwork(federated))
                 federatedList.append(FederatedNetwork(federated))
             except Exception:
@@ -74,7 +74,7 @@ def getSpecificFederatedMembers(request, federated_network_id):
     response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM + federated_network_id, None, request)
     data = []
     try:
-        members = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.]*)", response.text).group(1)
+        members = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.\\-]*)", response.text).group(1)
         for m in members.split(","):
             data.append(m.trim())
     except Exception:

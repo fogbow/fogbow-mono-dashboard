@@ -10,6 +10,8 @@ from horizon import messages
 
 import openstack_dashboard.models as fogbow_models
 
+FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
+
 class TerminateInstance(tables.BatchAction):
     name = "remove"
     action_present = _("Remove")
@@ -23,7 +25,10 @@ class TerminateInstance(tables.BatchAction):
         return True
 
     def action(self, request, obj_id):
-        self.current_past_action = 0
+        requestId = obj_id.split(':')[0]
+        response = fogbow_models.doRequest('delete', FEDERATED_NETWORK_TERM + requestId, None, request)   
+        if fogbow_models.isResponseOk(response.text) == False:
+            messages.error(request, _('Is was not possible to delete : %s') % requestId)
         
 class JoinInstance(tables.BatchAction):
     name = "join"
