@@ -36,9 +36,9 @@ SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
-FEDERATED_NETWORK_LABEL = "org.fogbowcloud.order.federated-network-label"
-FEDERATED_NETWORK_CIDR = "org.fogbowcloud.order.federated-network-cidr-notation"
-FEDERATED_NETWORK_MEMBERS = "org.fogbowcloud.order.federated-network-members"
+FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_LABEL
+FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_CIDR
+FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_MEMBERS
 
 class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))

@@ -26,9 +26,9 @@ LOG = logging.getLogger(__name__)
 FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
 FEDERATED_NETWORK_WITH_VERBOSE = fogbow_models.FogbowConstants.FEDERATED_NETWORK_WITH_VERBOSE
 X_OCCI_LOCATION = fogbow_models.FogbowConstants.X_OCCI_LOCATION
-FEDERATED_NETWORK_LABEL = "occi.federatednetwork.label"
-FEDERATED_NETWORK_CIDR = "occi.federatednetwork.cidr"
-FEDERATED_NETWORK_MEMBERS = "occi.federatednetwork.members"
+FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
+FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
+FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.InstancesTable
@@ -36,7 +36,6 @@ class IndexView(tables.DataTableView):
 
     def get_data(self):
         response = fogbow_models.doRequest('get', FEDERATED_NETWORK_WITH_VERBOSE, None, self.request)
-        LOG.info(response.text)
         if response is None:
             return []
         elif response.status_code is None or response.status_code >= 400:
@@ -46,15 +45,14 @@ class IndexView(tables.DataTableView):
             return self.getFederatedNetworkList(response.text)
 
     def getFederatedNetworkList(self, responseStr):
-        LOG.info(responseStr)
         federatedList = []
         fragments = responseStr.split("\n")
         for frag in fragments:
             federated = {}
             LOG.info(frag)
             try:
-                federated["id"] = re.search("verbose=true/([0-9a-fA-F\\-]*)", frag).group(1)
-                federated["federatedNetworkId"] = re.search("verbose=true/([0-9a-fA-F\\-]*)", frag).group(1)
+                federated["id"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", frag).group(1)
+                federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", frag).group(1)
                 federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", frag).group(1)
                 federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", frag).group(1)
                 federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.]*)", frag).group(1)

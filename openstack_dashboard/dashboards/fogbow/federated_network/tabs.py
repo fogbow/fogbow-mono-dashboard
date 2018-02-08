@@ -2,25 +2,14 @@ from django.utils.translation import ugettext_lazy as _
 from horizon import tabs
 import openstack_dashboard.models as fogbow_models
 import logging
+import re
 
 LOG = logging.getLogger(__name__)
-                
-NETWORK_TERM = fogbow_models.FogbowConstants.NETWORK_TERM
-COMPUTE_TERM = fogbow_models.FogbowConstants.COMPUTE_TERM
-STATE_TERM = fogbow_models.FogbowConstants.STATE_TERM
-SHH_PUBLIC_KEY_TERM = fogbow_models.FogbowConstants.SHH_PUBLIC_KEY_TERM
-CONSOLE_VNC_TERM = fogbow_models.FogbowConstants.CONSOLE_VNC_TERM
-MEMORY_TERM = fogbow_models.FogbowConstants.MEMORY_TERM
-CORES_TERM = fogbow_models.FogbowConstants.CORES_TERM
-IMAGE_SCHEME = fogbow_models.FogbowConstants.IMAGE_SCHEME     
-EXTRA_PORT_SCHEME = fogbow_models.FogbowConstants.EXTRA_PORT_SCHEME
 
-NETWORK_VLAN = "occi.network.vlan="
-NETWORK_LABEL = "occi.network.label="
-NETWORK_STATE = "occi.network.state="
-NETWORK_ADDRESS = "occi.network.address="
-NETWORK_GATEWAY = "occi.network.gateway="
-NETWORK_ALLOCATION = "occi.network.allocation="
+FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
+FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
+FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
+FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
 
 class InstanceDetailTabInstancePanel(tabs.Tab):
     name = _("Federated Network details")
@@ -28,12 +17,28 @@ class InstanceDetailTabInstancePanel(tabs.Tab):
     template_name = ("fogbow/network/_detail_federated_network.html")
 
     def get_context_data(self, request):
+        instanceId = self.tab_group.kwargs['instance_id']
+        response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM  + instanceId, None, request)   
 
-        return null
+        instance = None
+        try:
+            instance = getInstancePerResponse(instanceId, response.text)
+        except Exception:
+            instance = {'instanceId': '-' , 'label': '-', 'cidr': '-', 'members': '-'}
+        return {'instance' : instance}
     
 def getInstancePerResponse(instanceId, response):
-            
-    return null
+    federated = {}
+    try:
+        federated["id"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", response).group(1)
+        federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", response).group(1)
+        federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", response).group(1)
+        federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", response).group(1)
+        federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.]*)", response).group(1)
+    except Exception as error:
+        LOG.error("Malformed response for Federated Resource")
+        LOG.error(error)
+    return federated
     
 def normalizeAttributes(propertie, term):
     try:
