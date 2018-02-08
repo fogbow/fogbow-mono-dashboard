@@ -36,6 +36,7 @@ class IndexView(tables.DataTableView):
 
     def get_data(self):
         response = fogbow_models.doRequest('get', FEDERATED_NETWORK_WITH_VERBOSE, None, self.request)
+        LOG.info(response.text)
         if response is None:
             return []
         elif response.status_code is None or response.status_code >= 400:
@@ -45,23 +46,47 @@ class IndexView(tables.DataTableView):
             return self.getFederatedNetworkList(response.text)
 
     def getFederatedNetworkList(self, responseStr):
-        LOG.error(responseStr)
+        LOG.info(responseStr)
         federatedList = []
         fragments = responseStr.split("\n")
         for frag in fragments:
             federated = {}
+            LOG.info(frag)
             try:
                 federated["id"] = re.search("verbose=true/([0-9a-fA-F\\-])", frag).group(1)
-                federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_LABEL+"=([a-z A-Z])", frag).group(1)
-                federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR+"=([0-9\\./])", frag).group(1)
-                federated["providers"] = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.])", frag).group(1)
-                federatedList.append(federated)
+                federated["federatedNetworkId"] = re.search("verbose=true/([0-9a-fA-F\\-])", frag).group(1)
+                # Change FEDERATED_NETWORK_LABEL, FEDERATED_NETWORK_CIDR, FEDERATED_NETWORK_MEMBERS.
+                federated["label"] = "b" 
+                federated["cidr"] = "b"
+                federated["members"] = "c"                
+#                 federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z])", frag).group(1)
+#                 federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./])", frag).group(1)
+#                 federated["providers"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.])", frag).group(1)
+                LOG.info(FederatedNetwork(federated))
+                federatedList.append(FederatedNetwork(federated))
             except Exception:
                 LOG.error("Malformed response for Federated Resource")
+        LOG.info(FederatedNetwork(federatedList))
         return federatedList
 
+    def normalizeAttribute(self, propertie):
+        return propertie.replace(X_OCCI_LOCATION, '')
+
+    def getInstances(self, responseStr):
+        instances = []
+        try:            
+            if fogbow_models.isResponseOk(responseStr):                         
+                properties =  memberProperties = responseStr.split('\n')
+                for propertie in properties:
+                    idInstance = self.normalizeAttribute(propertie)
+                    instance = {'id': idInstance, 'instanceId': idInstance}
+                    if areThereInstance(responseStr):
+                        instances.append(project_models.Instance(instance))                                
+        except Exception:
+            instances = []
+
 def getSpecificFederatedMembers(request, federated_network_id):
-    response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM+federated_network_id, None, request)
+    response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM + federated_network_id, None, request)
     data = []
     try:
         members = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.])", response.text).group(1)

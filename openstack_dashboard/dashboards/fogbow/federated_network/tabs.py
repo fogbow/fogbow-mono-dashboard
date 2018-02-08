@@ -28,42 +28,12 @@ class InstanceDetailTabInstancePanel(tabs.Tab):
     template_name = ("fogbow/network/_detail_federated_network.html")
 
     def get_context_data(self, request):
-        instanceId = self.tab_group.kwargs['instance_id']
-        response = fogbow_models.doRequest('get', NETWORK_TERM  + instanceId, None, request)        
 
-        instance = None
-        try:
-            instance = getInstancePerResponse(instanceId, response)
-        except Exception:
-            instance = {'instanceId': '-' , 'vlan': '-', 'label': '-', 
-                        'state': '-', 'address': '-', 'gateway': '-', 'allocation': '-'}
-
-        return {'instance' : instance}
+        return null
     
 def getInstancePerResponse(instanceId, response):
-    if instanceId == 'null':
-        instanceId = '-'
-    
-    instanceDetails = response.text.split('\n')
-    LOG.debug(instanceDetails)
-    
-    vlan, label, state, address, gateway, allocation  = '-', '-' , '-', '-', '-' , '-'
-    for detail in instanceDetails:
-        if NETWORK_VLAN in detail:
-            vlan = normalizeAttributes(detail, NETWORK_VLAN)
-        elif NETWORK_LABEL in detail:
-            label = normalizeAttributes(detail, NETWORK_LABEL)
-        elif NETWORK_STATE in detail:
-            state = normalizeAttributes(detail, NETWORK_STATE)
-        elif NETWORK_ADDRESS in detail:
-            address = normalizeAttributes(detail, NETWORK_ADDRESS)
-        elif NETWORK_GATEWAY in detail:
-            gateway = normalizeAttributes(detail, NETWORK_GATEWAY) 
-        elif NETWORK_ALLOCATION in detail:
-            allocation = normalizeAttributes(detail, NETWORK_ALLOCATION)                                                
             
-    return {'instanceId': instanceId , 'vlan': vlan, 'label': label, 
-            'state': state, 'address': address, 'gateway': gateway, 'allocation': allocation}
+    return null
     
 def normalizeAttributes(propertie, term):
     try:

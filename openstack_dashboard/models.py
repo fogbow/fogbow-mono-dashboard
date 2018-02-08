@@ -83,9 +83,9 @@ class FogbowConstants():
     NETWORK_ALLOCATION = "occi.network.allocation="
     NETWORK_ID = "org.fogbowcloud.order.network-id"
 	
-    FEDERATED_NETWORK_LABEL = "occi.federatednetwork.label"
-    FEDERATED_NETWORK_CIDR = "occi.federatednetwork.cidr"
-    FEDERATED_NETWORK_MEMBERS = "occi.federatednetwork.members"
+    FEDERATED_NETWORK_LABEL = "org.fogbowcloud.order.federated-network-label"
+    FEDERATED_NETWORK_CIDR = "org.fogbowcloud.order.federated-network-cidr-notation"
+    FEDERATED_NETWORK_MEMBERS = "org.fogbowcloud.order.federated-network-members"
 
 class IdentityPluginConstants():
     AUTH_RAW_KEYSTONE = 'raw_keystone'

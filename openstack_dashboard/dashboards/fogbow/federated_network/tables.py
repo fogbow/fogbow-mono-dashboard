@@ -60,8 +60,9 @@ class InstancesFilterAction(tables.FilterAction):
 
 class InstancesTable(tables.DataTable):
     id = tables.Column(get_instance_id, verbose_name=_("Federated Network ID"))
+    label = tables.Column('label', verbose_name=_('Label'))
     cidr = tables.Column('cidr', verbose_name=_('CIDR'))
-    providers = tables.Column('providers', verbose_name=_('Providers'))
+    members = tables.Column('members', verbose_name=_('Members'))
 
     class Meta:
         name = "federated_network"

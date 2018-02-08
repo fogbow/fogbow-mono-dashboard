@@ -17,6 +17,7 @@ from horizon import messages
 from django import shortcuts
 from openstack_dashboard.dashboards.fogbow.members.views import IndexView as member_views
 from openstack_dashboard.dashboards.fogbow.network.views import IndexView as network_views
+from openstack_dashboard.dashboards.fogbow.federated_network.views import IndexView as federated_network_views
 LOG = logging.getLogger(__name__)
 
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
@@ -34,6 +35,7 @@ FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_T
 SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
+FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
 FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
 FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
 FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
@@ -101,7 +103,7 @@ class CreateRequest(forms.SelfHandlingForm):
     
     network_id = forms.ChoiceField(label=_('Network id'), help_text=_('Network id'), required=False)
     
-    federared_network_id = forms.ChoiceField(label=_('Federated network id'), help_text=_('Federated network id'), required=False)    
+    federated_network_id = forms.ChoiceField(label=_('Federated network id'), help_text=_('Federated network id'), required=False)    
     
     type = forms.ChoiceField(label=_('Type'),
                                help_text=_('Type Order'),
@@ -136,6 +138,18 @@ class CreateRequest(forms.SelfHandlingForm):
         except Exception as error: 
             pass        
 
+        federared_network_choices = []
+        federared_network_choices.append(('', ''))
+        # for TEST
+        federared_network_choices.append(('221da9e3-ada2-475a-b826-c5634e8459a8', '221da9e3-ada2-475a-b826-c5634e8459a8'))
+        try:
+            federated_networks = federated_network_views().getInstances(fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM, None, request).text)
+            for federated_network in federated_networks:
+                networksChoices.append((federated_network.get('id'), federated_network.get('id')))
+        except Exception as error: 
+            pass             
+        self.fields['federated_network_id'].choices = federared_network_choices
+
         self.fields['members'].choices = membersChoices
         
         del membersChoices[MEMBER_CHOICES_DEFAULT_KEY]
@@ -160,12 +174,7 @@ class CreateRequest(forms.SelfHandlingForm):
         except Exception as error: 
             pass    
         
-        self.fields['network_id'].choices = networksChoices
-        
-        federated_network_choices = []
-        federated_network_choices.append(('fake one', 'federated network one'))
-        federated_network_choices.append(('fake two', 'federated network two'))
-        self.fields['federared_network_id'].choices = federated_network_choices        
+        self.fields['network_id'].choices = networksChoices        
         
         dataAllocation = []
         dataAllocation.append(('dynamic', 'Dynamic'))
@@ -222,9 +231,15 @@ class CreateRequest(forms.SelfHandlingForm):
                 if networkId is not None and networkId is not '':
                     headerLink = '</network/%s> ;%s;%s;' % (networkId,'rel="http://schemas.ogf.org/occi/infrastructure#network"','category="http://schemas.ogf.org/occi/infrastructure#networkinterface"')
                 
+                
+                federated_network_id_attr = ''
+                federated_network_id = data['federated_network_id']
+                if federated_network_id is not None and federated_network_id is not '':
+                    federated_network_id_attr = ',%s=%s' % ('org.fogbowcloud.order.federated-network-id', federated_network_id)
+                
                 headers = {'Category' : '%s; %s; class="kind"%s,%s; scheme="http://schemas.fogbowcloud.org/template/os#"; class="mixin"%s'    
                             % (REQUEST_TERM_CATEGORY , REQUEST_SCHEME, '', data['image'].strip(), publicKeyCategory),
-                           'X-OCCI-Attribute' : 'org.fogbowcloud.order.instance-count=%s,org.fogbowcloud.order.type=%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute),
+                           'X-OCCI-Attribute' : 'org.fogbowcloud.order.instance-count=%s,org.fogbowcloud.order.type=%s%s%s%s%s' % (data['count'].strip(), data['type'].strip(), publicKeyAttribute, advancedRequirements, userDataAttribute, federated_network_id_attr),
                            'Link' : '%s;' % (headerLink)}
             elif resourceKind == 'storage':
                 sizeStorage = data['sizeStorage']
@@ -244,6 +259,7 @@ class CreateRequest(forms.SelfHandlingForm):
                 
                 headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrGateway, attrAllocation)}
             elif resourceKind == 'federated_network':
+                resourceKind = 'federatedNetwork'
                 attrCIRD, attrLabel, attrMembers = '', '', []
                 cird = data['cird']
                 label = data['label_federated_network']

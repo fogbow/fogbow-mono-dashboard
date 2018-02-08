@@ -40,4 +40,4 @@ class APIDictWrapper(object):
         return "<%s: %s>" % (self.__class__.__name__, self._apidict)
 
 class FederatedNetwork(APIDictWrapper):
-    _attrs = ['id', 'federatedNetworkId', 'cidr', 'providers', 'type']
+    _attrs = ['id', 'federatedNetworkId', 'label', 'cidr', 'members']
