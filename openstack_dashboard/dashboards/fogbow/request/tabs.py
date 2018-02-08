@@ -39,6 +39,9 @@ FOGBOW_NETWORK_GATEWAY = fogbow_models.FogbowConstants.NETWORK_GATEWAY
 FOGBOW_NETWORK_ALLOCATION = fogbow_models.FogbowConstants.NETWORK_ALLOCATION
 FOGBOW_NETWORK_ID = fogbow_models.FogbowConstants.NETWORK_ID
 FOGBOW_FEDERATED_NETWORK_ID = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_ID
+FOGBOW_FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_LABEL
+FOGBOW_FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_CIDR
+FOGBOW_FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.ORDER_FEDERATED_NETWORK_MEMBERS
 
 class InstanceDetailTab(tabs.Tab):
     name = _("Instance details")
@@ -66,9 +69,10 @@ class InstanceDetailTab(tabs.Tab):
             return {'instance' : tabsNetworkDashboard.getInstancePerResponse(instanceId, response)}
         elif resourceKind == 'federatedNetwork':
             self.name = _("Federated Network Details")
-            self.template_name = ("fogbow/federatedNetwork/_detail_instance.html")
+            self.template_name = ("fogbow/federated_network/_detail_instance.html")
+            instanceId = instanceId[0:instanceId.find("@")]
             response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM  + instanceId, None, request)
-            return {'instance' : tabsNetworkDashboard.getInstancePerResponse(instanceId, response)}
+            return {'instance' : tabsFederatedNetworkDashboard.getInstancePerResponse(instanceId, response.text)}
         else:
             return {'instance' : {}}
 
@@ -99,7 +103,7 @@ class RequestDetailTab(tabs.Tab):
         LOG.debug(requestDetails)
 
         requirements, type, state, validFrom, validUntil, image, ssh, extraUserdata, extraUserdataContentType, instanceId, count, size, resourceKind  = '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-', '-'
-        networkid, federatednetworkid, address, gateway, allocation = '-','-','-', '-', '-'
+        networkid, address, gateway, allocation = '-','-', '-', '-'
         for detail in requestDetails:
             if FOGBOW_REQUIREMENTS_TERM in detail:
                 try:
@@ -131,28 +135,30 @@ class RequestDetailTab(tabs.Tab):
                 resourceKind = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_RESOURCE_KIND_TERM)
             elif FOGBOW_NETWORK_ID in detail:
                 networkid = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ID)
-            elif FOGBOW_FEDERATED_NETWORK_ID in detail:
-                LOG.error(detail)
-                federatednetworkid = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_FEDERATED_NETWORK_ID)
             elif FOGBOW_NETWORK_ADDRESS in detail:
                 address = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ADDRESS)
             elif FOGBOW_NETWORK_GATEWAY in detail:
                 gateway = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_GATEWAY)
             elif FOGBOW_NETWORK_ALLOCATION in detail:
                 allocation = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_NETWORK_ALLOCATION)
+            elif FOGBOW_FEDERATED_NETWORK_LABEL in detail:
+                label = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_FEDERATED_NETWORK_LABEL)
+            elif FOGBOW_FEDERATED_NETWORK_CIDR in detail:
+                cidr = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_FEDERATED_NETWORK_CIDR)
+            elif FOGBOW_FEDERATED_NETWORK_MEMBERS in detail:
+                members = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_FEDERATED_NETWORK_MEMBERS).replace(";", ", ")
             elif FOGBOW_INSTANCE_ID_TERM in detail:
                 instanceId = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_INSTANCE_ID_TERM)
                 if 'null' in instanceId:
                     instanceId = 'Not defined'
-            # elif FOGBOW_USER_DATA in detail:
-            #     extra = tabsInstanceDashboard.normalizeAttributes(detail, FOGBOW_USER_DATA)
 
         return {'requestId': requestId , 'requirements': requirements, 'type':type,
                  'state' : state, 'validFrom' : validFrom, 'validUntil' : validUntil,
                 'image' : image, 'ssh': ssh, 'extraUserdata': extraUserdata,
                 'extraUserdataContentType': extraUserdataContentType, 'instanceId': instanceId,
                 'count': count, 'size': size, 'resourceKind': resourceKind, 'address': address,
-                'gateway': gateway, 'allocation': allocation, 'networkid': networkid, 'federatednetworkid': federatednetworkid}
+                'gateway': gateway, 'allocation': allocation, 'networkid': networkid,
+                'cidr': cidr, 'label': label, 'members': members}
 
 class InstanceDetailTabs(tabs.TabGroup):
     slug = "instances_details"

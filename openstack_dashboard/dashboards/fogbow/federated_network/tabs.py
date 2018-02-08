@@ -14,22 +14,29 @@ FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMB
 class InstanceDetailTabInstancePanel(tabs.Tab):
     name = _("Federated Network details")
     slug = "federated_networks_details"
-    template_name = ("fogbow/network/_detail_federated_network.html")
+    template_name = ("fogbow/federated_network/_detail_instance.html")
 
     def get_context_data(self, request):
         instanceId = self.tab_group.kwargs['instance_id']
+        instanceId = instanceId[0:instanceId.find("@")]
         response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM  + instanceId, None, request)   
 
         instance = None
         try:
             instance = getInstancePerResponse(instanceId, response.text)
         except Exception:
-            instance = {'instanceId': '-' , 'label': '-', 'cidr': '-', 'members': '-'}
+            instance = {'federatedNetworkId': '-' , 'label': '-', 'cidr': '-', 'members': '-'}
         return {'instance' : instance}
     
 def getInstancePerResponse(instanceId, response):
     federated = {}
+    federated["id"] = "-"
+    federated["federatedNetworkId"] = "-"
+    federated["label"] = "-"
+    federated["cidr"] = "-"
+    federated["members"] = "-"
     try:
+        LOG.error(response)
         federated["id"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", response).group(1)
         federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", response).group(1)
         federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", response).group(1)

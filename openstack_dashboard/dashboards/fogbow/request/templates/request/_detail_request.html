@@ -47,10 +47,6 @@
   <dl type="compute">
     <dt>{% trans "Network ID" %}</dt>
     {{ request.networkid }}
-  </dl>   
-  <dl type="compute">
-    <dt>{% trans "Federated Network ID" %}</dt>
-    {{ request.federatednetworkid }}
   </dl>        
   <dl type="compute">
     <dt>{% trans "SSH public key" %}</dt>
@@ -78,6 +74,19 @@
     {{ request.allocation }} 
   </dl>     
     
+  <dl type="federatedNetwork">
+    <dt>{% trans "Label" %}</dt>
+    {{ request.label }} 
+  </dl> 
+  <dl type="federatedNetwork">
+    <dt>{% trans "CIDR" %}</dt>
+    {{ request.cidr }}   
+  </dl> 
+  <dl type="federatedNetwork">
+    <dt>{% trans "Members" %}</dt>
+    {{ request.members }} 
+  </dl>     
+    
   
   
   <input id="input" value="{{ request.resourceKind }}" style="visibility: hidden;">                 
@@ -98,6 +107,7 @@
 			// hide
 			$("dl[type='storage']").hide(transition);
 			$("dl[type='network']").hide(transition);
+			$("dl[type='federatedNetwork']").hide(transition);
 		} else if (resourceKind == 'storage') {
 			console.log('storage');
 			//show
@@ -105,11 +115,21 @@
 			//hide
 			$("dl[type='compute']").hide(transition);						
 			$("dl[type='network']").hide(transition);
+			$("dl[type='federatedNetwork']").hide(transition);
 		} else if (resourceKind == 'network') {
 			console.log('network');
 			//show
 			$("dl[type='network']").show(transition);
 			//hide
+			$("dl[type='compute']").hide(transition);
+			$("dl[type='storage']").hide(transition);
+			$("dl[type='federatedNetwork']").hide(transition);
+		} else if (resourceKind == 'federatedNetwork') {
+			console.log('network');
+			//show
+			$("dl[type='federatedNetwork']").show(transition);
+			//hide
+			$("dl[type='network']").hide(transition);
 			$("dl[type='compute']").hide(transition);
 			$("dl[type='storage']").hide(transition);
 		}
