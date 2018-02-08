@@ -26,9 +26,9 @@ LOG = logging.getLogger(__name__)
 FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
 FEDERATED_NETWORK_WITH_VERBOSE = fogbow_models.FogbowConstants.FEDERATED_NETWORK_WITH_VERBOSE
 X_OCCI_LOCATION = fogbow_models.FogbowConstants.X_OCCI_LOCATION
-FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
-FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
-FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
+FEDERATED_NETWORK_LABEL = "occi.federatednetwork.label"
+FEDERATED_NETWORK_CIDR = "occi.federatednetwork.cidr"
+FEDERATED_NETWORK_MEMBERS = "occi.federatednetwork.members"
 
 class IndexView(tables.DataTableView):
     table_class = project_tables.InstancesTable
@@ -53,20 +53,16 @@ class IndexView(tables.DataTableView):
             federated = {}
             LOG.info(frag)
             try:
-                federated["id"] = re.search("verbose=true/([0-9a-fA-F\\-])", frag).group(1)
-                federated["federatedNetworkId"] = re.search("verbose=true/([0-9a-fA-F\\-])", frag).group(1)
-                # Change FEDERATED_NETWORK_LABEL, FEDERATED_NETWORK_CIDR, FEDERATED_NETWORK_MEMBERS.
-                federated["label"] = "b" 
-                federated["cidr"] = "b"
-                federated["members"] = "c"                
-#                 federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z])", frag).group(1)
-#                 federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./])", frag).group(1)
-#                 federated["providers"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.])", frag).group(1)
+                federated["id"] = re.search("verbose=true/([0-9a-fA-F\\-]*)", frag).group(1)
+                federated["federatedNetworkId"] = re.search("verbose=true/([0-9a-fA-F\\-]*)", frag).group(1)
+                federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", frag).group(1)
+                federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", frag).group(1)
+                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.]*)", frag).group(1)
                 LOG.info(FederatedNetwork(federated))
                 federatedList.append(FederatedNetwork(federated))
             except Exception:
                 LOG.error("Malformed response for Federated Resource")
-        LOG.info(FederatedNetwork(federatedList))
+        LOG.info(federatedList)
         return federatedList
 
     def normalizeAttribute(self, propertie):
