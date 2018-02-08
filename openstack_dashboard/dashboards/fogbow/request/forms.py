@@ -36,9 +36,9 @@ SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 FEDERATED_NETWORK_TERM = fogbow_models.FogbowConstants.FEDERATED_NETWORK_TERM
-FEDERATED_NETWORK_LABEL = fogbow_models.FogbowConstants.FEDERATED_NETWORK_LABEL
-FEDERATED_NETWORK_CIDR = fogbow_models.FogbowConstants.FEDERATED_NETWORK_CIDR
-FEDERATED_NETWORK_MEMBERS = fogbow_models.FogbowConstants.FEDERATED_NETWORK_MEMBERS
+FEDERATED_NETWORK_LABEL = "org.fogbowcloud.order.federated-network-label"
+FEDERATED_NETWORK_CIDR = "org.fogbowcloud.order.federated-network-cidr-notation"
+FEDERATED_NETWORK_MEMBERS = "org.fogbowcloud.order.federated-network-members"
 
 class CreateRequest(forms.SelfHandlingForm):
     TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
@@ -125,29 +125,27 @@ class CreateRequest(forms.SelfHandlingForm):
     def __init__(self, request, *args, **kwargs):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
         
-        response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
-        
         MEMBER_CHOICES_DEFAULT_KEY = 0
         membersChoices = []
         membersChoices.append((MEMBER_CHOICES_DEFAULT_KEY, 'Try first local, then any'))
         try:
-            membersResponseStr = fogbow_models.doRequest('get', MEMBER_TERM, None, request).text
             members = member_views().getMembersList(fogbow_models.doRequest('get', MEMBER_TERM, None, request).text)
             for m in members:
                 membersChoices.append((m.get('idMember'), m.get('idMember')))
-        except Exception as error: 
-            pass        
+        except Exception as error:
+            LOG.error(error)
 
         federared_network_choices = []
-        federared_network_choices.append(('', ''))
-        # for TEST
-        federared_network_choices.append(('221da9e3-ada2-475a-b826-c5634e8459a8', '221da9e3-ada2-475a-b826-c5634e8459a8'))
+        federared_network_choices.append(('', 'Unfederated'))
         try:
-            federated_networks = federated_network_views().getInstances(fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM, None, request).text)
+            federated_networks = federated_network_views().getInstances(request)
+            LOG.info("Federated networks retrieved")
+            LOG.info(federated_networks)
             for federated_network in federated_networks:
-                networksChoices.append((federated_network.get('id'), federated_network.get('id')))
-        except Exception as error: 
-            pass             
+                federared_network_choices.append((federated_network.get('id'), federated_network.get('label')))
+        except Exception as error:
+            LOG.error("An error occured while collecting federated networks.")
+            LOG.error(error)
         self.fields['federated_network_id'].choices = federared_network_choices
 
         self.fields['members'].choices = membersChoices
@@ -179,8 +177,7 @@ class CreateRequest(forms.SelfHandlingForm):
         dataAllocation = []
         dataAllocation.append(('dynamic', 'Dynamic'))
         dataAllocation.append(('static', 'Static'))
-        self.fields['allocation'].choices = dataAllocation        
-        
+        self.fields['allocation'].choices = dataAllocation
 
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')

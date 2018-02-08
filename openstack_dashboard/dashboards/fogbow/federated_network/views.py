@@ -68,24 +68,15 @@ class IndexView(tables.DataTableView):
     def normalizeAttribute(self, propertie):
         return propertie.replace(X_OCCI_LOCATION, '')
 
-    def getInstances(self, responseStr):
-        instances = []
-        try:            
-            if fogbow_models.isResponseOk(responseStr):                         
-                properties =  memberProperties = responseStr.split('\n')
-                for propertie in properties:
-                    idInstance = self.normalizeAttribute(propertie)
-                    instance = {'id': idInstance, 'instanceId': idInstance}
-                    if areThereInstance(responseStr):
-                        instances.append(project_models.Instance(instance))                                
-        except Exception:
-            instances = []
+    def getInstances(self, request):
+        self.request = request
+        return self.get_data()
 
 def getSpecificFederatedMembers(request, federated_network_id):
     response = fogbow_models.doRequest('get', FEDERATED_NETWORK_TERM + federated_network_id, None, request)
     data = []
     try:
-        members = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.])", response.text).group(1)
+        members = re.search(FEDERATED_NETWORK_MEMBERS+"=([ ,a-zA-Z\\.]*)", response.text).group(1)
         for m in members.split(","):
             data.append(m.trim())
     except Exception:
