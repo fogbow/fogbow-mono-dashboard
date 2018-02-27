@@ -41,6 +41,8 @@ class IndexView(tables.DataTableView):
         elif response.status_code is None or response.status_code >= 400:
             LOG.debug("Response from Federated Network was " + str(response.status_code))
             return []
+        elif response.text == "No federated networks.":
+            return []
         else:
             return self.getFederatedNetworkList(response.text)
 
@@ -55,7 +57,7 @@ class IndexView(tables.DataTableView):
                 federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", frag).group(1)
                 federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", frag).group(1)
                 federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", frag).group(1)
-                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.\\-]*)", frag).group(1)
+                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z0-9\\.\\-]*)", frag).group(1)
                 LOG.info(FederatedNetwork(federated))
                 federatedList.append(FederatedNetwork(federated))
             except Exception:

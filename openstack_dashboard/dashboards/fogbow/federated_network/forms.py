@@ -55,8 +55,6 @@ class JoinMember(forms.SelfHandlingForm):
         federared_network_choices = []
         try:
             federated_networks = self.get_data()
-            LOG.info("Federated networks retrieved")
-            LOG.info(federated_networks)
             for federated_network in federated_networks:
                 federared_network_choices.append((federated_network.get('id'), federated_network.get('label')))
         except Exception as error:
@@ -79,23 +77,33 @@ class JoinMember(forms.SelfHandlingForm):
         fragments = responseStr.split("\n")
         for frag in fragments:
             federated = {}
-            LOG.info(frag)
             try:
                 federated["id"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", frag).group(1)
                 federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", frag).group(1)
                 federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", frag).group(1)
                 federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", frag).group(1)
-                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.\\-]*)", frag).group(1)
-                LOG.info(FederatedNetwork(federated))
+                federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z0-9\\.\\-]*)", frag).group(1)
                 federatedList.append(FederatedNetwork(federated))
             except Exception as error:
                 LOG.error("Malformed response for Federated Resource")
                 LOG.error(error)
-        LOG.info(federatedList)
         return federatedList
         
     def handle(self, request, data):
         try:
+            headers = {'org.fogbowcloud.order.federated-network-id': data['federated_networks']}
+            headers.update({'org.fogbowcloud.order.federated-network-members': ';'.join(data['members'])})
+            response = fogbow_models.doRequest('put', FEDERATED_NETWORK_TERM, headers, request)
+            if response is None:
+                messages.error(request, _('No response from Fogbow Manager'))
+            elif response.status_code == 412:
+                messages.error(request, _(response.text))
+            elif response.status_code != 200:
+                messages.error(request, _('Failure processing request'))
+                LOG.error("Server returned status code " + str(response.status_code))
+                LOG.error(response.text)
+            elif fogbow_models.isResponseOk(response.text) == True: 
+                messages.success(request, _('Joined members'))
             return shortcuts.redirect(reverse("horizon:fogbow:federated_network:index"))    
         except Exception:
             redirect = reverse("horizon:fogbow:federated_network:index")

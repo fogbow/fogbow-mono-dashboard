@@ -225,6 +225,8 @@ def doRequest(method, endpoint, additionalHeaders, request, hiddenMessage=None):
             response = requests.delete(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutDelete)
         elif method == 'post':   
             response = requests.post(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutPost)
+        elif method == 'put':   
+            response = requests.put(settings.FOGBOW_MANAGER_ENDPOINT + endpoint, headers=headers, timeout=timeoutPost)
         responseStr = response.text
     except Exception as e:
         LOG.error(e)

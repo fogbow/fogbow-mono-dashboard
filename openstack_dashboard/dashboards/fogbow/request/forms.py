@@ -139,8 +139,6 @@ class CreateRequest(forms.SelfHandlingForm):
         federared_network_choices.append(('', 'Unfederated'))
         try:
             federated_networks = federated_network_views().getInstances(request)
-            LOG.info("Federated networks retrieved")
-            LOG.info(federated_networks)
             for federated_network in federated_networks:
                 federared_network_choices.append((federated_network.get('id'), federated_network.get('label')))
         except Exception as error:

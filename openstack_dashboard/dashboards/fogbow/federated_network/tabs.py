@@ -41,7 +41,7 @@ def getInstancePerResponse(instanceId, response):
         federated["federatedNetworkId"] = re.search(FEDERATED_NETWORK_TERM+"([0-9a-fA-F\\-]*)", response).group(1)
         federated["label"] = re.search(FEDERATED_NETWORK_LABEL + "=([a-z A-Z]*)", response).group(1)
         federated["cidr"] = re.search(FEDERATED_NETWORK_CIDR + "=([0-9\\./]*)", response).group(1)
-        federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z\\.zz-]*)", response).group(1)
+        federated["members"] = re.search(FEDERATED_NETWORK_MEMBERS + "=([ ,a-zA-Z0-9\\.\\-]*)", response).group(1)
     except Exception as error:
         LOG.error("Malformed response for Federated Resource")
         LOG.error(error)
