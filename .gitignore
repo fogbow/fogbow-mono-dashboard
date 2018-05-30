@@ -1,0 +1,8 @@
+*.pyc
+.venv/
+/static/dashboard/css/*.css
+.environment_version
+.project
+.pydevproject
+.settings 
+openstack_dashboard/local/local_settings.py
