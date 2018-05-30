@@ -33,6 +33,12 @@ class TerminateInstance(tables.BatchAction):
             messages.error(request, _('Is was not possible to delete : %s') % obj_id)          
             tableInstanceDashboard.checkAttachmentAssociateError(request, response.text)
 
+class CreateNetwork(tables.LinkAction):
+    name = 'create'
+    verbose_name = _('Create Instance')
+    url = 'horizon:fogbow:network:create'
+    classes = ('ajax-modal', 'btn-create') 
+
 def get_instance_id(request):
     if 'null' not in request.instanceId:
         return request.instanceId 
@@ -53,6 +59,6 @@ class InstancesTable(tables.DataTable):
     class Meta:
         name = "network"
         verbose_name = _("Networks")        
-        table_actions = (TerminateInstance, InstancesFilterAction)
+        table_actions = (CreateNetwork, TerminateInstance, InstancesFilterAction)
         row_actions = (TerminateInstance, )
         
