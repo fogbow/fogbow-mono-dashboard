@@ -15,6 +15,7 @@ from django.core.urlresolvers import reverse_lazy
 from horizon import messages
 from django import shortcuts
 from openstack_dashboard.dashboards.fogbow.members.views import IndexView as member_views
+from openstack_dashboard.dashboards.fogbow.network.views import IndexView as network_views
 
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
@@ -31,11 +32,8 @@ FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_T
 SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
-class CreateNetwork(forms.SelfHandlingForm):
-    TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
-    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'), ('network', 'network'))
-    
-    success_url = reverse_lazy("horizon:fogbow:request:index")
+class CreateRequest(forms.SelfHandlingForm):
+    success_url = reverse_lazy("horizon:fogbow:storage:index")
     
     count = forms.CharField(label=_('Number of orders'),
                            error_messages={
@@ -45,20 +43,21 @@ class CreateNetwork(forms.SelfHandlingForm):
                            validators=[validators.validate_slug],
                            initial='1')
     
-    resourceKind = 'network'
 
-    cird = forms.CharField(label=_('CIDR'), initial='192.168.0.0/24',
-                          widget=forms.TextInput(),
-                          required=False)
-
-    gateway = forms.CharField(label=_('Gateway'), initial='',
+    sizeStorage = forms.CharField(label=_('Volume size (in GB)'), initial=1,
                           widget=forms.TextInput(),
                           required=False)
     
-    members = forms.ChoiceField(label=_('Members'), help_text=_('Members'), required=False)           
+    members = forms.ChoiceField(label=_('Members'), help_text=_('Members'), required=False)
+        
+    advanced_requirements = forms.CharField(label=_('Advanced requirements'),
+                           error_messages={'invalid': _('The string may only contain'
+                                            ' ASCII characters and numbers.')},
+                           required=False, widget=forms.Textarea)
+    
 
     def __init__(self, request, *args, **kwargs):
-        super(CreateNetwork, self).__init__(request, *args, **kwargs)
+        super(CreateRequest, self).__init__(request, *args, **kwargs)
         
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
         
@@ -73,19 +72,6 @@ class CreateNetwork(forms.SelfHandlingForm):
             pass        
 
         self.fields['members'].choices = membersChoices
-        
-        networksChoices = []
-        networksChoices.append(('', 'Network default'))
-        print 'Aqui'
-        try:
-            print 'Aqui 2'
-            networks = network_views().getInstances(fogbow_models.doRequest('get', NETWORK_TERM, None, request).text)
-            print networks
-            for network in networks:
-                networksChoices.append((network.get('id'), network.get('id')))
-        except Exception as error: 
-            print error
-            pass
         
 
     def normalizeNameResource(self, resource):
@@ -118,21 +104,16 @@ class CreateNetwork(forms.SelfHandlingForm):
                 advancedRequirements = ''
             
             headers = {}
-            attrCIRD, attrGateway, attrAllocation = '', '', ''
-            cird = data['cird']
-            gateway = data['gateway']
-            if cird is not None and cird is not '':
-                attrGateway = '%s=%s,' % ('occi.network.address', cird)
-            if gateway is not None and gateway is not '':
-                attrCIRD = '%s=%s,' % ('occi.network.gateway', gateway)                          
+            sizeStorage = data['sizeStorage']
             
-            headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrGateway, attrAllocation)}
+            headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s=%s' % (SIZE_OCCI, sizeStorage)}
 
             addHeader = headers.get('X-OCCI-Attribute')
             headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
             if advancedRequirements != '':
                 addHeader = headers.get('X-OCCI-Attribute')
-                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})
+                headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})                                
+
 
             response = fogbow_models.doRequest('post', REQUEST_TERM, headers, request)
             
@@ -157,8 +138,7 @@ class CreateNetwork(forms.SelfHandlingForm):
         return responseFormated
     
     def checkAllAttributes(self, data, request):
-        if self.existsBreakline(str(data['publicKey']).strip())== True:
-            value = 'public key'
+        value = None
         if self.existsBreakline(str(data['count']).strip())== True:
             value = 'count'
         if self.existsBreakline(str(data['sizeStorage']).strip())== True:
