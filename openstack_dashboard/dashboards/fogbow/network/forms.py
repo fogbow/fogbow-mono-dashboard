@@ -16,6 +16,9 @@ from horizon import messages
 from django import shortcuts
 from openstack_dashboard.dashboards.fogbow.members.views import IndexView as member_views
 
+# FIXME: Why it does not work here?
+# from openstack_dashboard.dashboards.fogbow.network.views import IndexView as network_views
+
 RESOURCE_TERM = fogbow_models.FogbowConstants.RESOURCE_TERM
 MEMBER_TERM = fogbow_models.FogbowConstants.MEMBER_TERM
 REQUEST_TERM = fogbow_models.FogbowConstants.REQUEST_TERM
@@ -32,10 +35,7 @@ SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 class CreateNetwork(forms.SelfHandlingForm):
-    TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
-    TYPE_RESOURCE_KIND = (('compute', 'compute'), ('storage', 'storage'), ('network', 'network'))
-    
-    success_url = reverse_lazy("horizon:fogbow:request:index")
+    success_url = reverse_lazy("horizon:fogbow:network:index")
     
     count = forms.CharField(label=_('Number of orders'),
                            error_messages={
@@ -45,17 +45,21 @@ class CreateNetwork(forms.SelfHandlingForm):
                            validators=[validators.validate_slug],
                            initial='1')
     
-    resourceKind = 'network'
-
     cird = forms.CharField(label=_('CIDR'), initial='192.168.0.0/24',
                           widget=forms.TextInput(),
                           required=False)
 
     gateway = forms.CharField(label=_('Gateway'), initial='',
-                          widget=forms.TextInput(),
-                          required=False)
-    
-    members = forms.ChoiceField(label=_('Members'), help_text=_('Members'), required=False)           
+                          widget=forms.TextInput())
+
+    allocation = forms.ChoiceField(label=_('Allocation'), help_text=_('Allocation'), required=False)  
+
+    members = forms.ChoiceField(label=_('Members'), help_text=_('Members'), required=False)
+
+    advanced_requirements = forms.CharField(label=_('Advanced requirements'),
+                           error_messages={'invalid': _('The string may only contain'
+                                            ' ASCII characters and numbers.')},
+                           required=False, widget=forms.Textarea)           
 
     def __init__(self, request, *args, **kwargs):
         super(CreateNetwork, self).__init__(request, *args, **kwargs)
@@ -76,17 +80,23 @@ class CreateNetwork(forms.SelfHandlingForm):
         
         networksChoices = []
         networksChoices.append(('', 'Network default'))
-        print 'Aqui'
         try:
-            print 'Aqui 2'
+            # FIXME: Remove it from here
+            from openstack_dashboard.dashboards.fogbow.network.views import IndexView as network_views
+
             networks = network_views().getInstances(fogbow_models.doRequest('get', NETWORK_TERM, None, request).text)
             print networks
+            
             for network in networks:
                 networksChoices.append((network.get('id'), network.get('id')))
         except Exception as error: 
             print error
             pass
-        
+
+        dataAllocation = []
+        dataAllocation.append(('dynamic', 'Dynamic'))
+        dataAllocation.append(('static', 'Static'))
+        self.fields['allocation'].choices = dataAllocation
 
     def normalizeNameResource(self, resource):
         return resource.split(';')[0].replace('Category: ', '')
@@ -108,7 +118,7 @@ class CreateNetwork(forms.SelfHandlingForm):
             if self.checkAllAttributes(data, request) == False:
                 return None
             
-            resourceKind = data['resourceKind']
+            resourceKind = 'network'
             
             advancedRequirements = ''
             if data['advanced_requirements'] != '':
@@ -121,10 +131,13 @@ class CreateNetwork(forms.SelfHandlingForm):
             attrCIRD, attrGateway, attrAllocation = '', '', ''
             cird = data['cird']
             gateway = data['gateway']
+            allocation = data['allocation']
             if cird is not None and cird is not '':
                 attrGateway = '%s=%s,' % ('occi.network.address', cird)
             if gateway is not None and gateway is not '':
-                attrCIRD = '%s=%s,' % ('occi.network.gateway', gateway)                          
+                attrCIRD = '%s=%s,' % ('occi.network.gateway', gateway)
+            if allocation is not None and allocation is not '':
+                attrAllocation = '%s=%s' % ('occi.network.allocation', allocation)                     
             
             headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s%s%s' % (attrCIRD, attrGateway, attrAllocation)}
 
@@ -139,9 +152,9 @@ class CreateNetwork(forms.SelfHandlingForm):
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
                 messages.success(request, _('Orders created'))
             
-            return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
+            return shortcuts.redirect(reverse("horizon:fogbow:network:index"))    
         except Exception:
-            redirect = reverse("horizon:fogbow:request:index")
+            redirect = reverse("horizon:fogbow:network:index")
             exceptions.handle(request,
                               _('Unable to create orders.'),
                               redirect=redirect) 
@@ -157,12 +170,10 @@ class CreateNetwork(forms.SelfHandlingForm):
         return responseFormated
     
     def checkAllAttributes(self, data, request):
-        if self.existsBreakline(str(data['publicKey']).strip())== True:
-            value = 'public key'
+        value = None
+
         if self.existsBreakline(str(data['count']).strip())== True:
             value = 'count'
-        if self.existsBreakline(str(data['sizeStorage']).strip())== True:
-            value = 'size storage'
         
         if value is not None:
             messages.error(request, _('Wrong sintax. There is a breakline in the %s field.' % (value)))

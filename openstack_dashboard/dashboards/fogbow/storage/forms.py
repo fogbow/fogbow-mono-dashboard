@@ -32,7 +32,7 @@ FOGBOW_RESOURCE_KIND_TERM = fogbow_models.FogbowConstants.FOGBOW_RESOURCE_KIND_T
 SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
-class CreateRequest(forms.SelfHandlingForm):
+class CreateStorage(forms.SelfHandlingForm):
     success_url = reverse_lazy("horizon:fogbow:storage:index")
     
     count = forms.CharField(label=_('Number of orders'),
@@ -56,7 +56,7 @@ class CreateRequest(forms.SelfHandlingForm):
                            required=False, widget=forms.Textarea)
     
     def __init__(self, request, *args, **kwargs):
-        super(CreateRequest, self).__init__(request, *args, **kwargs)
+        super(CreateStorage, self).__init__(request, *args, **kwargs)
         
         response = fogbow_models.doRequest('get', RESOURCE_TERM, None, request)
         

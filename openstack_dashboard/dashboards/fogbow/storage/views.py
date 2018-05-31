@@ -4,7 +4,7 @@ from horizon import tables
 from horizon import tabs
 from horizon import forms
 
-from openstack_dashboard.dashboards.fogbow.storage.forms import CreateRequest
+from openstack_dashboard.dashboards.fogbow.storage.forms import CreateStorage
 from django.core.urlresolvers import reverse_lazy 
 
 from openstack_dashboard.dashboards.fogbow.storage \
@@ -63,7 +63,7 @@ def areThereInstance(responseStr):
     return True
 
 class CreateView(forms.ModalFormView):
-    form_class = CreateRequest
+    form_class = CreateStorage
     template_name = 'fogbow/storage/create.html'
     success_url = reverse_lazy('horizon:fogbow:index')
 

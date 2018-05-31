@@ -7,7 +7,6 @@ from horizon import forms
 from openstack_dashboard.dashboards.fogbow.network.forms import CreateNetwork
 from django.core.urlresolvers import reverse_lazy 
 
-
 from openstack_dashboard.dashboards.fogbow.network \
     import tabs as project_tabs
 from openstack_dashboard.dashboards.fogbow.network \
