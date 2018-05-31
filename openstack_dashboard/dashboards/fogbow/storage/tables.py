@@ -33,6 +33,12 @@ class TerminateInstance(tables.BatchAction):
             messages.error(request, _('Is was not possible to delete : %s') % obj_id)          
             tableInstanceDashboard.checkAttachmentAssociateError(request, response.text)
 
+class CreateVolume(tables.LinkAction):
+    name = 'create'
+    verbose_name = _('Create Volume')
+    url = 'horizon:fogbow:storage:create'
+    classes = ('ajax-modal', 'btn-create')
+
 def get_instance_id(request):
     if 'null' not in request.instanceId:
         return request.instanceId 
@@ -53,6 +59,6 @@ class InstancesTable(tables.DataTable):
     class Meta:
         name = "volumes"
         verbose_name = _("Volumes")        
-        table_actions = (TerminateInstance, InstancesFilterAction)
+        table_actions = (TerminateInstance, InstancesFilterAction, CreateVolume)
         row_actions = (TerminateInstance, )
         

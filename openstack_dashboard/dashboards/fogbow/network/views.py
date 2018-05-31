@@ -4,7 +4,7 @@ from horizon import tables
 from horizon import tabs
 from horizon import forms
 
-from openstack_dashboard.dashboards.fogbow.network.forms import CreateRequest
+from openstack_dashboard.dashboards.fogbow.network.forms import CreateNetwork
 from django.core.urlresolvers import reverse_lazy 
 
 
@@ -64,7 +64,7 @@ def areThereInstance(responseStr):
     return True 
 
 class CreateView(forms.ModalFormView):
-    form_class = CreateRequest
+    form_class = CreateNetwork
     template_name = 'fogbow/network/create.html'
     success_url = reverse_lazy('horizon:fogbow:index')
 

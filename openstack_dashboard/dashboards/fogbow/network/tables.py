@@ -35,7 +35,7 @@ class TerminateInstance(tables.BatchAction):
 
 class CreateNetwork(tables.LinkAction):
     name = 'create'
-    verbose_name = _('Create Instance')
+    verbose_name = _('Create Network')
     url = 'horizon:fogbow:network:create'
     classes = ('ajax-modal', 'btn-create') 
 
