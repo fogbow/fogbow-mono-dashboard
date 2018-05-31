@@ -36,66 +36,10 @@
 (function() {
 
 	$(document).ready(function() {
-		hideFields('compute', '');
+		$("#id_advanced_requirements").val("Glue2vCPU >= " + $('#id_cpu').val() + " && Glue2RAM >= " + $('#id_mem').val());
+		showComputeFields('');
 	});
 
-	function hideFields(resourceKind, transition) {
-		
-		if (resourceKind == 'compute') {
-			$("#id_advanced_requirements").val("Glue2vCPU >= " + $('#id_cpu').val() + " && Glue2RAM >= " + $('#id_mem').val());
-
-			showComputeFields(transition);
-			
-			hideStorageFields(transition);
-			hideNetworkFields(transition);
-		} else if (resourceKind == 'storage') {
-			$("#id_advanced_requirements").val("");
-			
-			showStorageFields(transition);
-				
-			hideComputeFields(transition);
-			hideNetworkFields(transition);
-		} else if (resourceKind == 'network') {
-			$("#id_advanced_requirements").val("");
-			showNetworkFields(transition);
-			
-			hideStorageFields(transition);
-			hideComputeFields(transition);
-		}
-	}
-	
-	// TODO refact this methods
-	function hideNetworkFields(transition) {
-		$(".control-group:has([for='id_cird'])").hide(transition);
-		$(".control-group:has([for='id_gateway'])").hide(transition);
-		$(".control-group:has([for='id_allocation'])").hide(transition);
-	}
-	
-	function showNetworkFields(transition) {
-		$(".control-group:has([for='id_cird'])").show(transition);
-		$(".control-group:has([for='id_gateway'])").show(transition);
-		$(".control-group:has([for='id_allocation'])").show(transition);
-	}
-	
-	function hideComputeFields(transition) {
-		$(".control-group:has([for='id_cpu'])").hide(transition);
-		$(".control-group:has([for='id_mem'])").hide(transition);
-		$(".control-group:has([for='id_image'])").hide(transition);
-		$(".control-group:has([for='id_data_user'])").hide(transition);	
-		$(".control-group:has([for='id_data_user_type'])").hide(transition);			
-		$(".control-group:has([for='id_publicKey'])").hide(transition);
-		$(".control-group:has([for='id_network_id'])").hide(transition);
-	}
-	
-	function showStorageFields(transition) {
-		$(".control-group:has([id='id_sizeStorage'])").show(transition);
-		$(".control-group:has([id='id_members'])").show(transition);		
-	}
-	
-	function hideStorageFields(transition) {
-		$(".control-group:has([id^='id_sizeStorage'])").hide(transition);
-	}
-	
 	function showComputeFields(transition) {
 		$(".control-group:has([for='id_cpu'])").show(transition);
 		$(".control-group:has([for='id_mem'])").show(transition);
@@ -107,13 +51,9 @@
 	}
 	
 	function setValueOnRequiremetns() {
-		resourceKind = $("#id_resourceKind").val().trim();
-		var originalString = '';
-		if (resourceKind != 'storage' && resourceKind != 'network') {
-			var vCpu = $('#id_cpu').val();
-			var ram = $('#id_mem').val();
-			originalString = "Glue2vCPU >= " + vCpu +" && Glue2RAM >= " + ram;						
-		}
+		var vCpu = $('#id_cpu').val();
+		var ram = $('#id_mem').val();
+		originalString = "Glue2vCPU >= " + vCpu +" && Glue2RAM >= " + ram;						
 		
 		var member = $('#id_members').val();
 		if (member != '') {
@@ -125,10 +65,6 @@
 		
 		$("#id_advanced_requirements").val(originalString);
 	};
-	
-	$("#id_resourceKind").change(function() {
-		hideFields($(this).val().trim(), 'slow');
-	});
 	
 	$('#id_mem, #id_cpu').keyup(function() {
 		setValueOnRequiremetns();

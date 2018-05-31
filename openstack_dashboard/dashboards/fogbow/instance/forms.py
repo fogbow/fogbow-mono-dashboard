@@ -33,7 +33,9 @@ SIZE_OCCI = fogbow_models.FogbowConstants.SIZE_OCCI
 STORAGE_SCHEME = fogbow_models.FogbowConstants.STORAGE_SCHEME
 
 class CreateInstance(forms.SelfHandlingForm):
-    success_url = reverse_lazy("horizon:fogbow:request:index")
+    TYPE_REQUEST = (('one-time', 'one-time'), ('persistent', 'persistent'))
+
+    success_url = reverse_lazy("horizon:fogbow:instance:index")
     
     count = forms.CharField(label=_('Number of orders'),
                            error_messages={
@@ -65,6 +67,10 @@ class CreateInstance(forms.SelfHandlingForm):
     network_id = forms.ChoiceField(label=_('Network id'), help_text=_('Network id'), required=False)    
     
     data_user = forms.FileField(label=_('Extra user data file'), required=False)
+    
+    type = forms.ChoiceField(label=_('Type'),
+                               help_text=_('Type Order'),
+                               choices=TYPE_REQUEST)
     
     data_user_type = forms.ChoiceField(label=_('Extra user data file type'),
                            help_text=_('Data user type'),
@@ -179,9 +185,9 @@ class CreateInstance(forms.SelfHandlingForm):
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
                 messages.success(request, _('Orders created'))
             
-            return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
+            return shortcuts.redirect(reverse("horizon:fogbow:instance:index"))    
         except Exception:
-            redirect = reverse("horizon:fogbow:request:index")
+            redirect = reverse("horizon:fogbow:instance:index")
             exceptions.handle(request,
                               _('Unable to create orders.'),
                               redirect=redirect) 
@@ -202,8 +208,6 @@ class CreateInstance(forms.SelfHandlingForm):
             value = 'public key'
         if self.existsBreakline(str(data['count']).strip())== True:
             value = 'count'
-        if self.existsBreakline(str(data['sizeStorage']).strip())== True:
-            value = 'size storage'
         
         if value is not None:
             messages.error(request, _('Wrong sintax. There is a breakline in the %s field.' % (value)))
