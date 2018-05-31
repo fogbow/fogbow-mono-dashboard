@@ -1,5 +1,7 @@
 *.pyc
 .venv/
+.idea/
+.tox/
 /static/dashboard/css/*.css
 .environment_version
 .project
