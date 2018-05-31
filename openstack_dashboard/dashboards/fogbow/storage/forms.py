@@ -55,7 +55,6 @@ class CreateRequest(forms.SelfHandlingForm):
                                             ' ASCII characters and numbers.')},
                            required=False, widget=forms.Textarea)
     
-
     def __init__(self, request, *args, **kwargs):
         super(CreateRequest, self).__init__(request, *args, **kwargs)
         
@@ -94,8 +93,6 @@ class CreateRequest(forms.SelfHandlingForm):
             if self.checkAllAttributes(data, request) == False:
                 return None
             
-            resourceKind = data['resourceKind']
-            
             advancedRequirements = ''
             if data['advanced_requirements'] != '':
                 advancedRequirements = ',org.fogbowcloud.order.requirements=%s' % (data['advanced_requirements'])
@@ -109,7 +106,7 @@ class CreateRequest(forms.SelfHandlingForm):
             headers = {'Category' : '%s; %s; class="kind"' % (REQUEST_TERM_CATEGORY, REQUEST_SCHEME), 'X-OCCI-Attribute' : '%s=%s' % (SIZE_OCCI, sizeStorage)}
 
             addHeader = headers.get('X-OCCI-Attribute')
-            headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, resourceKind)})
+            headers.update({'X-OCCI-Attribute': addHeader + ', %s=%s' % (FOGBOW_RESOURCE_KIND_TERM, 'storage')})
             if advancedRequirements != '':
                 addHeader = headers.get('X-OCCI-Attribute')
                 headers.update({'X-OCCI-Attribute': addHeader + '%s' % (advancedRequirements)})                                
@@ -120,9 +117,9 @@ class CreateRequest(forms.SelfHandlingForm):
             if response != None and fogbow_models.isResponseOk(response.text) == True: 
                 messages.success(request, _('Orders created'))
             
-            return shortcuts.redirect(reverse("horizon:fogbow:request:index"))    
+            return shortcuts.redirect(reverse("horizon:fogbow:storage:index"))    
         except Exception:
-            redirect = reverse("horizon:fogbow:request:index")
+            redirect = reverse("horizon:fogbow:storage:index")
             exceptions.handle(request,
                               _('Unable to create orders.'),
                               redirect=redirect) 

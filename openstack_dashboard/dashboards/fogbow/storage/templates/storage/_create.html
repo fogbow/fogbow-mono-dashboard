@@ -6,7 +6,7 @@
 {% block form_action %}{% url 'horizon:fogbow:storage:create' %}{% endblock %}
 
 {% block modal-header %}
-	{% trans "Create Network" %}
+	{% trans "Create Volume" %}
 	<link rel="stylesheet" type="text/css" href="/dashboards/fogbow/static/fogbow/css/fogbow.css">
 {% endblock %}
 {% block modal_id %}create_security_group_modal{% endblock %}
@@ -25,5 +25,5 @@
 
 {% block modal-footer %}
   <input class="btn btn-primary pull-right" type="submit" value="{% trans "Create volume" %}" />
-  <a href="{% url 'horizon:fogbow:request:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
+  <a href="{% url 'horizon:fogbow:storage:index' %}" class="btn secondary cancel close">{% trans "Cancel" %}</a>
 {% endblock %}
