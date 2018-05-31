@@ -2,6 +2,10 @@ from horizon import views
 from django.utils.translation import ugettext_lazy as _  # noqa
 from horizon import tables
 from horizon import tabs
+from horizon import forms
+
+from openstack_dashboard.dashboards.fogbow.network.forms import CreateNetwork
+from django.core.urlresolvers import reverse_lazy 
 
 from openstack_dashboard.dashboards.fogbow.network \
     import tabs as project_tabs
@@ -57,6 +61,11 @@ def areThereInstance(responseStr):
     if THERE_ARE_NOT_INSTANCE in responseStr:
         return False
     return True 
+
+class CreateView(forms.ModalFormView):
+    form_class = CreateNetwork
+    template_name = 'fogbow/network/create.html'
+    success_url = reverse_lazy('horizon:fogbow:index')
 
 class DetailViewInstance(tabs.TabView):
     tab_group_class = project_tabs.InstanceDetailTabGroupInstancePanel

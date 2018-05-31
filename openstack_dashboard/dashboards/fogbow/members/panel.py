@@ -5,7 +5,7 @@ import horizon
 from openstack_dashboard.dashboards.fogbow import dashboard
 
 class Members(horizon.Panel):
-    name = _("Members")
+    name = _("Quota")
     slug = "members"
 
 dashboard.Fogbow.register(Members)
