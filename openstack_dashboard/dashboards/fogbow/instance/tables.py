@@ -36,7 +36,11 @@ class TerminateInstance(tables.BatchAction):
             checkAttachmentAssociateError(request, response.text)
             return shortcuts.redirect(reverse("horizon:fogbow:instance:index"))
             
-                      
+class CreateInstance(tables.LinkAction):
+    name = 'create'
+    verbose_name = _('Create Instance')
+    url = 'horizon:fogbow:instance:create'
+    classes = ('ajax-modal', 'btn-create')                     
 
 def checkAttachmentAssociateError(request, responseStr):
     if 'Attachment IDs :' in responseStr:
@@ -69,6 +73,6 @@ class InstancesTable(tables.DataTable):
     class Meta:
         name = "instances"
         verbose_name = _("Instances")        
-        table_actions = (TerminateInstance, InstancesFilterAction)
+        table_actions = (CreateInstance, TerminateInstance, InstancesFilterAction)
         row_actions = (TerminateInstance, )
         
